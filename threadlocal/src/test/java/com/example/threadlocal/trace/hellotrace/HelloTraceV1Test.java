@@ -3,8 +3,6 @@ package com.example.threadlocal.trace.hellotrace;
 import com.example.threadlocal.trace.TraceStatus;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class HelloTraceV1Test {
 
     @Test
