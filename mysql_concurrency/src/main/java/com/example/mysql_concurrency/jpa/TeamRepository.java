@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.Lock;
 import javax.persistence.LockModeType;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface TeamRepository extends JpaRepository<Team, Long> {
 
-    @Override
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Lock(LockModeType.OPTIMISTIC)
-    Optional<Member> findById(Long id);
-    Optional<Member> findByUsername(String userName);
+//    @Override
+//    @Lock(LockModeType.OPTIMISTIC)
+//    Optional<Team> findById(Long id);
 }

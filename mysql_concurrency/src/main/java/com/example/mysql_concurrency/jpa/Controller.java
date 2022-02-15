@@ -2,6 +2,7 @@ package com.example.mysql_concurrency.jpa;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -9,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
 
     private final Service service;
-    @GetMapping("/jpa")
-    public String test() {
-        service.create();
+    @GetMapping("/jpa/{id}")
+    public String test(@PathVariable Long id) {
+        service.modify(id);
         return "ok";
     }
 }

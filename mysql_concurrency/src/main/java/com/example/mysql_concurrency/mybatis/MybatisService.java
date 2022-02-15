@@ -15,13 +15,13 @@ import java.util.Map;
 public class MybatisService {
 
     private final Dao dao;
-    private final SqlSession sqlSession;
+
     @Transactional
-    public void create() {
-        Map<String, Object> byId = dao.findById(1L);
+    public void create(Long id) {
+        Map<String, Object> byId = dao.findById(id);
         if (byId == null) {
             Map<String, Object> params = new HashMap<>();
-            params.put("id", 1);
+            params.put("id", id);
             params.put("username", "jisu");
             params.put("lastAt", "Y");
             dao.create(params);

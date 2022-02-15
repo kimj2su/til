@@ -9,17 +9,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Service {
 
-    private final EntityRepository entityRepository;
+    private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
 
 
     @Transactional
-    public void create() {
-        Optional<Entity> byId = entityRepository.findById(1L);
+    public Member create(Long id) {
+        Optional<Member> byId = memberRepository.findById(id);
         if (byId.isEmpty()) {
-            Entity jisu = Entity.builder()
+            Member entity = Member.builder()
                     .username("jisu")
                     .build();
-            entityRepository.save(jisu);
+          return  memberRepository.save(entity);
+        } else {
+            return byId.get();
+        }
+    }
+
+    @Transactional
+    public void modify(Long id) {
+        Member member = create(id);
+        Optional<Member> byId = memberRepository.findById(id);
+        if (byId.get().getUsername().equals("jisu")) {
+            member.modifyUsername("jisu2");
+        }
+    }
+
+    @Transactional
+    public void createTeam(Long id) {
+        Member member = create(id);
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isEmpty()) {
+            Team team1 = Team.builder()
+                    .teamName("team" + id)
+                    .member(member)
+                    .build();
+            teamRepository.save(team1);
         }
     }
 }
