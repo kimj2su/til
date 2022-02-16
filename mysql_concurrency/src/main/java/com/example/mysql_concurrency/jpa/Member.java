@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
 import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.GeneratedValue;
@@ -13,8 +15,10 @@ import javax.persistence.Id;
 
 @Data
 @javax.persistence.Entity
+//@OptimisticLocking(type = OptimisticLockType.ALL)
 @OptimisticLocking
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@DynamicUpdate
 public class Entity {
 
     @Id
