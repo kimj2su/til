@@ -71,4 +71,62 @@ advertised.listeners==PLAINTEXT://B:9092
 # returned from java.net.InetAddress.getCanonicalHostName().
 advertised.listeners=PLAINTEXT://192.168.64.10:9092
 ```
-advertised.listeners=PLAINTEXT://192.168.64.10:9092 의 주석을 풀고 ubuntu의 아이피 포트를 설정해 두었습니다.  
+advertised.listeners=PLAINTEXT://192.168.64.10:9092 의 주석을 풀고 ubuntu의 아이피 포트를 설정해 두었습니다.
+
+
+# Kafka Producer의 send 메소드 호출 프로세스
+- Kafka Producer 전송은 Producer Client의 별도의 Thread가 전송을 담당한다는 점에서 기본적으로 Thread간 Async 전송임.
+- 즉 Producer Client의 Main Thread가 send() 메소드를 호출하여 메시지 전송을 시작하지만 바로 전송되지 않으며 내부 Buffer에 메시지를 저장 후에 별도의 
+Thread가 Kafka Broker에 실제 전송을 하는 방식이다.
+
+# Producer와 브로커와의 메시지 동기화/비동기화 전송
+기본적으로 send 메소드는 비동기 방식으로 이루어집니다.  
+## Sync(동기화 방식)
+- Producer는 브로커로 부터 해당 메시지를 성공적으로 받았다는 Ack 메시지를 받은 후 다음 메시지를 전송
+- KafkaProducer.sned().get() 호출하여 브로커로 부터 Ack 메시지를 받을 때 까지 대기(Wait)함.  
+
+## SimpleProducerSync
+```
+try {
+            RecordMetadata recordMetadata = kafkaProducer.send(producerRecord).get();
+            logger.info("\n ##### record metadata received ##### \n" +
+                    "partition: " + recordMetadata.partition() + "\n" +
+                    "offset: " + recordMetadata.offset() + "\n" +
+                    "timestamp: " + recordMetadata.timestamp());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            kafkaProducer.close();
+}
+```
+kafkaProducer.send(producerRecord).get();  하게 되면 blocking 방식으로 응답을 기다리게 됩니다.
+
+## Async(비동기 방식)
+
+- Producer는 브로커로부터 해당 메시지를 성공적으로 받았다는 Ack메시지를 기다리지 않고 전송
+- 브로커로 부터 Ack 메시지를 비동기로 Producer에 받기 위해서 Callback을 적용함
+- send() 메소드 호출 시에 callback 객체를 인자로 입력하여 Ack 메시지를 Producer로 전달 받을 수 있음.
+
+Callback의 이해
+다른코드의 인수로서 넘겨주는 실행 가능한 코드이며, 콜백을 넘겨받는 코드는 이 콜백을 필요에 따라 즉시 실행할 수도 있고, 아니면 나중에 실행할 수도 있음.  
+즉 Callback은 다른 함수의 인자로서 전달된 후에 특정 이벤트가 발생 시 해당 함수에서 다치 호출됨.  
+자바에서는 
+1. Callback을 Interface로 구성하고, 호출되어질 메소드를 선언
+2. 해당 Callback을 구현하는 객체 생성, 즉 호출 되어질 메소드를 구체적으로 구현
+3. 다른 함수의 인자로 해당 Callback을 인자로 전달
+4. 해당 함수는 특정 이벤트 발생 시 Callback에 선언된 메소드를 호출
+
+```
+kafkaProducer.send(producerRecord, (metadata, exception) -> {
+            if (exception == null) {
+                logger.info("\n ##### record metadata received ##### \n" +
+                        "partition: " + metadata.partition() + "\n" +
+                        "offset: " + metadata.offset() + "\n" +
+                        "timestamp: " + metadata.timestamp());
+            } else {
+                logger.error("exception error from broker " + exception.getMessage());
+            }
+});
+```
