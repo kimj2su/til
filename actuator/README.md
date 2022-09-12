@@ -299,3 +299,77 @@ http://localhost:9090/config
 prometheus : 프로메테우스 자체에서 제공하는 메트릭 정보이다. (프로메테우스가 프로메테우스 자신의 메트릭을 확인하는 것이다.)  
 spring-actuator : 우리가 연동한 애플리케이션의 메트릭 정보이다.  
 State 가 UP 으로 되어 있으면 정상이고, DOWN 으로 되어 있으면 연동이 안된 것이다.  
+
+
+# 프로메테우스 - 기본 기능
+검색창에 http_server_requests_seconds_count 를 입력하고 실행해보자
+```
+http_server_requests_seconds_count{error="none", exception="none", instance="localhost:8080", job="spring-actuator", method="GET", outcome="CLIENT_ERROR", status="404", uri="/**"}
+4
+http_server_requests_seconds_count{error="none", exception="none", instance="localhost:8080", job="spring-actuator", method="GET", outcome="SUCCESS", status="200", uri="/actuator/metrics"}
+4
+http_server_requests_seconds_count{error="none", exception="none", instance="localhost:8080", job="spring-actuator", method="GET", outcome="SUCCESS", status="200", uri="/actuator/prometheus"}
+308
+http_server_requests_seconds_count{exception="None", instance="localhost:8000", job="apigateway-service", method="GET", outcome="CLIENT_ERROR", status="401", uri="UNKNOWN"}
+21
+http_server_requests_seconds_count{exception="None", instance="localhost:8000", job="apigateway-service", method="GET", outcome="SUCCESS", status="200", uri="/actuator/prometheus"}
+20
+http_server_requests_seconds_count{exception="NotFoundException", instance="localhost:8000", job="apigateway-service", method="GET", outcome="SERVER_ERROR", status="503", uri="UNKNOWN"}
+21
+```
+태그, 레이블: error , exception , instance , job , method , outcome , status , uri 는 각각의 메트릭 정보를 구분해서 사용하기 위한 태그이다. 마이크로미터에서는 이것을 태그(Tag)라 하고, 프로메테우스에서는 레이블(Label)이라 한다. 여기서는 둘을 구분하지 않고 사용하겠다.
+숫자: 끝에 마지막에 보면 132 , 4 와 같은 숫자가 보인다. 이 숫자가 바로 해당 메트릭의 값이다.
+
+# 기본 기능
+
+Table Evaluation time 을 수정해서 과거 시간 조회 가능  
+Graph 메트릭을 그래프로 조회 가능
+
+# 필터
+레이블을 기준으로 필터를 사용할 수 있다. 필터는 중괄호( {} ) 문법을 사용한다.
+# 레이블 일치 연산자
+- = 제공된 문자열과 정확히 동일한 레이블 선택
+- != 제공된 문자열과 같지 않은 레이블 선택
+- =~ 제공된 문자열과 정규식 일치하는 레이블 선택
+- !~ 제공된 문자열과 정규식 일치하지 않는 레이블 선택
+## 예)
+- uri=/log , method=GET 조건으로 필터
+    - http_server_requests_seconds_count{uri="/log", method="GET"} 
+- /actuator/prometheus 는 제외한 조건으로 필터
+    - http_server_requests_seconds_count{uri!="/actuator/prometheus"} 
+- method 가 GET , POST 인 경우를 포함해서 필터
+    - http_server_requests_seconds_count{method=~"GET|POST"} 
+- /actuator 로 시작하는 uri 는 제외한 조건으로 필터
+    - http_server_requests_seconds_count{uri!~"/actuator.*"}
+
+# 연산자 쿼리와 함수
+다음과 같은 연산자를 지원한다. 
+1. + (덧셈)
+2. - (빼기)
+3. * (곱셈)
+4. / (분할)
+5. % (모듈로)
+6. ^ (승수/지수)
+## sum
+값의 합계를 구한다.
+예) sum(http_server_requests_seconds_count)
+## sum by
+sum by(method, status)(http_server_requests_seconds_count) SQL의 group by 기능과 유사하다.
+```
+  {method="GET", status="404"} 3
+  {method="GET", status="200"} 120
+```
+
+## count
+count(http_server_requests_seconds_count)
+메트릭 자체의 수 카운트
+## topk
+topk(3, http_server_requests_seconds_count)
+상위 3개 메트릭 조회 
+## 오프셋 수정자
+http_server_requests_seconds_count offset 10m
+offset 10m 과 같이 나타낸다. 현재를 기준으로 특정 과거 시점의 데이터를 반환한다.
+## 범위 벡터 선택기
+http_server_requests_seconds_count[1m]
+마지막에 [1m] , [60s] 와 같이 표현한다. 지난 1분간의 모든 기록값을 선택한다.
+참고로 범위 벡터 선택기는 차트에 바로 표현할 수 없다. 데이터로는 확인할 수 있다. 범위 벡터 선택의 결과를 차트에 표현하기 위해서는 약간의 가공이 필요한데, 조금 뒤에 설명하는 상대적인 증가 확인 방법을 참고하자.
