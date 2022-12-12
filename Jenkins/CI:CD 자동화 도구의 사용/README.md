@@ -84,3 +84,21 @@ https://tomcat.apache.org
 <user username="deployer" password="deployer" roles="manager-script"/>
 <user username="tomcat" password="tomcat"  roles="manager-gui"/>
 ```
+
+
+# PollSCM 설정을 통한 지속적인 파일 업데이트 (폴링)
+
+## cron  
+소프트웨어 유틸리티 cron은 유닉스 계열 컴퓨터 운영 체제의 시간 기반 잡 스케줄러이다. 소프트웨어 환경을 설정하고 관리하는 사람들은 작업을 고정된 시간, 날짜, 간격에 주기적으로 실행할 수 있도록 스케줄링하기 위해 cron을 사용한다.  -위키백과-  
+
+Project -> Configure -> Build Triggers 
+- Build periodically -> cron job 
+- Poll SCM -> cron job
+첫번째 크론잡은 코드의 변경사항이 없어도 일단 빌드를 다시 합니다.  두번째 크론잡은 깃허브에서 코드를 가져올 때 커밋에 대한 내용이 있을 경우만 빌드를 하게 됩니다.
+
+# 빌드 유발
+Poll SCM - Schedule 
+```
+* * * * *
+```
+이렇게 추가하고 git 에 commit, push를 하면 빌드가 자동으로 된다.
