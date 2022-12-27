@@ -25,7 +25,7 @@ public class HelloRestTemplateController {
         RestTemplate restTemplate = new RestTemplate();
         URI uri = new URI(slackAlertWebhookUrl);
 
-        String errorMessage = "에러 메세지 발생!!!";
+        String errorMessage = System.getProperty("spring.profiles.active") + "에러 메세지 발생!!!";
         SlackErrorMessage slackErrorMessage = new SlackErrorMessage(errorMessage);
         ResponseEntity<String> result = restTemplate.postForEntity(uri, slackErrorMessage, String.class);
 

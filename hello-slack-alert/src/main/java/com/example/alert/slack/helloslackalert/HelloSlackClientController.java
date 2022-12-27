@@ -22,7 +22,7 @@ public class HelloSlackClientController {
     @GetMapping(value = "/hello-error-slack-client")
     public String helloErrorSlackClient() throws IOException {
         Slack slack = Slack.getInstance();
-        String errorMessage = "에러 메세지 발생!!!";
+        String errorMessage = System.getProperty("spring.profiles.active") + "에러 메세지 발생!!!";
         SlackErrorMessage slackErrorMessage = new SlackErrorMessage(errorMessage);
         WebhookResponse response = slack.send(slackAlertWebhookUrl, objectMapper.writeValueAsString(slackErrorMessage));
         return "Hello Slack Alert Sent = " + response.getCode();
