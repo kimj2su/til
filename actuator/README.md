@@ -451,3 +451,67 @@ Prometheus를 선택한다.
 Prometheus 데이터 소스 설정  
 URL: http://localhost:9090  
 나머지는 특별히 고칠 부분이 없다면 그대로 두고 Save & test 를 선택한다.  
+
+# 그라파나 - 대시보드 만들기
+
+## 대시보드 만들기
+대시보드 저장
+1. 왼쪽 Dashboards 메뉴 선택
+2. New 버튼 선택 New Dashboard 선택
+3. 오른쪽 상단의 Save dashboard 저장 버튼(disk 모양) 선택 4. Dashboard name: hello dashboard를 입력하고 저장
+## 대시보드 확인
+1. 왼쪽 Dashboards 메뉴 선택
+2. 앞서 만든 hello dashboard 선택
+
+## 대시보드에 패널 만들기
+대시보드가 큰 틀이라면 패널은 그 안에 모듈처럼 들어가는 실제 그래프를 보여주는 컴포넌트이다. 
+1. 오른쪽 상단의 Add panel 버튼(차트 모양) 선택
+2. Add a new panel 메뉴 선택
+3. 패널의 정보를 입력할 수 있는 화면이 나타난다.
+4. 아래에 보면 Run queries 버튼 오른쪽에 Builder , Code 라는 버튼이 보이는데, Code 를 선택하자.
+5. Enter a PromQL query... 이라는 부분에 메트릭을 입력하면 된다.
+
+
+## CPU 메트릭 만들기
+다음 메트릭을 패널에 추가해보자.  
+- system_cpu_usage : 시스템의 CPU 사용량 
+- process_cpu_usage : JVM 프로세스 CPU 사용량  
+
+PromQL 에 system_cpu_usage 를 입력하고 Run queries 버튼을 선택하자 패널에 시스템 CPU 사용량을 그래프로 확인할 수 있다.  
+process_cpu_usage 도 하나의 그래프에서 함께 확인하자. 이렇게 하려면 화면 하단의 + Query 버튼을 선택해야 한다.  
+추가한 부분의 PromQL 에 process_cpu_usage 를 입력하고 Run queries 버튼을 선택하자  
+패널에 프로세스 CPU 사용량이 추가된 것을 확인할 수 있다.  
+
+### 그래프의 데이터 이름 변경  
+패널 그래프 하단을 보면 범례(Legend)라고 하는 차트에 제공하는 데이터 종류를 구분하는 텍스트가 JSON으로 표시되어 있다.  
+이 부분을 수정해보자.  
+system_cpu_usage 를 입력한 곳에 가서 하단의 Options 를 선택한다.  
+Legend 를 선택하고 Custom을 선택한다. system cpu 를 입력한다. process_cpu_usage 를 입력한 곳에 가서 하단의 Options 를 선택한다.  
+Legend 를 선택하고 Custom을 선택한다. process cpu 를 입력한다.  
+### 패널 이름 설정  
+오른쪽에 보면 Panel options 라는 부분을 확인할 수 있다. 다음과 같이 수정하자  
+Title : CPU 사용량
+### 패널 저장하기
+화면 오른쪽 상단의 Save 또는 Apply 버튼을 선택한다.
+
+
+## 디스크 사용량 추가하기
+패널을 추가하고 다음 항목을 입력하자  
+### 패널 옵션  
+Title : 디스크 사용량  
+### PromQL
+disk_total_bytes  
+Legend : 전체 용량
++Query 로 다음을 추가하자  
+disk_total_bytes - disk_free_bytes  
+Legend : 사용 용량  
+참고: 사용 디스크 용량 = 전체 디스크 용량 - 남은 디스크 용량  
+### 그래프 데이터 사이즈 변경
+그래프를 보면 데이터 사이즈가 byte로 보이기 때문에 불편할 것이다. 이것을 변경하려면 오른쪽 옵션 창을 확인하자  
+Standard options Unit Data bytes(SI) 를 선택하자.  
+GB, TB 단위로 읽기 편하게 변한 것을 확인할 수 있다.
+### 최소값 변경
+그래프는 현재 상태에 최적화가 된다. 하지만 디스크 사용량은 0부터 시작하는 것도 좋겠다. Standard options Min 0 을 선택하자.  
+그래프가 0부터 시작하는 것을 확인할 수 있다.
+
+그런데 이렇게 하나하나 직접 대시보드를 입력하는 것도 참으로 힘든 일이다. 그라파나는 이미 만들어둔 대시보드를 가져다가 사용할 수 있는 기능을 제공한다.
