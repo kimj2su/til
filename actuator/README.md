@@ -177,3 +177,125 @@ https://prometheus.io/download/
 실행 - MAC ./prometheus 시스템환경설정 보안및개인정보보호 일반 -> 확인 없이 허용
 
 접속 http://localhost:9090
+
+
+# 프로메테우스 - 애플리케이션 설정
+
+프로메테우스는 메트릭을 수집하고 보관하는 DB이다. 프로메테우스가 우리 애플리케이션의 메트릭을 수집하도록 연동해보자.
+여기에는 2가지 작업이 필요하다.
+1. 애플리케이션 설정: 프로메테우스가 애플리케이션의 메트릭을 가져갈 수 있도록 애플리케이션에서 프로메테우스 포멧에 맞추어 메트릭 만들기
+2. 프로메테우스 설정: 프로메테우스가 우리 애플리케이션의 메트릭을 주기적으로 수집하도록 설정
+
+애플리케이션 설정  
+프로메테우스가 애플리케이션의 메트릭을 가져가려면 프로메테우스가 사용하는 포멧에 맞추어 메트릭을 만들어야 한다.  
+참고로 프로메테우스는 /actuator/metrics 에서 보았던 포멧(JSON)은 이해하지 못한다.  
+하지만 프로메테우스 포멧에 대한 부분은 걱정할 것이 없다. 마이크로미터가 이런 부분은 모두 해결해준다.  
+각각의 메트릭들은 내부에서 마이크로미터 표준 방식으로 측정되고 있다. 따라서 어떤 구현체를 사용할지 지정만 해주면 된다.
+
+```
+implementation 'io.micrometer:micrometer-registry-prometheus' //추가
+```
+이크로미터 프로메테우스 구현 라이브러리를 추가한다.  
+이렇게 하면 스프링 부트와 액츄에이터가 자동으로 마이크로미터 프로메테우스 구현체를 등록해서 동작하도록 설정해준다.  
+액츄에이터에 프로메테우스 메트릭 수집 엔드포인트가 자동으로 추가된다.  
+     /actuator/prometheus
+
+실행  
+http://localhost:8080/actuator/prometheus
+```
+  # HELP tomcat_threads_config_max_threads
+  # TYPE tomcat_threads_config_max_threads gauge
+  tomcat_threads_config_max_threads{name="http-nio-8080",} 200.0
+  # HELP tomcat_sessions_alive_max_seconds
+  # TYPE tomcat_sessions_alive_max_seconds gauge
+  tomcat_sessions_alive_max_seconds 0.0
+  # HELP tomcat_cache_access_total
+  # TYPE tomcat_cache_access_total counter
+  tomcat_cache_access_total 0.0
+  # HELP jvm_info JVM version info
+  # TYPE jvm_info gauge
+  jvm_info{runtime="OpenJDK Runtime Environment",vendor="JetBrains
+   s.r.o.",version="17.0.3+7-b469.37",} 1.0
+  # HELP logback_events_total Number of events that made it to the logs
+  # TYPE logback_events_total counter
+  logback_events_total{level="warn",} 0.0
+  logback_events_total{level="debug",} 0.0
+  logback_events_total{level="error",} 2.0
+  logback_events_total{level="trace",} 0.0
+  logback_events_total{level="info",} 47.0
+  ...
+  ```
+
+  모든 메트릭이 프로메테우스 포멧으로 만들어 진 것을 확인할 수 있다.  
+/actuator/metrics 와 비교해서 프로메테우스에 맞추어 변환된 부분을 몇가지 확인해보자.  
+
+# 포멧 차이
+jvm.info jvm_info : 프로메테우스는 . 대신에 _ 포멧을 사용한다. . 대신에 _ 포멧으로 변환된 것을 확인할 수 있다.  
+logback.events logback_events_total : 로그수 처럼 지속해서 숫자가 증가하는 메트릭을 카운터라 한다. 프로메테우스는 카운터 메트릭의 마지막에는 관례상 _total 을 붙인다.  
+http.server.requests 이 메트릭은 내부에 요청수, 시간 합, 최대 시간 정보를 가지고 있었다.   프로메테우스에서는 다음 3가지로 분리된다.  
+http_server_requests_seconds_count : 요청 수 http_server_requests_seconds_sum : 시간 합(요청수의 시간을 합함) http_server_requests_seconds_max : 최대 시간(가장 오래걸린 요청 수)  
+대략 이렇게 포멧들이 변경된다고 보면 된다. 포멧 변경에 대한 부분은 진행하면서 자연스럽게 알아보자.  
+
+# 프로메테우스 - 수집 설정
+
+이제 프로메테우스가 애플리케이션의 /actuator/prometheus 를 호출해서 메트릭을 주기적으로 수집하도록 설정해보자.  
+프로메테우스 폴더에 있는 prometheus.yml 파일을 수정하자.  
+
+# prometheus.yml
+```
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+  #추가
+  - job_name: "spring-actuator"
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 1s
+    static_configs:
+    - targets: ['localhost:8080']
+
+```
+
+
+job_name : 수집하는 이름이다. 임의의 이름을 사용하면 된다. metrics_path : 수집할 경로를 지정한다.   
+scrape_interval : 수집할 주기를 설정한다.  
+targets : 수집할 서버의 IP, PORT를 지정한다.  
+이렇게 설정하면 프로메테우스는 다음 경로를 1초에 한번씩 호출해서 애플리케이션의 메트릭들을 수집한다.  
+http://localhost:8080/actuator/prometheus
+
+> 주의  
+> scrape_interval 여기서는 예제를 빠르게 확인하기 위해서 수집 주기를 1s 로 했지만, 수집 주기의 기본
+값은 1m 이다. 수집 주기가 너무 짧으면 애플리케이션 성능에 영향을 줄 수 있으므로 운영에서는 10s ~ 1m 정도를 권장한다. (물론 시스템 상황에 따라서 다르다.)
+
+프로메테우스 연동 확인  
+프로메테우스 메뉴 Status Configuration 에 들어가서 prometheus.yml 에 입력한 부분이 추가되어 있는지 확인해보자.  
+http://localhost:9090/config  
+프로메테우스 메뉴 Status Targets 에 들어가서 연동이 잘 되었는지 확인하자. http://localhost:9090/targets  
+prometheus : 프로메테우스 자체에서 제공하는 메트릭 정보이다. (프로메테우스가 프로메테우스 자신의 메트릭을 확인하는 것이다.)  
+spring-actuator : 우리가 연동한 애플리케이션의 메트릭 정보이다.  
+State 가 UP 으로 되어 있으면 정상이고, DOWN 으로 되어 있으면 연동이 안된 것이다.  
