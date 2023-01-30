@@ -6,6 +6,8 @@ management:
       enabled: true
     env:
       enabled: true
+  server:
+    port: 8080
   endpoint:
     shutdown:
       enabled: true
@@ -16,6 +18,7 @@ management:
     web:
       exposure:
         include: "*"
+#      base-path: /manage
 #        beans, conditions, configprops, env,health, httpexchanges, info, loggers, metrics, mappings, threaddump, shutdown
 #https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints
 
