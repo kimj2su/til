@@ -24,3 +24,7 @@ info:
   app:
     name: hello-actuator
     company: Kim Ji Su
+
+logging:
+  level:
+    hello.controller: debug
