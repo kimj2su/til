@@ -1,0 +1,26 @@
+management:
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+    env:
+      enabled: true
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-components: always
+      #show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+#        beans, conditions, configprops, env,health, httpexchanges, info, loggers, metrics, mappings, threaddump, shutdown
+#https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints
+
+
+info:
+  app:
+    name: hello-actuator
+    company: Kim Ji Su
