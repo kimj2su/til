@@ -85,7 +85,7 @@ https://tomcat.apache.org
 <user username="tomcat" password="tomcat"  roles="manager-gui"/>
 ```
 
-
+<br/><br/>
 # PollSCM 설정을 통한 지속적인 파일 업데이트 (폴링)
 
 ## cron  
@@ -96,9 +96,55 @@ Project -> Configure -> Build Triggers
 - Poll SCM -> cron job
 첫번째 크론잡은 코드의 변경사항이 없어도 일단 빌드를 다시 합니다.  두번째 크론잡은 깃허브에서 코드를 가져올 때 커밋에 대한 내용이 있을 경우만 빌드를 하게 됩니다.
 
-# 빌드 유발
+## 빌드 유발
 Poll SCM - Schedule 
 ```
 * * * * *
 ```
 이렇게 추가하고 git 에 commit, push를 하면 빌드가 자동으로 된다.
+
+
+<br/><br/>
+
+# SSH Server 설치
+```
+docker pull edowon0623/docker-server:m1
+```
+위 명령어로 이미지를 다운 받는다.  
+docker images -> 이미지 확인
+
+```
+ docker run --privileged --name docker-server -itd -p 10022:22 -p 8081:8080 -e container=docker -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host edowon0623/docker-server:m1 /usr/sbin/init
+ ```
+
+ ## SSH 서버 접속
+ ssh root@localhost -p 10022   
+ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes  
+ root@localhost's password:   
+
+## docker 서버 작동 확인
+```
+ systemctl status docker
+  Loaded: loaded (/usr/lib/systemd/system/docker.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+     Docs: https://docs.docker.com
+```
+inactive면 작동 안 된 상태이다.     
+
+작동중인 상태로 만들어주려면 다음과 같은 명령어를 입력해주면 된다.
+```
+systemctl enable docker
+
+결과
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+
+
+systemctl start docker
+
+```
+
+만약 여기서 오류가 난다면 설정을 변경해줘야한다.  
+$ vi /etc/sysconfig/docker  
+$ yum install -y iptables net-tools  
+$ sed -i -e 's/overlay2/vfs/g' /etc/sysconfig/docker-storage  
+$ systemctl start docker  
