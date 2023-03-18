@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class Controller {
+public class MybatisController {
 
-    private final Service service;
+    private final MybatisService service;
     @GetMapping("/my")
     public String test() {
         service.create();

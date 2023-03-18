@@ -1,4 +1,4 @@
-package com.example.mysql_concurrency;
+package com.example.mysql_concurrency.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

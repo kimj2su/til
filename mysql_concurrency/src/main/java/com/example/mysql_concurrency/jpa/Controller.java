@@ -1,4 +1,4 @@
-package com.example.mysql_concurrency;
+package com.example.mysql_concurrency.jpa;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
 
     private final Service service;
-    @GetMapping("/")
+    @GetMapping("/jpa")
     public String test() {
         service.create();
         return "ok";

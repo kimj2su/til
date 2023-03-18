@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mysql_concurrency.mybatis.Dao">
+
+    <select id="findById" resultType="hashMap">
+        select * from entity2 where id = #{id} and last_at = 'N' for update
+    </select>
+
+    <insert id="create" parameterType="hashMap">
+        insert into entity2(username, last_at) values (#{username}, #{lastAt})
+    </insert>
+
+<!--    <insert id="updateBoard" parameterType="com.example.restapi.dto.request.BoardCreateRequest" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">-->
+<!--        update board set board_title = #{boardTitle}, board_content = #{boardContent} where board_id = #{boardId}-->
+<!--    </insert>-->
+</mapper>
+
+
