@@ -130,3 +130,21 @@ kafkaProducer.send(producerRecord, (metadata, exception) -> {
             }
 });
 ```
+
+
+# Producer의 acks 설정에 따른 send 방식 -acks 1
+- Producer는 Leader broke가 메시지 A를 정상적으로 받았는지에 대한 Ack메시지를 받은 후 다음 메시지인 메시지 B를 바로 전송. 만약 오류 메시지를 브로커로부터 받으면 메시지 A를 재 전송
+- 메시지 A가 모든 Replicator에 완벽하게 복사 되었는지의 여부는 확인하지 않고 메시지 B를 전송.
+- 만약 Leader가 메시지를 복제 중에 다운될 경우 다음 Leader가 될 브로커에는 메시지가 없을 수 있기 떄문에 메시지를 소실할 우려가 있음.  
+
+Producer는 해당 Topic의 Patition의 Leader Broker에게만 메시지를 보냄
+
+# Producer의 acks 설정에 따른 send 방식 -acks all, -1
+- Producer는 Leader broke가 메시지 A를 정상적으로 받은 뒤 min.insync.replicas 개수 만큼의 Replicator에 복제를 수행한 뒤에 보내는 Ack 메시지를 받은 후 다음 메시지인 메시지 B를 바로전송, 만약 오류 메시지를 브로커로 부터 받으면 메시지 A를 재전송.
+- 메시지 A가 모든 Replicator에 완벽하게 복사되었는지의 여부까지 확인후에 메시지 B를 전송.
+- 메시지 손실이 되지 않도록 모든 장애 상황을 감안한 ㅓㄴ송 모드이지만 Ack를 오래 기다려야 하므로 상대적으로 전송속도가 느림.
+
+# Producer의 Sync와 Callback Async에서의 acks와 retry
+-  Callback기반의 async에서도 동일하게 acks설정에 기반하여 retry가 수행됨
+- Callback기반의 async에서는 retry에 따라 Producer의 원래 메시지 전송 순서와 Broker에 기록되는 메시지 전송 순서가 변경 될 수 있음.
+- Sync 방식에서 acks = 0일 경우 전송 후 ack/error를 기다리지 않음(fire and forget).
