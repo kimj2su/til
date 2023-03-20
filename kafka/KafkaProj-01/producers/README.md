@@ -148,3 +148,39 @@ Producer는 해당 Topic의 Patition의 Leader Broker에게만 메시지를 보�
 -  Callback기반의 async에서도 동일하게 acks설정에 기반하여 retry가 수행됨
 - Callback기반의 async에서는 retry에 따라 Producer의 원래 메시지 전송 순서와 Broker에 기록되는 메시지 전송 순서가 변경 될 수 있음.
 - Sync 방식에서 acks = 0일 경우 전송 후 ack/error를 기다리지 않음(fire and forget).
+
+<br/><br/>
+
+# Producer의 메시지 배치 전송의 이해
+Serialize -> Partitioning -> Compression(선택) -> Record Accumulator 저장 -> Sender에서 별도의 Thread로 전송  
+카프카 프로듀서는 send() 메소드를 호출할때 프로듀서 레코드가 한건 들어갑니다.  
+하지만 실제 Sender Thread가 브로커에게 보낼때에는 배치단위로 보내게 됩니다.  
+실제로 send 메서드는 Record Accumulator라는곳에 저장을 시키고 반환을 시켜주는 역할을 합니다.  
+메시지 보내는 역할은 Sender Thread가 Record Accumulator 배치단위로 읽어와서 카프카 브로커로 보내게 됩니다.  
+ 
+ ## Producer Record와 Record Batch
+ KafkaProducer객체의 send() 메소드는 호출 시마다 하나의 ProducerRecord를 입력하지만 바로 전송되지 않고 내부 메모리(Record Accumulator)에서 단일 메시지를 토픽 파티션에 따라 Record Batch 단위로 묶인 뒤 전송됨. 메시지들은 Producer Client의 내부 메모리에 여러개의 Batch들로 buffer.memory 설정 사이즈 만큼 보관 될 수 있으며 여러개의 Batch들로 한꺼번에 전송될 수 있음  
+
+ ## Kafka Producer Record Accumulator
+ - ###  Record Accumulator는 Producer에 의해서 메시지 배치가 전송이 될 토픽과 Patition에 따라 저장되는 Kafka Producer메모리 영역
+- ### Sender Thread는 Record Accumulator에 누적된 메시지 배치를 꺼내서 브로커로 전송함.
+- ### KafkaProducer의 Main Thread는 send() 메소드를 호출하고  Record Accumulator에 데이터 저장하고 Sender Thread는 별개로 데이터를 브로커로 전송
+
+ - linger.ms = Sender Thread로 메시지를 보내기전 배치로 메시지를 만들어서 보내기 위한 최대 대기 시간
+ - buffer.memory = Record accumulator의 전체 메모리 사이즈
+ - batch.size = 단일 배치의 사이즈
+
+<br/><br/>
+
+# Producer의 linger.ms와 batch.size
+- Sender Thread는 기본적으로 전송할 준비가 되어 있으면 Record Accumulator에서 1개의 Batch를 가져갈수도, 여ㅑ러개의 Batch를 가져갈 수도 있음. 또한 Batch에 메시지가 다 차지 않아도 가져갈 수 있음.
+- linger.ms를 0보다 크게 설정하여 Sender Thread가 하나의 Record Batch를 가져갈 때 일정 시간 대기하여 Record Batch에 메시지를 보다 많이 채울 수 있도록 적용
+Sender Thread에 max.inflight.requests.per.connection = 2 이 있는데 여기서 2는 파티션에 배치를 2개 가져오라는 의미이다.  
+
+## Producer의 linger.ms에 대한 고찰
+- linger.ms를반드시0보다크게설정할필요는없음  
+- Producer와 Broker간의 전송이 매우 빠르고 Producer에서 메시지를 적절한 Record Accumulator에 누적된다면 linger.ms가 0이 되어도 무방  
+- 전반적인 Producer와 Broker간의 전송이 느리다면 linger.ms를 높여서 메시지가 배치로 적용될 수 있는 확률을 높이는 시도를 해볼 만함.
+- linger.ms는보통20ms이하로설정권장
+
+

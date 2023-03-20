@@ -33,7 +33,7 @@ public class SimpleProducerASyncWithKey {
         for (int seq = 0; seq < 20; seq ++) {
             //ProducerRecord 객체 생성
             ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topicName, String.valueOf(seq), "hello world " + seq);
-
+            //기본적으로 카프카는 비동기 이므로 send를 호출하고 이 메서드는 반환이된다.
             kafkaProducer.send(producerRecord, (metadata, exception) -> {
                 if (exception == null) {
                     logger.info("\n ##### record metadata received ##### \n" +

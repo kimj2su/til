@@ -69,6 +69,7 @@ public class PizzaProducer {
             });
         } else {
             try {
+                //get()을 사용하면 blocking이다.
                 RecordMetadata metadata = kafkaProducer.send(producerRecord).get();
                 logger.info("sync message: " + pMessage.get("key") + "partition: " + metadata.partition() + "\n" +
                         "offset: " + metadata.offset());
@@ -93,6 +94,11 @@ public class PizzaProducer {
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
+        //acks setting
+        //props.setProperty(ProducerConfig.ACKS_CONFIG, "all")
+        //batch setting
+        props.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "32000");
+        props.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
 
         //KafkaProducer 객체 생성
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
