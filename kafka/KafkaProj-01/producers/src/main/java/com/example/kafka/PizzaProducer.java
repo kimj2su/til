@@ -93,6 +93,10 @@ public class PizzaProducer {
         props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.10:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+//        props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "50000");
+//        props.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "6");
+//        props.setProperty(ProducerConfig.ACKS_CONFIG, "0");
+//        props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         //acks setting
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "all")
@@ -103,7 +107,7 @@ public class PizzaProducer {
         //KafkaProducer 객체 생성
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
 
-        sendPizzaMessage(kafkaProducer, topicName, -1, 100, 1000, 100, true);
+        sendPizzaMessage(kafkaProducer, topicName, -1, 1000, 0, 0, false);
         kafkaProducer.close();
     }
 }

@@ -184,3 +184,125 @@ Sender Thread에 max.inflight.requests.per.connection = 2 이 있는데 여기�
 - linger.ms는보통20ms이하로설정권장
 
 
+<br/><br/>
+
+# Producer의 메지 전송/재 전송 시간 파라미터 이해
+delivery.timeout.ms >= liger.ms + request.timeout.ms
+
+Sender Thread가 메시지 전송을 하다 오류가나면 재 전송, 또 재 전송을 해줍니다.  
+언제까지 이 일을 하느냐 바로 delivery.timeout.ms 만큼 리트라이를 하다가 종료하게 됩니다.
+
+## max.block.ms
+- Send 호출시 Record Accumulator에 입력하지 못하고 block되는 최대 시간, 초과시 Timeout Exception
+## linger.ms
+- Sender Thread가 Record Accumulator에서 배치별로 가져가기 위한 최대 대기시간
+## request.timeout.ms
+- 전송에 걸리는 최대 시간, 전송 재 시도 대기시간 제외. 초과시 retry를 하거나 Timeout Exception 발생
+## retry.backoff.ms
+- 전송 재 시도를 위한 대기 시간
+## deliver.timeout.ms
+- Producer 메시지(배치) 전송에 허용된 최대 시간, 초과 시 Timeout Exception
+
+# Producer의 메시지 재 전송 -retries와 delivery.timeout.ms
+- retries와 delivery.timeout.ms를 이용하여 재 전송 횟수 조정
+- retries는 재전 송 횟수를 설정
+- delivery.timeout.ms는 메시지 재전송을 멈출때까지의 시간
+- 보통 retries는 무한대값으로 설정하고 delivery.timeout.ms(기본 120000, 즉 2분)를 조정하는 것을 권장  
+
+retries 설정 횟수 만큼 재전송 시도하다가 delivery.timeout.ms가 되면 재 전송 중지
+```
+retries = 10
+retires.backoff.ms = 30
+request.timeout.ms = 10000ms
+```
+- retires.backoff.ms는 재 전송 주기 시간을 설정
+- retries = 10, retires.backoff.ms = 30, request.timeout.ms = 10000ms인 경우 request.timeout.ms 기다린 후 재 전송하기전 30ms 이후 재전송 시도, 이와 같은 방식으로 재 전송을 10회 시도하고 더이상 retry시도하지 않음
+- 만약 10회 이내에 delivery.timeout.ms에 도달하면 더 이상 retry시도하지 않음
+
+# max.in.flight.requests.per.connection
+브로커 서버의 응답없이 Producer의 sender thread가 한번에 보낼 수 있는 메시지 배치의 개수. Default 값은 5
+Kafka Producer의 메시지 전송 단위는 Batch임.  
+비동기 전송 시 브로커의 응답없이 한꺼번에 보낼 수 있는 Batch의 개수는 max.in.flight.requests.per.connection에 따름
+
+# Producer 메시지 전송 순서와 Broker 메시지 저장 순서 고찰
+
+B0가 B1보다 먼저 Producer에서 생성된 메시지 배치.  
+• max.in.flight.requests.per.connection = 2 ( > 1) 에서 B0, B1 2개의 배치 메시지를 전송 시 B1은 성공적으로 기록 되었으나 B0의 경우  
+Write되지 않고 Ack 전송이 되지 않는 Failure 상황이 된 경우 Producer는 BO를 재 전송하여 성공적으로 기록되며 Producer의 원래 메시지 순서와는 다르게 Broker에 저장 될 수 있음.  
+
+# 최대 한번 전송, 적어도 한번 전송, 정확히 한번 전송
+- 최대  한 번 전송(at most once)
+- 적어도 한 번 전송(at least once)
+- 정확히 한번 전송(exactly once)
+    - 중복 없이 전송(Idempotence): Producer의 message 전송 retry시 중복제거
+    - Transaction기반 전송: Consumer > Process > Producer(주로 Kafka Streams)에 주로 사용되는 Transaction기반 처리
+
+# 중복없이 전송 (idempotence)    
+- Producer는 브로커로 부터 ACK를 받은 다음에 다음 메시지 전송하되, Producer ID와 메시지 Sequence를 Header에 저장하여 전송
+- 메시지 Sequence는 메시지의 고유 Sequence번호, 0부터 시작하여 순차적으로 증가 Producer ID는 Producer가 기동시마다 새롭게 생성
+- 브로커에서 메시지 Sequece가 중복 될 경우 이를 메시지 로그에 기록하지 않고 Ack만 전송
+- 브로커는 Producer가 보낸 메시지의 Sequence가 브로커가 가지오 이는 메시지의 Sequence보다 1만큼 큰 경우에만 브로커에 저장
+
+
+Producer　　　　　　　　　　　　　　　　　　　　　Broker  
+메시지 A  　　　　　　　　　　　　　　　　　　　　　　메시지A  
+PID:0, SEQ:0　　--->　　1.전송　　-------->  　PID:0, SEQ:0  
+PID:0, SEQ:0　　<---　　2.ACK　　<--------  　PID:0, SEQ:0  
+
+메시지 A가 정상적으로 브로커에 기록되고 Ack전송됨(메시지 A는 프로듀서 ID:0, 메시지 시퀀스:0 으로 브로커 메모리에 저장됨, Producer는 ACK를 기다린 후 메시지 B를 전송
+
+
+Producer　　　　　　　　　　　　　　　　　　　　　　　　　　　　Broker  
+메시지 B  　　　　　　　　　　　　　　　　　　　　　　　　　　　 　메시지B  
+PID:0, SEQ:1　　　　　---------->　　3.전송　　----------->  　PID:0, SEQ:1  
+PID:0, SEQ:0　　　　　　　　　　　　　　　　　　　　　　　　　　PID:0, SEQ:0  
+　　　<--x--- 4.네트워크　장애등으로 ACK나 Error 보내지 못함　<------
+
+메시지 B가 정상적으로 Broker에 기록되었지만 네트웍 장애 등으로 Ack를 Producer에게 보내지 못함. 메시지 B는 메시지 시퀀스 1로 브로커에 저장됨   
+
+Producer　　　　　　　　　　　　　　　　　　　　　Broker  
+메시지 B  　　　　　　　　　　　　　　　　　　　　　　메시지 B  
+PID:0, SEQ:1　　--->　　5. 재 전송　　-------->  　PID:0, SEQ:1  
+　　　　　　　　<------　　ACK　<------
+
+메시지 B의 Ack를 받지 못한 Producer는 메시지 B를 다시 보냄. 메시지 B는 재 전송 되었지만 브로커는 SEQ가 1인 메시지가 이 미 저장되어서 해당 메시지를 메시지 로그에 저장하지 않고 Ack만 보냄.  
+
+<br/><br/>
+
+# Idempotence 를 위한 Producer 설정
+
+• enable.idempotence = true  
+• acks = all  
+• retries는 0 보다 큰 값  
+• max.in.flight.requests.per.connection은 1에서 5사이 값  (카프카쪽에서 정함)
+# Idempotence 적용 후 성능이 약간 감소(최대 20%)할 수 있지만 기본적으로 idempotence 적용을 권장 
+
+
+# Idempotence 기반에서 메시지 전송 순서 유지
+
+• B0이 가장 먼저, B1, B2 순에서 Producer에서 생성된 메시지 배치.  
+• Idempotence 기반에서 max.in.flight.requests.per.connection 만큼 여러 개의 배치들이 Broker에 전송됨.  
+• Broker는 메시지 배치를 처리시 write된 배치의 마지막 메시지 Sequence + 1 이 아닌 배치 메시지가 올 경우
+OutOfOrderSequenceException을 생성하여 Producer에 오류로 전달.  
+
+<br/><br/>
+
+# Idempotence 를 위한 Producer 설정 시 유의 사항  
+• Kafka 3.0 버전 부터는 Producer의 기본 설정이 Idempotence임.  
+• 하지만 기본 설정중에 enable.idempotence=true를 제외하고 다른 파라미터들을 잘못설정하면(예를 들어 acks=1로 설정) Producer는 정상적으로 메시지를 보내지만 idempotence로는 동작하지 않음  
+• 명시적으로  enable.idempotence=true를 설정한 뒤 다른 파라미터들을 잘못 설정하면 Config오류가 발생하면서 Producer가 기동되지 않음  
+
+```
+Properties props = new Properties();
+//bootstrap.servers, key.serializer.class, value.serializer.class
+props.setProperty("bootstrap.servers", "192.168.64.10:9092");
+props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.10:9092");
+props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+props.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "6");
+props.setProperty(ProducerConfig.ACKS_CONFIG, "0");
+props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+```
+위와 같이 설정하면 Exception in thread "main" org.apache.kafka.common.config.ConfigException: Must set acks to all in order to use the idempotent producer. Otherwise we cannot guarantee idempotence. 다음과 같은 에러로 서버가 기동되지 않습니다.  
+그래서  props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); 를 all 이나 -1로 설정해야 합니다.  
+## 공식문서 https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html  -> enable.idempotence 키워드를 찾음
