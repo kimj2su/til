@@ -14,8 +14,8 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-public class PizzaProducer {
-    public static final Logger logger = LoggerFactory.getLogger(PizzaProducer.class.getName());
+public class PizzaProducerCustomPartitioner {
+    public static final Logger logger = LoggerFactory.getLogger(PizzaProducerCustomPartitioner.class.getName());
 
     public static void sendPizzaMessage(KafkaProducer<String, String> kafkaProducer,
                                         String topicName, int iterCount,
@@ -82,21 +82,27 @@ public class PizzaProducer {
 
     public static void main(String[] args) {
 
-        String topicName = "pizza-topic";
+        String topicName = "pizza-topic-partitioner";
 
         //KafkaProducer configuration setting
         //null, "hello world"
 
         Properties props = new Properties();
         //bootstrap.servers, key.serializer.class, value.serializer.class
-        props.setProperty("bootstrap.servers", "192.168.64.10:9092");
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.10:9092");
+//        props.setProperty("bootstrap.servers", "localhost:9092");
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 //        props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "50000");
+        //# Idempotence 기반에서 메시지 전송 순서 유지
 //        props.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "6");
 //        props.setProperty(ProducerConfig.ACKS_CONFIG, "0");
 //        props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+        //커스텀 파티셔너
+//        props.setProperty("partitioner.class", "CustomPartitioner");
+        props.setProperty("custom.specialKey", "P001");
+        //같은 패키지에 있다면 클래스명만 적어줘도 된다.
+        props.setProperty(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com.example.kafka.CustomPartitioner");
 
         //acks setting
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "all")
@@ -107,7 +113,7 @@ public class PizzaProducer {
         //KafkaProducer 객체 생성
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
 
-        sendPizzaMessage(kafkaProducer, topicName, -1, 1000, 0, 0, false);
+        sendPizzaMessage(kafkaProducer, topicName, -1, 100, 0, 0, true);
         kafkaProducer.close();
     }
 }

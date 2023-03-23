@@ -306,3 +306,115 @@ props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 위와 같이 설정하면 Exception in thread "main" org.apache.kafka.common.config.ConfigException: Must set acks to all in order to use the idempotent producer. Otherwise we cannot guarantee idempotence. 다음과 같은 에러로 서버가 기동되지 않습니다.  
 그래서  props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); 를 all 이나 -1로 설정해야 합니다.  
 ## 공식문서 https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html  -> enable.idempotence 키워드를 찾음
+
+
+# 커스텀 파티셔너 만들기
+기본적으로 카프카는 토픽을 만들때 파티션을 만들면 (예를 들어 3개의 파티션이 있다고 가정) 1개의 파티션만 살아있다가 
+2개의 파티션으로 늘어나면 자동으로 리밸런싱을 하여 분산처리를 해주고 다시 한번 3개의 파티션으로 늘어나도 리밸런싱,
+다시 2개로 가도 리밸런싱을 해줍니다.  
+그리고 특정 키 값의 메세지는 DefaultPartitioner 을 통해서 해싱이 되어 특정 파티션으로만 계속 보내지게 됩니다.  
+```
+public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster,
+                         int numPartitions) {
+        if (keyBytes == null) {
+            return stickyPartitionCache.partition(topic, cluster);
+        }
+        // hash the keyBytes to choose a partition
+        return Utils.toPositive(Utils.murmur2(keyBytes)) % numPartitions;
+    }
+```
+
+만약 A, B, C 중에 A가 트래픽이 많이 몰리는 곳에서 보내는 메세지라면 A만 파티션을 따로 두어 트래픽 관리를 할 수 있게 됩니다.  
+여기서는 파티션을 5개로 예제를 하였습니다.  
+
+```
+토픽 생성 
+kafka-topics --bootstrap-server localhost:9092 --create --topic pizza-topic-partitioner --partitions 5
+
+package com.example.kafka;
+
+import org.apache.kafka.clients.producer.Partitioner;
+import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
+import org.apache.kafka.clients.producer.internals.StickyPartitionCache;
+import org.apache.kafka.common.Cluster;
+import org.apache.kafka.common.InvalidRecordException;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+
+// 5개 파티션을 만들고 특정 키값 P001을 고정 파티션에 놔두고 나머지 들을 나머지 파티션으로 보낸다.
+public class CustomPartitioner implements Partitioner {
+
+    public static final Logger logger = LoggerFactory.getLogger(CustomPartitioner.class.getName());
+
+    private final StickyPartitionCache stickyPartitionCache = new StickyPartitionCache();
+
+    private String specialKeyName;
+    /**
+     * 파라미터 Map은 Properties props = new Properties(); 에 정의 된 내용이 넘어온다.
+     * @param configs
+     */
+    @Override
+    public void configure(Map<String, ?> configs) {
+        specialKeyName = configs.get("custom.specialKey").toString();
+    }
+
+    /**
+     *
+     * @param topic The topic name
+     * @param key The key to partition on (or null if no key)
+     * @param keyBytes The serialized key to partition on( or null if no key)
+     * @param value The value to partition on or null
+     * @param valueBytes The serialized value to partition on or null
+     * @param cluster The current cluster metadata - 브로커에 있는 토픽의 정보들을 캐싱해서 가지고 있다.
+     * @return
+     */
+    @Override
+    public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
+        List<PartitionInfo> partitionInfoList = cluster.partitionsForTopic(topic);
+        //파티션의 사이즈, 개수
+        int numPartitions = partitionInfoList.size();
+        int numSpecialPartitions = (int)(numPartitions * 0.5);
+
+        int partitionIndex = 0; // 초기화 0으로 안하면 NPE 가능성있음.
+
+        if (keyBytes == null) {
+//            return stickyPartitionCache.partition(topic, cluster);
+            throw new InvalidRecordException("key should not be null");
+        }
+
+        //numSpecialPartitions 가 5개면 2개가 나온다.
+        //Utils.toPositive(Utils.murmur2(keyBytes)) % numSpecialPartitions; 기존 로직은 keyBytes가 P001로 고정된 값이라 0,1번 파티션만 나온다.
+        if (((String) key).equals(specialKeyName)) {
+            partitionIndex = Utils.toPositive(Utils.murmur2(valueBytes)) % numSpecialPartitions;
+        } else {
+            //연산 로직은 if문은 0,1 만 나오고 else는 다 나오므로 (5-2) == 0,1,2 에서 2씩 더해준 파티션이 나오게 해준다.
+            partitionIndex = Utils.toPositive(Utils.murmur2(keyBytes)) % (numPartitions - numSpecialPartitions) + numSpecialPartitions;
+        }
+
+        logger.info("key : {} is sent to partition: {}", key.toString(), partitionIndex);
+
+        return partitionIndex;
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+
+}
+
+1. kafka-dump-log 명령어로 파티션별로 메시지 확인하기
+kafka-dump-log --deep-iteration --files /Users/kimjisu/Desktop/dev_downloads/confluent/data/kafka-logs/pizza-topic-partitioner-0/00000000000000000000.log --print-data-log
+
+
+2. Consumer를 partition 별로 접속하여 확인. --group 인자를 주어서는 안됨. 
+kafka-console-consumer --bootstrap-server localhost:9092 --topic pizza-topic-partitioner \
+--property print.key=true --property print.value=true --partition 0
+
+```
