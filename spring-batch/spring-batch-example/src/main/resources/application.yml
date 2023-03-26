@@ -4,3 +4,18 @@ spring:
       names: ${job.name:NONE}
     jdbc:
       initialize-schema:
+  datasource:
+#    hikari:
+#      jdbc-url: jdbc:mysql://127.0.0.1:3306/spring_batch?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      username: root
+#      password: 1234
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      data-locations: classpath:person.sql
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
