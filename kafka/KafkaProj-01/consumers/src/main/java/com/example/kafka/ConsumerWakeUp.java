@@ -26,7 +26,8 @@ public class ConsumerWakeUp {
         //props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-01-static");
         //props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3");
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
-              
+        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
 
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
         kafkaConsumer.subscribe(List.of(topicName));
@@ -53,7 +54,7 @@ public class ConsumerWakeUp {
                 //메인 스레드가 최대 1초동안 기다린다.
                 ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord record : consumerRecords) {
-                    logger.info("record key: {}, record value{}, partition:{}, record offset: {}",
+                    logger.info("record key: {}, record value:{}, partition:{}, record offset: {}",
                             record.key(), record.value(), record.partition(), record.offset());
                 }
             }
