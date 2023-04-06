@@ -3,6 +3,7 @@ package org.example.백준.브론즈.피보나치수5;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.function.BinaryOperator;
 
 public class Main {
     public static int result(int n ) {
