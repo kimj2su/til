@@ -124,3 +124,8 @@ __consumer_offsets에 Consumer Group이 해당 Topic Partition 별로 offset 정
 • 동일 Consumer Group으로 Consumer가 새롭게 접속할 시 __consumer_offsets에 있는 offset 정보를 기반으로 메시지를 가져오기 때문에 earliest로 설정하여도 0번 오프셋 부터 읽어 들이지 않음.  
 • Consumer Group의 Consumer가 모두 종료 되어도 Consumer Group이 읽어들인 offset 정보는 7일동안 __consumer_offsets에 저장되어 있음 (offsets.retention.minutes)  
 • 해당 Topic이 삭제되고 재 생성될 경우에는 해당 topic에 대한 Consumer Group의 offset 정보는 0으로 __consumer_offsets으로 기록됨  
+
+<br/><br/>
+
+# Broker의 Group Coordinator와 Consumer/Consumer Group
+
