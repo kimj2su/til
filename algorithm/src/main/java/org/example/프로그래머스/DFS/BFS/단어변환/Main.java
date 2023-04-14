@@ -1,4 +1,4 @@
-package org.example.프로그래머스.BFS.단어변환;
+package org.example.프로그래머스.DFS.BFS.단어변환;
 
 import java.util.LinkedList;
 import java.util.Queue;
