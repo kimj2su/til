@@ -1,4 +1,4 @@
-package org.example.프로그래머스.DFS.BFS.게임맵최단거리;
+package org.example.프로그래머스.BFS.게임맵최단거리;
 
 import java.util.LinkedList;
 import java.util.Queue;
