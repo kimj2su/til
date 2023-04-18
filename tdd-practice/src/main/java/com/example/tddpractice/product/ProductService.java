@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
+public
 class ProductService {
     private final ProductPort productPort;
 
@@ -27,8 +28,22 @@ class ProductService {
     }
 
     @GetMapping("/{productId}")
-    public GetProductResponse getProduct(@PathVariable Long productId) {
+    public ResponseEntity<GetProductResponse> getProduct(@PathVariable Long productId) {
         final Product product = productPort.getProduct(productId);
-        return new GetProductResponse(product.getId(), product.getName(), product.getPrice(), product.getDiscountPolicy());
+        final GetProductResponse response = new GetProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getDiscountPolicy());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<Void> updateProduct(@PathVariable final Long productId, @RequestBody final UpdateProductRequest request) {
+        Product product = productPort.getProduct(productId);
+        product.update(request.name(), request.price(), request.discountPolicy());
+
+        productPort.save(product);
+        return ResponseEntity.ok().build();
     }
 }
