@@ -17,12 +17,14 @@ public class ConsumerWakeUp {
     public static final Logger logger = LoggerFactory.getLogger(ConsumerWakeUp.class.getName());
     public static void main(String[] args) {
 
-        String topicName = "simple-topic";
+        String topicName = "pizza-topic";
+
         Properties props = new Properties();
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-01-static");
+        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3");
         //props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-01-static");
         //props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3");
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");

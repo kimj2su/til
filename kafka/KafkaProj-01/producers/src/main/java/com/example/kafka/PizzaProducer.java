@@ -89,8 +89,8 @@ public class PizzaProducer {
 
         Properties props = new Properties();
         //bootstrap.servers, key.serializer.class, value.serializer.class
-        props.setProperty("bootstrap.servers", "192.168.64.10:9092");
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.10:9092");
+        props.setProperty("bootstrap.servers", "localhost:9092");
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 //        props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "50000");

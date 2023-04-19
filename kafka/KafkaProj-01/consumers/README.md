@@ -128,4 +128,36 @@ __consumer_offsets에 Consumer Group이 해당 Topic Partition 별로 offset 정
 <br/><br/>
 
 # Broker의 Group Coordinator와 Consumer/Consumer Group
+Consumer Group내에 새로운 Consumer가 추가되거나 기존 Consumer가 종료 될 때, 또는 Topic에 새로운 Partition이 추가될 때 Broker의 Group Coordinator는 Consumer Group내의 Consumer들에게 파티션을 재 할당하는 Rebalancing을 수행하도록 지시
 
+## Group Coordinator
+• Consumer들의 Join Group 정보, Partition 매핑 정보 관리  
+• Consumer 들의 HeartBeat 관리
+
+1. Consumer Group내의 Consumer가 브로커에 최초 접속 요청 시 Group Coordinator 생성.
+2. 동일 group.id로 여러 개의 Consumer로 Broker의 Group Coordinator로 접속
+3. 가장 빨리 Group에 Join 요청을 한 Consumer에게 Consumer Group내의 Leader Consumer로 지정
+4. Leader로 지정된 Consumer는 파티션 할당전략에 따라 Consumer들에게 파티션 할당
+5. Leader Consumer는 최종 할당된 파티션 정보를 Group Coordinator에게 전달.
+6. 정보 전달 성공을 공유한 뒤 개별 Consumer들은 할당된 파티션에서 메시지 읽음
+
+<br/><br/>
+
+# Consumer 스태틱 그룹 멤머쉽의 필요성
+• 많은 Consumer를 가지는 Consumer Group에서 Rebalance가 발생하면 모든 Consumer들이 Rebalance 를 수행하므로 많은 시간이 소모 되고 대량 데이터 처리시 Lag가 더 길어질 수 있음  
+• 유지보수 차원의 Consumer Restart도 Rebalance를 초래하므로 불필요한 Rebalance를 발생 시키지 않 을방법대두  
+• Consumer Group내의 Consumer들에게 고정된 id를 부여.  
+• Consumer 별로 Consumer Group 최초 조인 시 할당된 파티션을 그대로 유지하고 Consumer가 shutdown되어도 session.timeout.ms내에 재 기동되면 rebalance가 수행되지 않고, 기존 파티션이 재 할당됨.  
+• Consumer #3 가 종료 되었지만 Rebalance가 일어나지 않으며, Partition #3는
+다른 Consumer에 재 할당되지 않고 읽혀지지 않음  
+• Consumer #3가 session.timeout.ms 내에 다시 기동되면 Partition #3는
+Consumer #3에 할당  
+• Consumer #3가 session.timeout.ms 내에 기동되지 않으면 Rebalance가 수행
+된 후 Partition #3가 다른 Consumer에 할당됨.  
+• 스태틱 그룹 멤버쉽을 적용할 경우 session.timeout.ms 를 좀 더 큰 값으로 설정  
+
+```
+[2023-04-21 00:59:20,240] INFO [GroupCoordinator 0]: Static member with groupInstanceId=3 and unknown member id joins group group-01-static in Stable state. Replacing previously mapped member 3-f10cb99a-b96c-4b45-9e7e-25ac21762b14 with this groupInstanceId. (kafka.coordinator.group.GroupCoordinator)
+[2023-04-21 00:59:20,243] INFO [GroupCoordinator 0]: Static member which joins during Stable stage and doesn't affect selectProtocol will not trigger rebalance. (kafka.coordinator.group.GroupCoordinator)
+```
+컨슈머 기동시 session.timeout.ms = 45000 45초가 되어있는데 이 안에 재 기동시 리밸런싱이 안일어난다.
