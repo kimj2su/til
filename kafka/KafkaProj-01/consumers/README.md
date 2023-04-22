@@ -161,3 +161,34 @@ Consumer #3에 할당
 [2023-04-21 00:59:20,243] INFO [GroupCoordinator 0]: Static member which joins during Stable stage and doesn't affect selectProtocol will not trigger rebalance. (kafka.coordinator.group.GroupCoordinator)
 ```
 컨슈머 기동시 session.timeout.ms = 45000 45초가 되어있는데 이 안에 재 기동시 리밸런싱이 안일어난다.
+
+<br/><br/>
+
+# KafkaConsumer의 Heart Beat Thread
+
+KafkaConsumer  
+Fetcher  
+ConsumerNetworkClient  
+SubscriptionState  
+ConsumerCoordinator  
+Heart Beat Thread  
+Heart Beat Thread 를 통해서 브로커의 Group Coordinator에 Consumer의 상태를 전송
+
+## 주요 파라미터
+Consumer 파라미터명  기본값(ms)
+heartbeat.interval.ms Heart Beat Thread가 Heart Beat을 보내는 간격. session.timeout.ms보다낮게설정되어야함. Session.timeout.ms의1/3보다낮 게설정권장.
+브로커가 Consumer로 Heart Beat을 기다리는 최대 시간. 브로커는 이 시간동 안 Heart beat을 consumer로 부터 받지 못하면 해당 consumer를 Group에서 제 외하도록 rebalancing 명령을 지시
+이전 poll( )호출 후 다음 호출 poll( )까지 브로커가 기다리는 시간. 해당 시간동 안 poll( )호출이 Consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있 는 것으로 판단하고 브로커는 rebalance 명령을 보냄.
+session.timeout.ms
+max.poll.interval.ms
+300000
+본 교재와 실습 자료는 다른 강의나 블로그에 활용 하시면 안됩니다.
+기본값(ms)
+3000
+45000
+설명
+| Consumer 파라미터명      | 기본값(ms)               | 설명 |
+|-----------------------|----------------------|--------------------------|
+| heartbeat.interval.ms | 3000   | Heart Beat Thread가 Heart Beat을 보내는 간격. <br>session.timeout.ms 보다 낮게 설정되어야 함. Session.timeout.ms의 1/3 보다 낮게 설정 권장|
+| session.timeout.ms    | 45000  | 브로커가 Consumer로 Heart Beat을 기다리는 최대 시간. 브로커는 이 시간동 안 Heart beat을 consumer로 부터 받지 못하면 해당 consumer를 Group에서 제 외하도록 rebalancing 명령을 지시  
+| max.poll.interval.ms  | 3000000|이전 poll( )호출 후 다음 호출 poll( )까지 브로커가 기다리는 시간. 해당 시간동 안 poll( )호출이 Consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있 는 것으로 판단하고 브로커는 rebalance 명령을 보냄.
