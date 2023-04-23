@@ -174,21 +174,144 @@ ConsumerCoordinator
 Heart Beat Thread  
 Heart Beat Thread 를 통해서 브로커의 Group Coordinator에 Consumer의 상태를 전송
 
+<br/><br/>
+
 ## 주요 파라미터
-Consumer 파라미터명  기본값(ms)
-heartbeat.interval.ms Heart Beat Thread가 Heart Beat을 보내는 간격. session.timeout.ms보다낮게설정되어야함. Session.timeout.ms의1/3보다낮 게설정권장.
-브로커가 Consumer로 Heart Beat을 기다리는 최대 시간. 브로커는 이 시간동 안 Heart beat을 consumer로 부터 받지 못하면 해당 consumer를 Group에서 제 외하도록 rebalancing 명령을 지시
-이전 poll( )호출 후 다음 호출 poll( )까지 브로커가 기다리는 시간. 해당 시간동 안 poll( )호출이 Consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있 는 것으로 판단하고 브로커는 rebalance 명령을 보냄.
-session.timeout.ms
-max.poll.interval.ms
-300000
-본 교재와 실습 자료는 다른 강의나 블로그에 활용 하시면 안됩니다.
-기본값(ms)
-3000
-45000
-설명
+
 | Consumer 파라미터명      | 기본값(ms)               | 설명 |
 |-----------------------|----------------------|--------------------------|
 | heartbeat.interval.ms | 3000   | Heart Beat Thread가 Heart Beat을 보내는 간격. <br>session.timeout.ms 보다 낮게 설정되어야 함. Session.timeout.ms의 1/3 보다 낮게 설정 권장|
 | session.timeout.ms    | 45000  | 브로커가 Consumer로 Heart Beat을 기다리는 최대 시간. 브로커는 이 시간동 안 Heart beat을 consumer로 부터 받지 못하면 해당 consumer를 Group에서 제 외하도록 rebalancing 명령을 지시  
 | max.poll.interval.ms  | 3000000|이전 poll( )호출 후 다음 호출 poll( )까지 브로커가 기다리는 시간. 해당 시간동 안 poll( )호출이 Consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있 는 것으로 판단하고 브로커는 rebalance 명령을 보냄.
+
+<br/><br/>
+
+# Consumer에 Rebalance가 발생하는 상황
+Consumer Group내에 새로운 Consumer가 추가되거나 기존 Consumer가 종료 될 때, 또는 Topic에 새로운 Partition이 추가될 때  
+• session.timeout.ms 이내에 Heartbeat이 응답이 없거나, max.poll.interval.ms 이내에 poll( ) 메소드가 호출되지 않을 경우  
+
+<br/><br/>
+
+# Consumer에서 여러개의 Topic 읽기
+```
+kafka-topics --bootstrap-server localhost:9092 --create --topic topic-p3-t1 --partitions 3
+Created topic topic-p3-t1.  
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic topic-p3-t2 --partitions 3
+Created topic topic-p3-t2.  
+
+kafka-console-producer --bootstrap-server localhost:9092 --topic topic-p3-t1
+kafka-console-producer --bootstrap-server localhost:9092 --topic topic-p3-t2
+
+메세지 전송을 한다.  
+KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
+kafkaConsumer.subscribe(List.of("topic-p3-t1", "topic-p3-t2"));
+
+컨슈머에서 리스트로 토픽 이름을 받으면 여러개의 토픽을 읽을 수 있다.
+```
+
+<br/><br/>
+
+# Consumer Rebalancing Protocol – Eager 모드
+
+• Rebalance 수행 시 기존 Consumer들의 모든 파티션 할당을 취소하고 잠시 메시지를 읽지 않음. 이후 새롭게 Consumer에 파티션 을 다시 할당 받고 다시 메시지를 읽음.  
+• 모든 Consumer가 잠시 메시지를 읽지 않는 시간으로 인해 Lag가 상대적으로 크게 발생할 가능성 있음.  
+
+파티션 할당 전략(partition.assignment.stragegy)중 Range, Round Robin, Sticky 방식이 여기에 해당  
+
+<br/><br/> 
+
+# Consumer Rebalancing Protocol – (Incremental) Cooperative모드
+• Rebalance 수행 시 기존 Consumer들의 모든 파티션 할당을 취소하지 않고 대상이 되는 Consumer들에 대해서 파티션에 따라 점 진적으로(Incremental) Consumer를 할당하면서 Rebalance를 수행.  
+• 전체 Consumer가 메시지 읽기를 중지하지 않으며 개별 Consumer가 협력적으로(Cooperative) 영향을 받는 파티션만 Rebalance 로 재 분배. 많은 Consumer를 가지는 Consumer Group내에서 Rebalance 시간이 오래 걸릴 시 활용도 높음
+
+<br/><br/> 
+
+파티션 할당 전략(partition.assignment.stragegy)중 Cooperative Sticky에 해당
+
+# Consumer 파티션 할당 전략 목표
+• Consumer의 부하를 파티션 별로 균등하게 할당  
+• 데이터 처리 및 리밸런싱의 효율성 극대화
+
+<br/><br/>
+
+# Consumer 파티션 할당 전략 유형
+
+| 파티션 할당 전략     |  내용            |   
+|-----------------------|----------------------|
+| Range 할당 전략 | • 서로 다른 2개 이상의 토픽을 Consumer들이 Subscription 할 시 토픽별 동일한 파티션을 특정 Consumer에게 할당하는 전략. <br/> • 여러 토픽들에서 동일한 키값으로 되어 있는 파티션은 특정 Consumer에 할당하여 해당 Consumer 가여러토픽의동일키값으로데이터처리를용이하게할수있도록지원
+|
+| Round Robin 할당 전략    | • 파티션별로 Consumer들이 균등하게 부하를 분배할 수 있도록 여러 토픽들의 파티션들을 Consumer들에게 순차적인 Round robin 방식으로 할당
+| Sticky 할당 전략  | • 최초에 할당된 파티션과 Consumer 매핑을 Rebalance 수행되어도 가급적 그대로 유지 할 수 있도록 지원하는 전략. <br/> • 하지만 Eager Protocol 기반이므로 Rebalance 시 모든 Consumer의 파티션 매핑이 해제 된 후에 다시 매핑되는 형태임.
+| Cooperative(협력적) Sticky 할당 전략 | • 최초에 할당된 파티션과 Consumer 매핑을 Rebalance수행되어도 가급적 그대로 유지 할 수 있도록 지원함과 동시에 Cooperative Protocol 기반으로 Rebalance 시 모든 Consumer의 파티션 매핑이 해제 되지 않고 Rebalance 연관된 파티션과 Consumer만 재 매핑됨
+
+
+
+<br/><br/>
+# Consummer 파티션 하당 전략 실습 Rangedhk Round Robin 방식 할당 실습
+ConsumerMTopicRebalance 컨슈머를 실행시키면
+```
+partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+``` 
+다음과 같이 레인지가 보입니다.
+
+```
+kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group group-assign
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                  HOST            CLIENT-ID
+group-assign    topic-p3-t2     1          3               3               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+group-assign    topic-p3-t1     1          1               1               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+group-assign    topic-p3-t2     2          4               4               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+group-assign    topic-p3-t2     0          0               0               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+group-assign    topic-p3-t1     2          2               2               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+group-assign    topic-p3-t1     0          4               4               0               consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6 /127.0.0.1      consumer-group-assign-1
+```
+
+여기서 하나의 컨슈머를 더 기동해보겠습니다.
+```
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Adding newly assigned partitions: topic-p3-t2-1, topic-p3-t1-0, topic-p3-t2-0, topic-p3-t1-1
+```
+
+여기서 2개가 나올수도 있고 4개가 나올수도있다.
+
+## 기존 컨슈머에서 리보크로 6개의 토픽을 포기한뒤 2개를 할당받는 모습이다.
+```
+Request joining group due to: group is already rebalancing
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Revoke previously assigned partitions topic-p3-t2-1, topic-p3-t1-0, topic-p3-t2-0, topic-p3-t1-2, topic-p3-t2-2, topic-p3-t1-1
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] (Re-)joining group
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Successfully joined group with generation Generation{generationId=2, memberId='consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6', protocol='range'}
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Finished assignment for group at generation 2: {consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6=Assignment(partitions=[topic-p3-t2-2, topic-p3-t1-2]), consumer-group-assign-1-b0d1a555-3b46-4607-a85e-3c725f1999de=Assignment(partitions=[topic-p3-t2-0, topic-p3-t2-1, topic-p3-t1-0, topic-p3-t1-1])}
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Successfully synced group in generation Generation{generationId=2, memberId='consumer-group-assign-1-de7062a0-798c-4cb2-b54a-dc81c85461f6', protocol='range'}
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Notifying assignor about the new Assignment(partitions=[topic-p3-t2-2, topic-p3-t1-2])
+[main] INFO org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-group-assign-1, groupId=group-assign] Adding newly assigned partitions: topic-p3-t1-2, topic-p3-t2-2
+```
+
+
+
+# Round Robin으로 바꾸기
+
+```
+props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
+```
+
+# Cooperative Sticky으로 바꾸기
+
+```
+props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName());
+
+
+출력 값
+partition.assignment.strategy = [org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+
+
+이런식으로 포기하는 토픽이 바로 바로 출력되고 할당되는 것을 보여준다.
+Assigned partitions:        [topic-p3-t1-0, topic-p3-t1-1]
+Current owned partitions:   [topic-p3-t1-0, topic-p3-t1-2,topic-p3-t1-1]
+Added partitions (assigned - owned):       []
+Revoked partitions (owned - assigned):     [topic-p3-t1-2]
+```
+
+
+
+
+
