@@ -32,7 +32,7 @@ public class UserController {
         return Response.success(new UserLoginResponse(token));
     }
 
-    @GetMapping
+    @GetMapping("")
     public String user(@AuthenticationPrincipal UserDto principalDetails) {
         System.out.println("authentication = " + principalDetails);
         System.out.println("authentication = " + principalDetails.getUsername());
