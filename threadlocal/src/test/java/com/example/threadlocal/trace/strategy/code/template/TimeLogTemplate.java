@@ -1,16 +1,15 @@
-package com.example.threadlocal.trace.template.code;
+package com.example.threadlocal.trace.strategy.code.template;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractTemplate {
+public class TimeLogTemplate {
 
-    public void execute() {
+    public void execute(Callback callback) {
         long startTime = System.currentTimeMillis();
-        call();
+        callback.call();
         long endTime = System.currentTimeMillis();
         long resultTime = endTime - startTime;
         log.info("resultTime={}", resultTime);
     }
-    protected abstract void call();
 }

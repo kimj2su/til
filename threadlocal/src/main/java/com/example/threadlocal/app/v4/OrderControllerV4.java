@@ -1,30 +1,28 @@
-package com.example.threadlocal.app.v3;
+package com.example.threadlocal.app.v4;
 
 import com.example.threadlocal.trace.TraceStatus;
 import com.example.threadlocal.trace.logtrace.LogTrace;
+import com.example.threadlocal.trace.template.AbstractTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class OrderControllerV3 {
+public class OrderControllerV4 {
 
-    private final OrderServiceV3 orderService;
+    private final OrderServiceV4 orderService;
     private final LogTrace trace;
 
-    @GetMapping("/v3/request")
+    @GetMapping("/v4/request")
     public String request(String itemId) {
-
-        TraceStatus status = null;
-        try {
-            status = trace.begin("OrderController.request()");
-            orderService.orderItem(itemId);
-            trace.end(status);
-            return "ok";
-        } catch (Exception e) {
-            trace.exception(status, e);
-            throw e;//예외를 꼭 다시 던져주어야 한다.
-        }
+        AbstractTemplate<String> template = new AbstractTemplate<>(trace) {
+            @Override
+            protected String call() {
+                orderService.orderItem(itemId);
+                return "ok";
+            }
+        };
+        return template.execute("OrderController.request()");
     }
 }

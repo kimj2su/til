@@ -1,28 +1,27 @@
-package com.example.threadlocal.app.v3;
+package com.example.threadlocal.app.v4;
 
 import com.example.threadlocal.trace.TraceStatus;
 import com.example.threadlocal.trace.logtrace.LogTrace;
+import com.example.threadlocal.trace.template.AbstractTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceV3 {
+public class OrderServiceV4 {
 
-    private final OrderRepositoryV3 orderRepository;
+    private final OrderRepositoryV4 orderRepository;
     private final LogTrace trace;
 
     public void orderItem(String itemId) {
 
-        TraceStatus status = null;
-        try {
-            status = trace.begin("OrderService.orderItem()");
-            orderRepository.save(itemId);
-            trace.end(status);
-        } catch (Exception e) {
-            trace.exception(status, e);
-            throw e;
-        }
-
+        AbstractTemplate<Void> template = new AbstractTemplate<>(trace) {
+            @Override
+            protected Void call() {
+                orderRepository.save(itemId);
+                return null;
+            }
+        };
+        template.execute("OrderService.orderItem()");
     }
 }
