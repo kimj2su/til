@@ -21,46 +21,60 @@ public class Main {
         System.out.println("user = " + user);
     }
 
-}
-
-
-class CompareTo implements BinaryOperator<User> {
-
-    @Override
-    public User apply(User user, User user2) {
-        if (user.getAge() < 3 || user2.getAge() < 3) {
-            return user.removerUser();
+    @Test
+    void test2() {
+        test3(1);
+    }
+    void test3(int k) {
+        if (k == 10) {
+            return;
+        } else {
+            test3(k+1);
+            System.out.println("k = " + k);
         }
-        return user;
+    }
+
+    static class CompareTo implements BinaryOperator<User> {
+
+        @Override
+        public User apply(User user, User user2) {
+            if (user.getAge() < 3 || user2.getAge() < 3) {
+                return user.removerUser();
+            }
+            return user;
+        }
+    }
+
+    static class User {
+        private int age;
+        private String name;
+
+        public User(int age, String name) {
+            this.age = age;
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public User removerUser() {
+            return null;
+        }
     }
 }
 
-class User {
-    private int age;
-    private String name;
 
-    public User(int age, String name) {
-        this.age = age;
-        this.name = name;
-    }
 
-    public int getAge() {
-        return age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public User removerUser() {
-        return null;
-    }
-}
