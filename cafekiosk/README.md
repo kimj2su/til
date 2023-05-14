@@ -68,6 +68,17 @@ TDD, 레드-그린-리팩토링
 
 JUnit vs Spock
 
+# Layered Architecture
+
+## Persistence Layer - Repository test
+- Data Access의 역할
+- 비즈니스 가공 로직이 포함되어서는 안된다. Data에 대한 CRUD에만 집중한 레이어
+
+## Business Layer - Service test(Persistence Layer 포함)
+- 비즈니스 로직을 구현하는 역할
+- Persistence Layer와의 상호작용(Data를 읽고 쓰는 행위)을 통해 비즈니스 로직을 전개시킨다.
+- 트랜잭션을 보장해야 한다.
+
 
 
 
