@@ -82,9 +82,12 @@ JUnit vs Spock
 ## Presentation Layer - Controller test(Business Layer 포함)
 - 외부 세계의 요청을 가장 먼저 받는 계층
 - 파라미터에 대한 최소한의 검증을 수행한다.
-- 
 
+# Test Fixture 클렌징
+## deleteAll() vs deleteAllInBatch()
 
+deleteAll은 table을 조회해서 where절에 id를 찾아 다 삭제하지만 deleteAllInBatch는
+where절 없이 테이블을 다 지우기 때문에 성능차이가 있다.
 
 
 
