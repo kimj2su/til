@@ -1,4 +1,4 @@
-package com.example.exception;
+package com.example.moduleapi.exception;
 
 import com.example.modulecommon.enums.CodeEnum;
 import lombok.AllArgsConstructor;

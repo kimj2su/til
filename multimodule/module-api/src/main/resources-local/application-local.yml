@@ -1,19 +1,20 @@
+profile-name: local
 
 spring:
   main:
     allow-bean-definition-overriding: true
-#  datasource:
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password:
-#    driver-class-name: org.h2.Driver
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   jpa:
 #    database: mysql
 #    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-#    database: h2
-#    database-platform: org.hibernate.dialect.H2Dialect
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: none # or `create`
+      ddl-auto: create # or `create`
     properties:
       hibernate:
         show_sql: true # to System OutDataSourceConfiguration
@@ -21,9 +22,3 @@ spring:
         use_sql_comments: true
         jdbc:
           time_zone: Asia/Seoul # @CreatedDate 필드의 Time Zone 값 설정
-  profiles:
-    default: local
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
