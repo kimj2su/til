@@ -232,3 +232,32 @@ fun main() {
     
 }
 ```
+
+# 예외 처리
+                Throwable
+                    |
+        Error                       Exception
+          |                       |             |
+    Uncheckederrors         RuntimeException
+                                |
+                            UncheckedExceptions     CheckedExceptions
+                                
+- Error : 시스템에 비정상적인 상황이 발생, 예측이 어렵고 기본적으로 복구가 불가능함.
+  - OutOfMemoryError, StackOverflowError 등 
+- Exception : 개발자가 구현한 로직에서 발생하는 예외, 예측이 가능하고 복구가 가능함. 예외처리 강제
+  - IoException, SQLException 등
+  - @Transactional 어노테이션을 사용하면 RuntimeException이 발생하면 롤백을 하고, CheckedException이 발생하면 롤백을 하지 않는다.
+- RuntimeException : 개발자가 구현한 로직에서 발생하는 예외, 예측이 가능하고 복구가 가능함. 예외처리 강제 x
+  - NullPointerException, IllegalArgumentException 등 
+
+```kotlin
+val a = try {
+    "1234".toInt()
+} catch (e: Exception) {
+    println()
+}
+
+print(a)
+```
+
+코틀린에서 try catch 또한 표현식이므로 값을 반환할 수 있다.
