@@ -24,56 +24,40 @@ class MemberRepositoryFactoryTest {
     void paginationLegacy() {
         // given : 선행조건 기술
         String prefixName = "a";
-//        for (int i = 1; i <= 30; i++) {
-//            memberRepository.save(Member.builder()
-//                    .name(prefixName + i)
-//                    .build());
-//        }
 
         // when : 기능 수행
-        List<MemberDto> members = memberRepositoryFactory.paginationLegacy(prefixName, 1000, 10);
+        List<MemberDto> members = memberRepositoryFactory.paginationLegacy(prefixName, 99999, 10);
+        for (MemberDto member : members) {
+            System.out.println("member = " + member.getName());
+        }
 
         // then : 결과 확인
         assertThat(members.size()).isEqualTo(10);
-//        assertThat(members.get(0).getName()).isEqualTo("a20");
-//        assertThat(members.get(9).getName()).isEqualTo("a11");
     }
 
     @Test
     void paginationNoOffset1() {
         // given : 선행조건 기술
         String prefixName = "a";
-        for (int i = 1; i <= 30; i++) {
-            memberRepository.save(Member.builder()
-                    .name(prefixName + i)
-                    .build());
-        }
 
         // when : 기능 수행
         List<MemberDto> members = memberRepositoryFactory.paginationNoOffsetBuilder(null, prefixName, 10);
 
         // then : 결과 확인
         assertThat(members.size()).isEqualTo(10);
-        assertThat(members.get(0).getName()).isEqualTo("a30");
-        assertThat(members.get(9).getName()).isEqualTo("a21");
     }
 
     @Test
     void paginationNoOffset2() {
         // given : 선행조건 기술
         String prefixName = "a";
-//        for (int i = 1; i <= 30; i++) {
-//            memberRepository.save(Member.builder()
-//                    .name(prefixName + i)
-//                    .build());
-//        }
 
         // when : 기능 수행
-        List<MemberDto> members = memberRepositoryFactory.paginationNoOffset(9990L, prefixName, 10);
-
+        List<MemberDto> members = memberRepositoryFactory.paginationNoOffset(11L, prefixName, 10);
+        for (MemberDto member : members) {
+            System.out.println("member.getName() = " + member.getName());
+        }
         // then : 결과 확인
         assertThat(members.size()).isEqualTo(10);
-//        assertThat(members.get(0).getName()).isEqualTo("a20");
-//        assertThat(members.get(9).getName()).isEqualTo("a11");
     }
 }

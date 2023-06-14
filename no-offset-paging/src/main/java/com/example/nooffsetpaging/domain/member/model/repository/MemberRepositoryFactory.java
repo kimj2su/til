@@ -37,7 +37,7 @@ public class MemberRepositoryFactory {
                 .limit(pageSize) // 지정된 사이즈 만큼
                 .fetch();
         stopWatch.stop();
-        System.out.println("객체 생성 시간 = " + stopWatch.getTotalTimeSeconds());
+        System.out.println("쿼리 측정 시간 = " + stopWatch.getTotalTimeSeconds());
         return members;
     }
 
@@ -79,7 +79,7 @@ public class MemberRepositoryFactory {
                 .limit(pageSize) // 지정된 사이즈 만큼
                 .fetch();
         stopWatch.stop();
-        System.out.println("객체 생성 시간 = " + stopWatch.getTotalTimeSeconds());
+        System.out.println("쿼리 측정 시간 = " + stopWatch.getTotalTimeSeconds());
         return members;
     }
 

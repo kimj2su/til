@@ -202,8 +202,8 @@ from
 where
     m1_0.name like 'a%' 
 order by
-    m1_0.member_id desc limit 10, 10000
-시간 = 0.223800375
+    m1_0.member_id desc limit 999990, 10
+쿼리 측정 시간 = 4.93384175
 ```
 
 No Offset
@@ -215,11 +215,22 @@ select
 from
     member m1_0 
 where
-    m1_0.member_id < 9990 
+    m1_0.member_id < 11 
     and m1_0.name like 'a%' 
 order by
     m1_0.member_id desc limit 10
-시간 = 0.197339583
+쿼리 측정 시간 = 0.193790958
 ```
 
-미세한 차이지만 No Offset이 더 빠르다는 것을 알 수 있습니다.
+같은 member 테이블에서 같은 결과 같을 가지고 오는 조회를 했을때 성능이 25배 정도 차이가 납니다.  
+
+
+# 
+No Offset 방식으로 개선할 수 있다면 정말 좋겠지만, NoOffset 페이징을 사용할 수 없는 상황이라면 커버링 인덱스로 성능을 개선할 수 있습니다.  
+커버링 인덱스란 쿼리를 충족시키는 데 필요한 모든 데이터를 갖고 있는 인덱스를 이야기합니다.
+
+즉, select, where, order by, limit, group by 등에서 사용되는 모든 컬럼이 Index 컬럼안에 다 포함된 경우인데요.
+
+여기서 하나의 의문이 드는 것은 select절까지 포함하게 되면 너무 많은 컬럼이 인덱스에 포함되지 않겠냐는 것인데요.
+그래서 실제로 커버링 인덱스를 태우는 부분은 select를 제외한 나머지만 우선으로 수행합니다.   
+
