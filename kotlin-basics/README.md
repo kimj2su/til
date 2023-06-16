@@ -74,3 +74,117 @@ fun main( ) {
 }
 ```
 
+# 흐름 제어
+
+## if-else
+```kotlin
+fun main() {
+    val age : Int = 10
+    
+    val str = if (age >= 20) {
+        println("성인입니다.")
+    } else if (age >= 17) {
+        println("고등학생입니다.")
+    } else {
+        println("학생입니다.")
+    }
+}
+```
+
+## when
+
+```kotlin
+fun main() {
+    val day = 2
+
+    val result = when (day) {
+        1 -> "월요일"
+        2 -> "화요일"
+        3 -> "수요일"
+        4 -> "목요일"
+        5 -> "금요일"
+        6 -> "토요일"
+        7 -> "일요일"
+        else -> "알 수 없는 요일"
+    }
+    print(result)
+
+    // else를 생략할 수 있다.
+    when (getColor()) {
+        Color.RED -> println("빨간색")
+        Color.BLUE -> println("파란색")
+        Color.GREEN -> println("초록색")
+        else -> println("알 수 없는 색")
+    }
+    
+    // 여러개의 조건을 콤마로 구분해 한줄에서 정의할 수 있다.
+    when (getNumber()) {
+        0, 1 -> println("0 또는 1")
+        else -> println("그 외의 숫자")
+    }
+}
+
+enum class Color {
+    RED, BLUE, GREEN
+}
+
+fun getColor() : Color {
+    return Color.RED
+}
+
+fun getNumber()  = 2
+```
+
+
+## for loof
+```kotlin
+
+    // 범위 연산자 ..를 사용해 for loop 돌리기
+    for (i in 1..10) {
+        println(i)
+    }
+
+    for (i in 0 .. 3) { // 0<= .. <= 3
+        println(i)
+    }
+
+    // until은 뒤에 온 숫자는 포함하지 않는다.
+    for (i in 0 until 3) { // 0<= .. < 3
+        println(i)
+    }
+
+    // step을 사용해 증가폭을 지정할 수 있다.
+    for (i in 0 .. 10 step 2) {
+        println(i)
+    }
+
+    // downTo를 사용해 감소하는 for loop을 만들 수 있다.
+    for (i in 10 downTo 0) {
+        println(i)
+    }
+
+    // downTo와 step을 함께 사용할 수 있다.
+    for (i in 10 downTo 0 step 2) {
+        println(i)
+    }
+
+    // 전달받은 배열을 반복
+    val numbers = arrayOf(1, 2, 3, 4, 5)
+
+    for (i in numbers) {
+        println(i)
+    }
+```
+
+## while
+```kotlin
+// 자바의 while 문과 동일
+// 조건을 확인하고 참이면 코드 블록을 실행한 후 다시 조건을 확인
+fun main() {
+    var x = 0
+    while (x < 10) {
+        println(x)
+        x++
+    }
+}
+```
