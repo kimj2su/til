@@ -188,3 +188,47 @@ fun main() {
     }
 }
 ```
+
+# 널 안정성
+## 1. 널 참조의 위험성
+- 자바를 포함한 많은 프로그래밍 언어에서 가장 많이 발생하는 예외 유형이 바로 NullPointerException이다.
+- null을 발명한 토니호어는 1965 null을 발면한 후 수십년간 수십억 달러의 시스템 오류와 피해가 발생했기 때문에 1조원 짜리 실수였다고 고백한다.
+- 자바에선 NPE를 줄이기 위해 JDK8에서 Optional을 지원하기 시작했다.
+- 자바의 옵셔널은 값을 래핑하기 때문에 객체 생성에 따른 오버헤드가 발생하고, 컴파일 단계에서 Null 가능성을 검사하지 않는다.
+- 코틀린을 비롯한 최신언어에선 널 가능성을 컴파일러가 미리 감지해서 NPE 가능성을 줄일 수 있다.
+
+```kotlin
+fun main() {
+//    val a: String = null // 컴파일 오류
+
+//    var b: String? = "abc"
+//    b = null // 컴파일 오류
+    
+    // 널이 될 수 있는 타입을 컴파일러가 추론할 수 있으면 타입을 명시하지 않아도 된다.
+    var a : String? = null // String? 타입으로 추론
+    println(a?.length) // 안전연산자를 통해 접근하면 NPE 없이 null이 출력된다.
+    
+    val c = a?.length ?: 0 // 엘비스 연산자를 통해 null일 경우 0을 반환한다.
+    println(c)
+    
+}
+
+fun getNullStr(): String? = null
+fun getLengthIfNotNull(str: String?) = str?.length ?: 0
+
+fun main() {
+    
+    val nullableStr = getNullStr()
+    
+    val nullableStrLength = nullableStr.length // 컴파일 오류
+    
+    val nullableStrLength = nullableStr?.length // ok
+    val nullableStrLength = nullableStr?.length ?: "null 인경우 반환".length // ok
+    
+    val length = getLengthIfNotNull(null) // ok -> 0 반환
+    
+    val c: String? = null
+    val d = c!!.length // NPE 발생 단언 연산자는 개발자에게 널 검증을 맡기기 때문에 컴파일 오류 발생 x
+    
+}
+```
