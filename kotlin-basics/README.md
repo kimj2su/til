@@ -261,3 +261,40 @@ print(a)
 ```
 
 코틀린에서 try catch 또한 표현식이므로 값을 반환할 수 있다.
+
+
+# 클래스와 프로퍼티
+```kotlin
+//constructor는 생략할 수 있다.
+// 기본적으로 클래스를 생성하면 게터, 세터를 생성해주지만 val 키워드를 사용하면 게터만 생성해준다.
+class Coffee constructor(
+  var name: String = "",
+  var price: Int = 0,
+) { 
+          
+    // 커스텀 게터
+    val brand : String
+//      get() = "스타벅스" 
+    get() {
+        return "스타벅스"
+    }
+  
+  var quantity = Int = 0
+    set(value) {
+        if (value > 0) {  // field는 프로퍼티의 값을 저장하는 데 사용되는 특수한 식별자이다.
+            field = value
+          // quantity = value 이런식으로 값을 할당하면 무한루프에 빠진다. 왜냐하면 quantity에 값을 할당하면 setter가 호출되기 때문이다.
+        }
+    }
+}
+
+class EmptyClass
+
+fun main() {
+    val coffee = Coffee()
+  coffee.name = "아이스 아메리카노"
+  coffee.price = 2000
+  
+  println("${coffee.name} 가격은 ${coffee.price}")
+}
+```
