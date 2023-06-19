@@ -298,3 +298,67 @@ fun main() {
   println("${coffee.name} 가격은 ${coffee.price}")
 }
 ```
+
+
+# 상속
+코틀린의 최상위 클래스는 Any 라는 클래스이다. 
+이 Any라는 클래스에는 equals, hashCode, toString이 있어 모든 클래스에는 이 3가지 메서드가 구현되어있다.
+그리고 코틀린의 클래스는 기본적으로 final 클래스이므로 상속이 불가능하다. 그렇기 때문에 상속을 사용하러면 open 키워드를 사용해야한다.
+
+```kotlin
+open class Dog {
+    open var age: Int = 0
+  
+  open fun bark() {
+      println("멍멍")
+  }
+}
+
+class Bulldog: Dog() {
+    override var age : Int = 0 // override 키워드를 통해 재정의해서 사용한다.
+  
+  override fun bark() {
+      println("불독이 짖는다.")
+  }
+}
+
+open class Bulldog(override var age: Int = 0): Dog() {
+
+  override fun bark() { // open 클래스의 메서드는 기본적으로 open 메서드 이므로 자식 클래스에서 재정의를 막으러면 final 키워드를 붙인다.
+    println("컹컹")
+  }
+}
+
+class ChildBulldog: Bulldog() { // 기본적으로 open 클래스의 메서드들은 open 메서드이므로 자식 클래스에서 재정의 가능하다.
+
+  override var age: Int = 0
+  
+  override fun bark() {
+   super.bark() // 부모의 메서드를 호출할 때 super 키워드를 사용한다.
+  }
+}
+
+// 추상 클래스
+abstract class Devleoper {
+    abstract var age: Int
+    abstract fun coded(language: String)
+}
+
+class BackendDeveloper(override var age: Int = 0) : Devleoper() {
+    
+    
+  override fun code(language: String) {
+      println("$language 언어로 백엔드 개발을 한다.")
+  }
+}
+
+fun main() { 
+    val dog = Bulldog(age = 2)
+    println(dog.age) //  2 출력 
+    dog.bark()  //  컹컹 출력
+  
+  val backendDeveloper = BackendDeveloper(age = 28)
+  println(backendDeveloper.age) // 28 출력
+  backendDeveloper.code("Kotlin") // Kotlin 언어로 백엔드 개발을 한다.
+}
+```
