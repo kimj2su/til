@@ -362,3 +362,64 @@ fun main() {
   backendDeveloper.code("Kotlin") // Kotlin 언어로 백엔드 개발을 한다.
 }
 ```
+
+# 인터페이스
+
+```kotlin
+class Product(val name: String, bal price: Int) 
+
+interface Wheel {
+    fun roll()
+}
+interface Cart : Wheel {
+    
+    var coin: Int
+    
+    val weight: String 
+      get() = "20KG"
+    fun add(product: Product) 
+    
+    fun rent () {
+        if (coin > 0) {
+            println("카트를 대여합니다.")
+        }
+    }
+  
+  override fun roll() {
+      println("카트가 굴러갑니다.")
+  }
+
+  fun printId() = printId("1234")
+}
+
+interface Order {
+    fun add(product: Product) {
+        println("${product.name}을(를) 주문합니다.")
+    }
+  
+  fun printId() = printId("5678")
+}
+
+class MyCart(override var coin: Int) : Cart, Order {
+    
+    override fun add (product: Product) {
+      if (coin <= 0) pringln("코인을 넣엏주세요")
+      else println("${product.name}이(가) 카트에 추가했습니다.")
+      
+      super<Order.add(product)>
+    }
+  
+    override fun printId() {
+      super<Cart>.printId()
+      super<Order>.printId()
+    }
+}
+
+fun main() { 
+  val cart = MyCart(coin = 1000)
+  cart.rent()
+  cart.roll()
+  cart.add(Product(name = "장난감", price = 1000))
+  cart.printId()
+}
+```
