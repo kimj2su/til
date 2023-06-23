@@ -16,6 +16,7 @@ public class PredicateTest {
 
         // 내가 만든 predicate와 반대인 predicate는 negate()로 만들 수 있다.
         System.out.println("Non-positive number: " + filter(inputs, isPositive.negate()));
+        inputs.stream().filter(isPositive.negate()).forEach(System.out::println);
 
         // or은 내가 만든 predicate와 또 다른 predicate를 합칠 수 있다.
         System.out.println("Non-negative number: " + filter(inputs, isPositive.or( x -> x == 0 )));

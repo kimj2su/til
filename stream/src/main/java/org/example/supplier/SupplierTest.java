@@ -9,7 +9,8 @@ public class SupplierTest {
         System.out.println(myStringSupplier.get());
 
         // 함수가 일급 시민이 되었으므로 파라미터로 넘길 수 있다.
-        Supplier<Double> myRandomDoubleSupplier = () -> Math.random();
+//        Supplier<Double> myRandomDoubleSupplier = () -> Math.random();
+        Supplier<Double> myRandomDoubleSupplier = Math::random;
         printRandomDoubles(myRandomDoubleSupplier, 5);
     }
 

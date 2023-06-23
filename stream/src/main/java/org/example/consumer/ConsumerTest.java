@@ -10,6 +10,7 @@ public class ConsumerTest {
 
         myStringConsumer.accept("Hello World");
 
+        // imuatableList
         List<Integer> inputs = Arrays.asList(4, 2, 3);
         Consumer<Integer> myIntegerProcessor = x -> System.out.println("Processing integer " + x);
 //        process(inputs, myIntegerProcessor);
