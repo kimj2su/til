@@ -17,7 +17,10 @@ public class ToMap {
     public static void main(String[] args) {
         Map<Integer, String> numberMap = Stream.of(3, -5, -4, 4, 5)
                 .collect(Collectors.toMap(x -> x, x -> "Number is " + x));
-        System.out.println("numberMap = " + numberMap);
+
+        Map<Integer, String> numberMap2 = Stream.of(3, -5, -4, 4, 5)
+                .collect(Collectors.toMap(Function.identity(), x -> "Number is " + x));
+        System.out.println("numberMap = " + numberMap2);
 
         User user1 = new User()
                 .setId(101)
@@ -81,7 +84,7 @@ public class ToMap {
         List<Order> orders = Arrays.asList(order1, order2, order3);
 
         Map<Long, Order.OrderStatus> collect = orders.stream()
-                .collect(Collectors.toMap(x -> x.getId(), x -> x.getStatus()));
+                .collect(Collectors.toMap(Order::getId, Order::getStatus));
         System.out.println("collect = " + collect);
     }
 }

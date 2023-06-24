@@ -240,6 +240,49 @@ List<OrderLine> list = orders.stream() // Stream<Order>
         .flatMap(List::stream) // Stream<OrderLine>
         .toList();
 ```
+# Optional
+## NPE - NullPointerException
+- Null 상태인 오브젝트를 레퍼런스 할 때 발생
+- Runtime error 이기 때문에 실행전 까지는 발생 여부를 알기 쉽지 않음
+
+## Optional - 있을 수도 있고 없을 수도 있다.
+- Null 상태인 오브젝트를 레퍼런스 할 때 발생하는 NPE를 방지하기 위해 사용
+```java
+public static <T> Optional<T> of (T value)
+public static <T> Optional<T> ofNullable (T value)
+public static <T> Optional<T> ofNullable (T value)
+Optional<String> empty = Optional.empty();
+```
+-of - null이 아닌 값을 가지고 Optional 객체를 생성
+-ofNullable - null이 될 수 있는 값을 가지고 Optional 객체를 생성
+-empty - 비어있는 Optional 객체를 생성
+
+## Optional의 메서드
+```java
+public boolean isPresent();
+public T get();
+public T orElse(T other);
+public T orElseGet(Supplier<? extends T> other);
+public <X extends Throwable> T orElseThrow(
+        Supplier<? extends X> exceptionSupplier) throws X;
+```
+- isPresent - Optional 객체가 값이 있는지 여부를 반환
+- get - Optional 객체의 값을 반환, 값이 없으면 NoSuchElementException 발생
+- orElse - Optional 객체의 값을 반환, 값이 없으면 인자로 넘긴 값 반환
+- orElseGet - Optional 객체의 값을 반환, 값이 없으면 인자로 넘긴 Supplier의 get 메서드를 실행한 결과 반환
+- orElseThrow - Optional 객체의 값을 반환, 값이 없으면 인자로 넘긴 Supplier의 get 메서드를 실행한 결과 반환
+
+# Optional 응용
+```java
+public void ifPresent(Consumer<? super T> consumer);
+public <U> Optional<U> map(Function<? super T, ? extends U> mapper);
+public <U> Optional<U> flatMap(
+        Function<? super T, ? extends Optional<? extends U>> mapper);
+```
+- ifPresent - Optional 객체가 값이 있는지 여부를 확인하고 값이 있으면 인자로 넘긴 Consumer의 accept 메서드를 실행
+- map - Optional 객체가 값이 있는지 여부를 확인하고 값이 있으면 인자로 넘긴 Function의 apply 메서드를 실행한 결과를 가지고 Optional 객체를 생성
+- flatMap - Optional 객체가 값이 있는지 여부를 확인하고 값이 있으면 인자로 넘긴 Function의 apply 메서드를 실행한 결과를 가지고 Optional 객체를 생성
+
 
 # Max / Min / Count
 ```java
@@ -284,3 +327,110 @@ T reduce(T identity, BinaryOperator<T> accumulator);
 - reduce2 - 주어진 초기 값과 accumulaotr를 이용. 초기값이 있기 때문에 항상 반환값이 존재
 - reduce3 - 합치는 과정에서 타입이 바뀔 경우 사용. Map + reduce로 대체 가능
 
+# Collectors
+- Stream의 데이터를 수집하는 역할
+```java
+<R, A> R collect(Collector<? super T, A, R> collector);
+
+List<Integer> numberList = Stream.of(1, 2, 3, 4, 5)
+        .collect(Collectors.toList());
+
+// 절대값으로 변환
+List<Integer> numberList2 = Stream.of(1, 2, -3, 4, 5)
+        .collect(Collectors.mapping(x -> Math.abs(x), Collectors.toList()));
+Set<Integer> numberSet = Stream.of(1, 2, 3, 4, 5)
+        .collect(Collectors.toSet());
+
+// 스트림의 합
+int sum = Stream.of(1, 2, 3, 4, 5)
+        .collect(Collectors.reducing(0, (x, y) -> x+y));
+
+```
+
+# To Map
+```java
+public static <T, K, U> Collector<T, ?, Map<K, U>> toMap(
+        Function<? super T, ? extends K> keyMapper,
+        Function<? super T, ? extends U> valueMapper)
+```
+- Stream 안의 데이터를 map의 혀앹로 반환해주는 collector
+- keyMapper - key를 추출하는 함수
+- valueMapper - value를 추출하는 함수
+
+# Grouping By
+```java
+public static <T, K> Collector<T, ?, Map<K, List<T>>> groupingBy(
+        Function<? super T, ? extends K> classifier)
+```
+- Stream 안의 데이터에 classifier를 적용했을때 결과 값이 같은 값끼리 List로 모아서 Map으로 만들어주는 collector
+- 이때 key는 classifier의 결과 값이고 value는 classifier를 적용했을 때 결과 값이 같은 데이터들의 List
+- 예를들어 stream에 {1,2,3,4,5,6,7}이 있을때 classifier가 x -> x%3 이라면 반환 되는 map은
+- {0=[3, 6], 1=[1, 4, 7], 2=[2, 5]} 이다.
+
+# Partitioning By
+```java
+public static <T> Collector<T, ?, Map<Boolean, List<T>>> partitioningBy(
+        Predicate<? super T> predicate)
+
+public static <T, D, A> Collector<T, ?, Map<Boolean, D>> partitioningBy(
+        Predicate<? super T> predicate,
+        Collector<? super T, A, D> downstream)
+```
+- Grouping By와 비슷하지만 결과 값이 true, false 두개로 나뉜다.
+- 예를들어 stream에 {1,2,3,4,5,6,7}이 있을때 predicate가 x -> x%3 == 0 이라면 반환 되는 map은
+- {false=[1, 2, 4, 5, 7], true=[3, 6]} 이다.
+
+# For Each
+```java
+public void forEach(Consumer<? super T> action);
+```
+- 제공된 actions 을 Stream의 각 데이터에 적용해주는 종결 처리 메서드
+
+# Parallel Stream - Stream을 병렬로
+```java
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+Stream<Integer> parallelStream = numbers.parallelStream();
+Stream<Integer> parallelStream2 = numbers.parallel();
+```
+- Sequential vs Parallel
+- 여러개의 스레드를 이용하여 stream의 처리 과정을 병렬화
+- 중간 과정은 병렬 처리 되지만 순서가 있는 Stream의 경우 종결 처리 했을 때의 결과물이 기존의 순차적 처리화  
+- 일치하도록 종결 처리과정에서 조정된다. 즉 List로 collect한다면 순서가 항상 올바르게 나온다는것.
+
+## 장점
+- 굉장히 간단하게 병렬 처리를 사용할 수 있게 해준다.
+- 속도가 비약적으로 빨라질 수 있다.
+## 단점
+- 항상 속도가 빨라지는것은 아니다.
+- 공통으로 사용하는 리소스가 있을 경우 잘못된 결과가 나오거나 아예 오류가 날수도 있다(deadlock)
+- 이를 막기위해 mutex, semaphore등 병렬 처리 기술을 이용하면 순차처리보다 느려질 수도 있다.
+
+# Scope Closure Curry
+- Scope - 변수가 참조 가능한 범위
+- 함수안에 함수가 있을때 내부 함수에서 외부 함수에 있는 변수에 접근이 가능하다(lexical scope) 그 반대는 불가능하다.
+```java
+public static Supplier<String> getStringSupplier() {
+    String hello = "Hello";
+    Supplier<String> supplier = () -> {
+        String world = "World";
+        return hello + " " + world;
+    };
+    return supplier;
+}
+```
+- Closure - 내부 함수가 존재하는 한 내부 함수가 사용한 외부 함수의 변수들 역시 계속 존재한다.
+- 이렇게 lexical scope를 포함하는 함수를 closure라 한다.
+- 이 때 내부 함수가 사용한 외부 함수의 변수들은 내부 함수 선언 당시로부터 변할 수 없기 때문에 final로 선언되지 않더라고
+- 암묵적으로 final 취급된다.
+## Curry
+- 여러개의 매개변수를 받는 함수를 중첩된 여러개의 함수로 쪼개어 매개 변수를 한번에 받지 않고 여러단계에 걸쳐 나눠 받을 수 있게 하는기술
+- Cloure의 응용
+```java
+BiFunction<Integer, Integer, Integer> add = (x, y) -> x + y;
+// curry를 이용해 중첩된 함수로 쪼갤수 있다. x를 받아 y를 받아 최종적으로 합을 리턴한다.
+Function<Integer, Function<Integer, Integer>> add = x -> y -> x + y;
+```
+
+# Lazy Evaluation
+- Lambda의 계산은 그 결과값이 필요할 때가 되어서야 계산된다.
+- 이를 이용하여 불필욯나 계산을 줄이거나 해당 코드의 실행 순서를 의도적으로 미룰 수 있다.
