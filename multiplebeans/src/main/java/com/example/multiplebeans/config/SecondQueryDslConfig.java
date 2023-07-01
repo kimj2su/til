@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PrimaryQueryDslConfig {
+public class SecondQueryDslConfig {
 
-    @PersistenceContext(unitName = "primaryEntityManager")
+    @PersistenceContext(unitName = "secondEntityManager")
     private EntityManager em;
 
     @Bean
-    public JPAQueryFactory jpaQueryFactory() {
+    public JPAQueryFactory secondJpaQueryFactory() {
         return new JPAQueryFactory(em);
     }
 }
