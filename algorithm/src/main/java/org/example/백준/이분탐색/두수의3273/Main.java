@@ -1,4 +1,4 @@
-package org.example.백준.이분탐색.두용액2470;
+package org.example.백준.이분탐색.두수의3273;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,56 +8,52 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N;
-    static int[] A;
-    static int tmp;
+    static int N, M;
+    static int[] arr;
     static Reader reader = new Reader();
     public static void main(String[] args) {
         input();
         getResult();
     }
 
-    private static void getResult() {
-        Arrays.sort(A, 1, N + 1);
-
-        int ans = 0;
+    static void getResult() {
+        // A 배열에 대해 이분 탐색을 할 예정이니깐, 정렬을 해주자 !
+        Arrays.sort(arr, 1, N + 1);
+        int answer = 0;
         for (int i = 1; i <= N; i++) {
             // A[i] 보다 작은 B[j]의 개수를 찾자 !
-//            int cnt = lowerBound(A, 1, M, A[i]);
-//            ans += cnt;
-            lowerBound(A, 1, N, A[i]);
+            if (lowerBound(arr, 1, N, M - arr[i])) {
+                answer++;
+            }
         }
-
-        System.out.println("ans = " + ans);
+        System.out.println(answer / 2);
     }
 
-    static void lowerBound(int[] A, int left, int right, int target) {
-        // A[L..R] 에서 X 미만의 수(X 보다 작은 수) 중 제일 오른쪽 인덱스를 return 하는 함수
-        // 그런게 없다면 L - 1 을 return 한다.
-        int result = left - 1;
+    static boolean lowerBound(int[] arr, int left, int right, int target) {
+       // A[L..R] 에서 X 이상의 수 중 제일 왼쪽 인덱스를 return 하는 함수
+        // 그런게 없다면 R + 1 을 return 한다.
         while (left <= right) {
             int mid = (left + right) / 2;
-//            int abs = Math.abs(A[mid] + target);
-            int plus = A[mid] + target;
-            if (plus < 0) {
+            if (arr[mid] == target) {
+                return true;
+            }
+            if (arr[mid] < target) {
                 left = mid + 1;
             }
-//            if (A[mid] < target) {
-//                result = mid;
-//                left = mid + 1;
-//            } else {
-//                right = mid - 1;
-//            }
+            else {
+                right = mid - 1;
+            }
         }
-        System.out.println(A[result]);
+        return false;
     }
 
     private static void input() {
         N = reader.nextInt();
-        A = new int[N + 1];
+        arr = new int[N + 1];
         for (int i = 1; i <= N; i++) {
-            A[i] = reader.nextInt();
+            arr[i] = reader.nextInt();
         }
+        M = reader.nextInt();
     }
 
     static class Reader {
