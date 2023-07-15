@@ -1,14 +1,16 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.8'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
     //코틀린 플러그인 추가
-    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
+    // jpa 기본 생성자 추가 플러그인
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.8.22'
 }
 
 group = 'com.group'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -22,6 +24,9 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 코틀린 리플렉션 추가
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
 }
 
 tasks.named('test') {
@@ -31,12 +36,12 @@ tasks.named('test') {
 // 컴파일시 자바 11로 컴파일
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }

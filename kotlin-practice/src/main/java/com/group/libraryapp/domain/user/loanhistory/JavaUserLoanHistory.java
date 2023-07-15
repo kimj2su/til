@@ -1,34 +1,36 @@
 package com.group.libraryapp.domain.user.loanhistory;
 
 import com.group.libraryapp.domain.user.User;
+import jakarta.persistence.JoinColumn;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class UserLoanHistory {
+public class JavaUserLoanHistory {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
 
   @ManyToOne
+  @JoinColumn(name = "user_id")
   private User user;
 
   private String bookName;
 
   private boolean isReturn;
 
-  public UserLoanHistory() {
+  public JavaUserLoanHistory() {
 
   }
 
-  public UserLoanHistory(User user, String bookName, boolean isReturn) {
+  public JavaUserLoanHistory(User user, String bookName, boolean isReturn) {
     this.user = user;
     this.bookName = bookName;
     this.isReturn = isReturn;
