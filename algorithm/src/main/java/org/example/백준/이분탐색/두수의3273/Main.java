@@ -47,6 +47,7 @@ public class Main {
         return false;
     }
 
+
     private static void input() {
         N = reader.nextInt();
         arr = new int[N + 1];
