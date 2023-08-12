@@ -66,3 +66,18 @@ Slack API 연동을 통해, 빌드 진행 사항과 결과를 Slack 채널에 �
 • 설치후 Jenkins 관리 > System > Slack
 
 Dashboard > [JOB명] > 구성 > 빌드후 조치 > Slack Notification  
+
+# PR 빌더
+풀리퀘스트를 올렸을때 테스트, 빌드를 하고 깃허브에 다시 알려주는 기능을 한다.
+GITHUB PR에 커멘트가 입력되면, 해당 커멘드와 커밋 HASH를 Jenkins로 전달 이후 젠킨스는 커멘트를 인지하여 적절한 빌드/배포를 수행하고
+빌드 실행 결과를 다시 GITHUB PR에 전달
+
+docker run -d --rm --name ngrok --hostname ngrok \
+-e NGROK_AUTHTOKEN=2VAB8GkRdBDTIMQIeMOSnYV4lmQ_t4qeNnNed5mNeWvtApb4 \
+--network=practice \
+-p 4040:4040 \
+ngrok/ngrok:latest http http://jenkins:8080
+
+## Jenkins를 public IP로 노출
+ngrok을 사용하여 public IP로 노출
+- ngrok 은 로컬 PC 에서 실행되는 프로그램으로, 로컬 PC 에서 실행되는 서버를 public IP 로 노출시켜줌
