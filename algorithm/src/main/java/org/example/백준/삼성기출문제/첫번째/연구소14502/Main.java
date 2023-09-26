@@ -13,8 +13,8 @@ public class Main {
     static int M;
     static int[][] graph;
     static boolean[] visited;
-    static int[] dx = {0, 0, -1, 1};
-    static int[] dy = {-1, 1, 0, 0};
+    static int[] dx = {0,0,1,-1};
+    static int[] dy = {1,-1,0,0};
 
     public static void main(String[] args) {
         input();
@@ -60,7 +60,7 @@ public class Main {
         Queue<Node> q = new LinkedList<>();
 
         for(int i = 1; i <= N; i++) {
-            for(int j=1; j <= M; j++) {
+            for(int j = 1; j <= M; j++) {
                 if(graph[i][j] == 2) {
                     q.add(new Node(i,j));
                 }
@@ -80,12 +80,12 @@ public class Main {
             int x = now.x; // 현재 값
             int y = now.y; //
 
-            for(int k=0; k<4; k++) {
+            for(int k = 0; k < 4; k++) {
                 int nx = x + dx[k];
                 int ny = y + dy[k];
 
                 //연구소 범위 밖이 아니고 빈칸일 경우에만 바이러스를 퍼트린다.
-                if(0 <= nx && nx <= N && 0 <= ny && ny < M) {
+                if(0 < nx && nx <= N && 0 < ny && ny <= M) {
                     if(copyMap[nx][ny] == 0) {
                         q.add(new Node(nx,ny));
                         copyMap[nx][ny] = 2;
@@ -107,9 +107,7 @@ public class Main {
                 }
             }
         }
-        if (maxSafeZone < safeZone) {
-            maxSafeZone = safeZone;
-        }
+        maxSafeZone = Math.max(maxSafeZone, safeZone);
     }
 
     //Queue에 좌표값 x,y를 넣기 위함.
