@@ -1,6 +1,9 @@
 package com.example.app.config.filter;
 
+import com.example.app.controller.response.Response;
 import com.example.app.dto.UserDto;
+import com.example.app.exception.ErrorCode;
+import com.example.app.exception.SampleApplicationException;
 import com.example.app.service.UserService;
 import com.example.app.util.JwtTokenUtils;
 import jakarta.servlet.FilterChain;
@@ -53,9 +56,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (RuntimeException e) {
-            log.error("Error occurs while validating. {}", e.toString());
-            filterChain.doFilter(request, response);
-            return;
+            throw new SampleApplicationException(ErrorCode.INVALID_PERMISSION);
+//            log.error("Error occurs while validating. {}", e.toString());
+//            filterChain.doFilter(request, response);
+//            return;
         }
 
         filterChain.doFilter(request, response);

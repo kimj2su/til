@@ -38,4 +38,11 @@ public class UserController {
         System.out.println("authentication = " + principalDetails.getUsername());
         return principalDetails.getUsername();
     }
+
+    @GetMapping("/test")
+    public String user2(@AuthenticationPrincipal UserDto principalDetails) {
+        System.out.println("authentication = " + principalDetails);
+        System.out.println("authentication = " + principalDetails.getUsername());
+        return principalDetails.getUsername();
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.app.config;
 
+import com.example.app.config.filter.ExceptionHandlerFilter;
 import com.example.app.config.filter.JwtTokenFilter;
 import com.example.app.exception.CustomAuthenticationEntryPoint;
 import com.example.app.service.UserService;
@@ -51,7 +52,7 @@ public class AuthenticationConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .addFilterBefore(new JwtTokenFilter(key, userService), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new ExceptionHandlerFilter(), JwtTokenFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(), JwtTokenFilter.class)
 //                .addFilterAfter (new AuthorityFilter(), JwtTokenFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
