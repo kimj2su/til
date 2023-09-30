@@ -21,7 +21,7 @@ public class ComparatorTest {
         System.out.println("users = " + users);
 
         // String이 알파벳순으로 정렬되는 것을 이용한 Comparator
-        Collections.sort(users, (u1, u2) -> u1.getName().compareTo(u2.getName()));
+        Collections.sort(users, Comparator.comparing(User::getName));
         System.out.println("users = " + users);
     }
 
