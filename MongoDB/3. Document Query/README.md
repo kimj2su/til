@@ -730,3 +730,491 @@ db.restaurants.find(
         }
 )
 ```
+
+## Aggregation Framework
+- Collection의 데이터를 변환하거나 분석하기 위해 사용하는 집계 Framework
+- Aggregation은 Find함수로 처리할 수 없는, SQL의 Group By와 Join 구문 같은 복잡한 데이터 분석 기능들을 제공한다.
+- Aggregation Framework는 파이프라인 형태를 갖춘다. (Linux Pipeline 구문과 비슷)
+- MongoDB 2.2부터 제공되었고 이전에는 MapReduce를 사용했다.
+
+```SQL
+SELECT 
+    productName,
+    SUM(quantity) AS sumQuantity
+FROM orders
+WHERE status = 'urgent'
+GROUP BY productName
+
+db.orders.aggregate([
+    {$match: {status: 'urgent'}},
+    {$group: {_id: '$productName', sumQuantity: {$sum: '$quantity'}}}
+])
+```
+
+Input -> Match -> Group -> sort -> Output 형태로 데이터를 반환받는다.  
+db.orders을 통해 컬렉션의 값을 가져온다.
+```java
+{_id: 0, productName: "A", quantity: 10, status: "new"},
+{_id: 1, productName: "A", quantity: 20, status: "urgent"},
+{_id: 2, productName: "A", quantity: 30, status: "urgent"},
+{_id: 3, productName: "B", quantity: 40, status: "urgent"},
+{_id: 4, productName: "B", quantity: 40, status: "urgent"},
+{_id: 5, productName: "B", quantity: 40, status: "new"},
+```
+$match를 통해 status가 urgent인 데이터만 가져온다.
+```java
+{_id: 1, productName: "A", quantity: 20, status: "urgent"},
+{_id: 2, productName: "A", quantity: 30, status: "urgent"},
+{_id: 3, productName: "B", quantity: 40, status: "urgent"},
+{_id: 4, productName: "B", quantity: 40, status: "urgent"},
+```
+$group을 통해 productName을 기준으로 그룹핑하고, quantity를 합산한다.
+```java
+{_id: "A", sumQuantity: 50},
+{_id: "B", sumQuantity: 80},
+```
+
+## Aggregation Framework 사용법
+https://mongodb.com/docs/v5.0/reference/operator/aggregation-pipeline/
+```java
+db.orders.insertMany( [
+	{ _id: 0, name: "Pepperoni", size: "small", price: 19,
+	  quantity: 10, date: ISODate( "2021-03-13T08:14:30Z" ) },
+	{ _id: 1, name: "Pepperoni", size: "medium", price: 20,
+	  quantity: 20, date : ISODate( "2021-03-13T09:13:24Z" ) },
+	{ _id: 2, name: "Pepperoni", size: "large", price: 21,
+	  quantity: 30, date : ISODate( "2021-03-17T09:22:12Z" ) },
+	{ _id: 3, name: "Cheese", size: "small", price: 12,
+	  quantity: 15, date : ISODate( "2021-03-13T11:21:39.736Z" ) },
+	{ _id: 4, name: "Cheese", size: "medium", price: 13,
+	  quantity:50, date : ISODate( "2022-01-12T21:23:13.331Z" ) },
+	{ _id: 5, name: "Cheese", size: "large", price: 14,
+	  quantity: 10, date : ISODate( "2022-01-12T05:08:13Z" ) },
+	{ _id: 6, name: "Vegan", size: "small", price: 17,
+	  quantity: 10, date : ISODate( "2021-01-13T05:08:13Z" ) },
+	{ _id: 7, name: "Vegan", size: "medium", price: 18,
+	  quantity: 10, date : ISODate( "2021-01-13T05:10:13Z" ) }
+])
+```
+
+```java
+db.orders.aggregate([
+    {
+        $match: {
+            size: "medium"
+        }
+    },
+    {
+        $group: {
+            _id: { $getField: "name"},
+            totalQuantity: { 
+                $sum: {$getField: "quantity"}
+            }
+        }
+    }
+])
+
+$getField를 $로 사용할 수 있다.
+db.orders.aggregate([
+    {
+        $match: {
+            size: "medium"
+        }
+    },
+    {
+        $group: {
+            _id: "$name",
+            totalQuantity: { 
+                $sum: "$quantity"
+            }
+        }
+    }
+])
+
+db.orders.aggregate([
+    {
+        $match: {
+            date: {
+                $gte: new ISODate("2020-01-30"),
+                $lt: new ISODate("2022-01-30")
+            }
+        }
+    },
+    {
+        $group: {
+            _id: {
+                $dateToString: {
+                    format: "%Y-%m-%d", date: "$date"
+                }
+            },
+            totalOrderValue: {
+                $sum: {
+                    $multiply: ["$price", "$quantity"]
+                }
+            },
+            averageOrderQuantity: {
+                $avg: "$quantity"
+            }
+        }
+    },
+    {
+        $sort: {
+            totalOrderValue: -1
+        }
+    }
+])
+
+ db.books.insertMany([
+	{ "_id" : 8751, "title" : "The Banquet", "author" : "Dante", "copies" : 2 },
+	{ "_id" : 8752, "title" : "Divine Comedy", "author" : "Dante", "copies" : 1 },
+	{ "_id" : 8645, "title" : "Eclogues", "author" : "Dante", "copies" : 2 },
+	{ "_id" : 7000, "title" : "The Odyssey", "author" : "Homer", "copies" : 10 },
+	{ "_id" : 7020, "title" : "Iliad", "author" : "Homer", "copies" : 10 }
+ ])
+
+
+db.books.aggregate([
+    {
+        $group: {
+          _id: "$author",
+          books: {
+            $push: "$title"
+          }
+        }
+    }
+])
+
+$$ROOT : 시스템 변수 가장 탑레벨 도큐먼트의 정보를 넣어준다.
+db.books.aggregate([
+    {
+        $group: {
+          _id: "$author",
+          books: {
+            $push: "$$ROOT"
+          },
+          totalCopies: {
+            $sum: "$copies"
+          }
+        }
+    }
+])
+
+db.books.aggregate([
+    {
+        $group: {
+          _id: "$author",
+          books: {
+            $push: "$$ROOT"
+          }
+        }
+    },
+    {
+        $addFields: {
+            totalCopies: { $sum: "$books.copies"}
+        }
+    }
+])
+
+join 사용
+
+db.orders.drop()
+
+db.orders.insertMany([
+    { "productId" : 1,   "price" : 12,   },
+    { "productId" : 2,   "price" : 20,   },
+    { "productId" : 3,   "price" : 80,   }
+])
+
+ 
+db.products.insertMany([
+    { "id" : 1,  "instock" : 120 },  
+    { "id" : 2,  "instock" : 80  }, 
+    { "id" : 3,  "instock" : 60  }, 
+    { "id" : 4,  "instock" : 70  }
+])
+
+db.orders.aggregate([
+    {
+        $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: 'id',
+            as: 'data'
+        }
+    }
+])
+
+$expr: 조건을 표현할 때 사용한다.
+같은필드를 기준으로 비교할때 사용한다.
+하지만 다음과 같이 '$data.instock'과 같은 배열을 비교할때는 사용할 수 없다.
+db.orders.aggregate([
+    {
+        $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: 'id',
+            as: 'data'
+        }
+    },
+    {
+        $match: {
+            $expr: {
+                $gt: ['$data.instock', '$price']
+            }
+        }
+    }
+])
+
+해결방법은 $unwind를 사용해서 배열을 풀어준다.
+db.orders.aggregate([
+    {
+        $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: 'id',
+            as: 'data'
+        }
+    },
+    {
+        $unwind: '$data'
+    },
+    {
+        $match: {
+            $expr: {
+                $gt: ['$data.instock', '$price']
+            }
+        }
+    }
+])
+
+db.orders.aggregate([
+    {
+        $lookup: {
+            from: 'products',
+            localField: 'productId',
+            foreignField: 'id',
+            as: 'data'
+        }
+    },
+    {
+        $unwind: '$data'
+    },
+    {
+        $match: {
+            $expr: {
+                $lt: ['$data.instock', '$price']
+            }
+        }
+    }
+])
+
+샘플링($sample) : 데이터를 랜덤하게 가져온다.
+db.listingsAndReviews.aggregate([
+    {
+        $sample: {
+            size: 3
+        }
+    },
+    {
+        $project: {
+            name: 1,
+            summary: 1
+        }
+    }
+])
+
+skip, limit : 페이징처리
+db.listingsAndReviews.aggregate([
+    {
+        $match: {
+            property_type: "Apartment"
+        }
+    },
+    {
+        $sort: {
+            number_of_reviews: -1
+        }
+    },
+    {
+        $skip: 0
+    },
+    {
+        $limit: 5
+    },
+    {
+        $project: {
+            name: 1,
+            number_of_reviews: 1
+        }
+    }
+])
+
+$out: 조회 결과를 새로운 컬렉션으로 저장하는 법
+db.books.aggregate([
+    {
+        $group: {
+            _id: "$author",
+            books: {
+                $push: "$title"
+            }
+        }
+    },
+    {
+        $out: "authors"
+    } 
+])
+```
+
+## Aggregation Framework로 데이터 정제하기
+```
+db.grades.aggregate([
+    {
+        $unwind: "$scores"
+    },
+    {
+        $match: {
+            "scores.type": {
+                $in: ["exam", "quiz"]
+            }
+        }
+    },
+    {
+        $group: {
+            _id: {
+                class_id: "$class_id",
+                type: "$scores.type"
+            },
+            avgScore: {
+                $avg: "$scores.score"
+            }
+        }
+    },
+    {
+        $group: {
+            _id: "$_id.class_id",
+            scores: {
+                $push: {
+                    type: "$_id.type",
+                    avg_score: "$avgScore"
+                }
+            }
+        }
+    },
+    {
+        $sort: {
+            "_id": -1
+        }
+    },
+    {
+        $limit: 5
+    }
+])
+```
+1. $unwind : 배열을 풀어준다.
+2. $match : stores.type 중에서 exam, quiz만 조회한다.
+3. $group : class_id와 type을 기준으로 그룹핑하고, score의 평균을 구한다.
+4. $group : 3번의 결과를 가지고 class_id를 기준으로 그룹핑하고, scores를 배열로 만든다.
+5. $sort : class_id를 기준으로 내림차순 정렬한다.
+6. $limit : 5개만 조회한다.
+
+```java
+db.grades.aggregate([
+    {
+        $addFields: {
+            tmp_scores: {
+                $filter: {
+                    input: "$scores",
+                    as: "score_var",
+                    cond: {
+                        $in: ["$$score_var.type", ["exam", "quiz"]]
+                    }
+                }
+            }
+        }
+    },
+    {
+        $unset: ["scores", "student_id"]    
+    },
+    {
+        $unwind: "$tmp_scores"
+    },
+    {
+        $group: {
+            _id: "$class_id",
+            exam_scores: {
+                $push: {
+                    $cond: {
+                        if: {
+                            $eq: ["$tmp_scores.type", "exam"]
+                        },
+                        then: "$tmp_scores.score",
+                        else: "$$REMOVE"
+                    }
+                }    
+            },
+            quiz_scores: {
+                $push: {
+                    $cond: {
+                        if: {
+                            $eq: ["$tmp_scores.type", "quiz"]
+                        },
+                        then: "$tmp_scores.score",
+                        else: "$$REMOVE"
+                    }
+                }
+            }
+        }
+    },
+    {
+        $project: {
+            _id: 1,
+            scores: {
+                $objectToArray: {
+                    exam: {
+                        $avg: "$exam_scores"
+                    },
+                    quiz: {
+                        $avg: "$quiz_scores"
+                    }
+                }
+            }
+        }
+    },
+    {
+        $sort: {
+            _id: -1
+        }
+    },
+    {
+        $limit: 5
+    }
+])
+```
+
+유저 변수(내가 만든 변수)를 사용할때는 $$를 사용한다.
+1. $addFields : tmp_scores 필드로 추가 한다. tmp_scores 필드는 scores 필드에서 type이 exam, quiz인 데이터만 가져온다.
+2. $unset : scores, student_id 필드를 삭제한다.
+3. $unwind : tmp_scores 필드를 풀어준다.
+4. $group : class_id를 기준으로 그룹핑하고, exam_scores와 quiz_scores를 배열로 만든다.
+5. $project : _id와 scores 필드를 만든다. scores 필드는 exam_scores와 quiz_scores를 평균을 구해서 exam과 quiz 필드로 만든다.
+6. $sort : _id를 기준으로 내림차순 정렬한다.
+7. $limit : 5개만 조회한다.
+
+## Replica Set 와 Sharded Cluster 에 따른 CURD 특징
+### Target Query
+쿼리할때 어느 샤드에 존재하는지 알고 쿼리하는 방식이다.  
+Replica Set에서는 하나의 샤드에만 쿼리를 보내면 되지만, Sharded Cluster에서는 샤드마다 데이터가 분산되어 있기때문에 쿼리를 보내야하는 샤드를 알아야한다.
+
+### Broadcast Query
+모든 샤드에 쿼리를 보내는 방식이다.  
+Range shard key를 사용하면 정렬이 되어서 저장되기 때문에 사용할 수 있지만
+Hash shard key를 사용하면 정렬이 되어있지 범위 조건에서 모든 샤드를 쿼리 해야 한다.
+
+### Updating Shard Keys
+Version 4.0 이하는 Shard Key를 변경할 수 없다.
+Version 4.2 이상에서는 Shard Key의 모든 필드는 Query Filter에 넣어야 수정할 수 있다.(Multi-Update는 불가능)
+
+### Deleting with Shard Keys
+Shard Key: {a:1, b:1} 일때 
+동등 조건으로 _id를 사용하거나 db.test.deleteOne({_id: ObjectId("5f9f7f7f7f7f7f7f7f7f7f7f")})  
+db.test.deleteOne({a: 1, b: 1}) 모든 조건으로 삭제할 수 있다.
