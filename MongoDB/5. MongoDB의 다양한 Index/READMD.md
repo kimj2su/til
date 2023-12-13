@@ -268,6 +268,42 @@ db.hidden.unhideIndex({a: 1}) -> MongoServerError: user is not allowed to do act
 3. stage: 'IXSCAN'으로 인덱스 조회를 한다.
 ```
 
+## Index 생성 주의 사항
 
+4.2 버전 이전까지는 background가 기본값이 아니였다.  
+background가 false이면 인덱스 생성이 완료될 때까지 다른 작업을 할 수 없다.
+```java
+db. collection.crateIndex(
+    {"deleteDate": 1},
+    {expireAfterSecods: 10},
+    {background: true}        
+)
 
+db. collection.crateIndex(
+    {"deleteDate": 1},
+    {expireAfterSecods: 10, background: true}
+)
+```
+ttl 인덱스를 생성하는데 2개의 파라미터를 받지만 구문 검사가 취약하여 포그라운드로 실행되어 버린다.
 
+### Resumable Index Build
+5.0부터 Index 생성중에 정상적으로 process가 종료되면 다시 기동 되었을때 기존의 progress에 이어서 index가 생성된다.  
+비정상적으로 shutdown된 경우는 처음부터 index를 다시 생성한다.
+
+### 내장된 Docyment의 Index
+```java
+db.users.insertOne(
+    {
+        name: "tom",
+        address: {
+            city: "seoul",
+            zipcode: "12345"
+        }
+    }
+)
+
+1, db.users.createIndex({address: 1})
+2. db.users.createIndex({"address.city": 1})
+```
+필터링에서 Document의 모든 필드의 순서도 같을 때만 인덱스를 사용하기 때문에 내장 Docuemnt 필드 자체에 Index를 만드는 것은 피한다.   
+2번과 같이 내장 Document안의 구체적인 필드에 Index를 생성한다.
