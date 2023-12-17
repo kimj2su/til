@@ -1,4 +1,4 @@
-package inflearn.oop;
+package inflearn.oop.lec09;
 
 public class JavaPerson {
 

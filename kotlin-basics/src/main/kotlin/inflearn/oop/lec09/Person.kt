@@ -1,4 +1,4 @@
-package inflearn.oop
+package inflearn.oop.lec09
 
 fun main() {
     val person = Person("John", 1)
@@ -15,7 +15,7 @@ class Person (
     val name: String,
     var age: Int,
 ) {
-    
+
     init {
         if (age <= 0) throw IllegalArgumentException("나이는 ${age}보다 작을 수 없습니다.")
     }
