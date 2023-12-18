@@ -1,4 +1,5 @@
-package common;
+package com.example.common;
+
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

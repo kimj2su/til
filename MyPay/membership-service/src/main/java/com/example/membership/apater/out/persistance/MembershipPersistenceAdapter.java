@@ -1,19 +1,20 @@
 package com.example.membership.apater.out.persistance;
 
+import com.example.common.PersistenceAdapter;
 import com.example.membership.application.port.out.FindMembershipPort;
+import com.example.membership.application.port.out.ModifyMembershipPort;
 import com.example.membership.application.port.out.RegisterMembershipPort;
 import com.example.membership.domain.Membership;
-import common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MembershipPersistenceAdapter implements RegisterMembershipPort, FindMembershipPort {
+public class MembershipPersistenceAdapter implements RegisterMembershipPort, FindMembershipPort, ModifyMembershipPort {
 
-    private final SpringDataMembershipRepository springDataMembershipRepository;
+    private final SpringDataMembershipRepository membershipRepository;
     @Override
     public MemberShipJpaEntity createMembership(Membership.MembershipName membershipName, Membership.MemberShipEmail memberShipEmail, Membership.MembershipAddress membershipAddress, Membership.MembershipisValid membershipIsValid, Membership.MembershipCorp membershipCorp) {
-        return springDataMembershipRepository.save(
+        return membershipRepository.save(
                 new MemberShipJpaEntity(
                         membershipName.getMembershipName(),
                         memberShipEmail.getMemberShipEmail(),
@@ -26,6 +27,19 @@ public class MembershipPersistenceAdapter implements RegisterMembershipPort, Fin
 
     @Override
     public MemberShipJpaEntity findMembership(Membership.MembershipId membershipId) {
-        return springDataMembershipRepository.getReferenceById(Long.parseLong(membershipId.getMembershipId()));
+        return membershipRepository.getReferenceById(Long.parseLong(membershipId.getMembershipId()));
+    }
+
+    @Override
+    public MemberShipJpaEntity modifyMembership(Membership.MembershipId membershipId, Membership.MembershipName membershipName, Membership.MemberShipEmail memberShipEmail, Membership.MembershipAddress membershipAddress, Membership.MembershipisValid membershipIsValid, Membership.MembershipCorp membershipCorp) {
+        MemberShipJpaEntity entity = membershipRepository.getReferenceById(Long.parseLong(membershipId.getMembershipId()));
+
+        entity.setName(membershipName.getMembershipName());
+        entity.setEmail(memberShipEmail.getMemberShipEmail());
+        entity.setAddress(membershipAddress.getMembershipAddress());
+        entity.setValid(membershipIsValid.isMembershipisValid());
+        entity.setCorp(membershipCorp.isMembershipCorp());
+
+        return membershipRepository.save(entity);
     }
 }
