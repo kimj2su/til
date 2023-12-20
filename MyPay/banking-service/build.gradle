@@ -8,23 +8,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.jetbrains:annotations:23.0.0'
+//    implementation group: 'org.axonframework', name: 'axon-configuration', version: "$axonVersion"
+//    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
 
     implementation project(path: ':common')
-//    runtimeOnly 'com.h2database:h2'
+//     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
-
-//docker {
-////    name "${project.group}/${project.name}"
-////    files bootJar
-////    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
-////    dockerfile file('src/main/docker/Dockerfile')
-////    copySpec.from('src/main/docker')
-////    copySpec.into('/')
-////    copySpec.eachFile {
-////        it.mode = 0755
-////    }
-//}
 
 docker {
     println(tasks.bootJar.outputs.files)
@@ -40,5 +30,4 @@ docker {
 
     // 도커 빌드시 추가할 인자
     buildArgs(['JAR_FILE': tasks.bootJar.outputs.files.singleFile.name])
-
 }

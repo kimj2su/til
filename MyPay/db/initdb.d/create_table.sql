@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS fastcampus_pay;
-USE fastcampus_pay;
+CREATE DATABASE IF NOT EXISTS my_pay;
+USE my_pay;
 
 -- for Axon Framework (for Mismatching of Axon and Mysql)
 -- create table IF NOT EXISTS dead_letter_entry (
