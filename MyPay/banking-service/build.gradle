@@ -12,7 +12,7 @@ dependencies {
 //    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
 
     implementation project(path: ':common')
-//     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
 

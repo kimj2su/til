@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class BankAccountPersistenceAdapter implements RegisterBankAccountPort {
+public class RegisterBankAccountPersistenceAdapter implements RegisterBankAccountPort {
 
     private final SpringDataRegisteredBankAccountRepository bankAccountRepository;
 
