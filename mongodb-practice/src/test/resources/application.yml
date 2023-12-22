@@ -1,0 +1,7 @@
+spring.config.activate.on-profile: test
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27018/test
+      database: test
