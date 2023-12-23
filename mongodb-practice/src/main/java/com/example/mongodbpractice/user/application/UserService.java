@@ -26,4 +26,14 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
         return UserDto.from(user);
     }
+
+    public UserDto modifyUser(long id, UserDto userDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+        user.modify(userDto.getName(), userDto.getAge());
+        return UserDto.from(userRepository.save(user));
+    }
+
+    public void deleteUser(long id) {
+        userRepository.deleteById(id);
+    }
 }

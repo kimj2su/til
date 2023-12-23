@@ -1,7 +1,5 @@
 spring.config.activate.on-profile: test
 
-spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27018/test
-      database: test
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: trace

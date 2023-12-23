@@ -26,6 +26,11 @@ public class User {
         return new User(id, name, age);
     }
 
+    public void modify(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public long getId() {
         return id;
     }
