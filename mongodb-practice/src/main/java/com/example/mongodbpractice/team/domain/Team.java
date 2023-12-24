@@ -13,16 +13,28 @@ public class Team {
     public static final String SEQUENCE_NAME = "team_sequence";
 
     @Id
-    private long id;
+    private Long id;
 
     private String teamName;
 
     private List<Long> userIds;
 
-    public Team(long id, String teamName, List<Long> userIds) {
+    private Team(Long id, String teamName, List<Long> userIds) {
         this.id = id;
         this.teamName = teamName;
         this.userIds = userIds;
+    }
+
+    public static Team of(Long id, String teamName, List<Long> userIds) {
+        return new Team(id, teamName, userIds);
+    }
+
+    public void modifyTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public void addUser(Long userId) {
+        userIds.add(userId);
     }
 
     public long getId() {
