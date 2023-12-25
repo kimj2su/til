@@ -17,9 +17,9 @@ public class DatabaseCleanup {
     public void execute() {
         Set<String> collectionNames = mongoTemplate.getCollectionNames();
         mongoTemplate.getDb().drop();
-        for (String collectionName : collectionNames) {
-            mongoTemplate.dropCollection(collectionName);
-        }
+        // for (String collectionName : collectionNames) {
+        //     mongoTemplate.dropCollection(collectionName);
+        // }
     }
 
 }

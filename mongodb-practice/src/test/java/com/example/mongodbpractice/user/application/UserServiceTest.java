@@ -1,6 +1,6 @@
 package com.example.mongodbpractice.user.application;
 
-import com.example.mongodbpractice.utils.MongoDBContainerTest;
+import com.example.mongodbpractice.utils.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("UserService 통합 테스트")
-class UserServiceTest extends MongoDBContainerTest {
+class UserServiceTest extends AcceptanceTest {
 
     @Autowired
     private UserService userService;
