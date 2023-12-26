@@ -1,71 +1,10 @@
-#version: '3'
-#services:
-#  mysql:
-#    platform: linux/amd64
-#    image: mysql
-#    networks:
-#      - my-pay_network
-#    volumes:
-#      - ./db/conf.d:/etc/mysql/conf.d
-#      - ./db/data:/var/lib/mysql
-#      - ./db/initdb.d:/docker-entrypoint-initdb.d
-#    env_file: .env
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      - TZ=Asia/Seoul
-#      - MYSQL_ROOT_PASSWORD=rootpassword
-#      - MYSQL_USER=mysqluser
-#      - MYSQL_PASSWORD=mysqlpw
-#
-#  membership-service:
-#    platform: linux/amd64
-#    image: my-pay-membership-service:1.0.0
-#    networks:
-#      - my-pay_network
-#    ports:
-#      - "8081:8080"
-#    depends_on:
-#      - mysql
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
-#      - SPRING_DATASOURCE_USERNAME=mysqluser
-#      - SPRING_DATASOURCE_PASSWORD=mysqlpw
-##      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#
-#  banking-service:
-#    platform: linux/amd64
-#    image: my-pay-banking-service:1.0.0
-#    networks:
-#      - my-pay_network
-#    ports:
-#      - "8082:8080"
-#    depends_on:
-#      - mysql
-#    environment:
-##      - AXON_AXONSERVER_SERVERS=axon-server:8124
-##      - AXON_SERIALIZER_EVENTS=jackson
-##      - AXON_SERIALIZER_MESSAGES=jackson
-##      - AXON_SERIALIZER_GENERAL=xstream
-#      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
-#      - SPRING_DATASOURCE_USERNAME=mysqluser
-#      - SPRING_DATASOURCE_PASSWORD=mysqlpw
-##      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
-#
-#networks:
-#  my-pay_network:
-#    driver: bridge
-#    name: my-pay_network
-
 version: '3'
 services:
   mysql:
     image: mysql:latest
     platform: linux/amd64
     networks:
-      - fastcampuspay_network
+      - mypay_network
     volumes:
       - ./db/conf.d:/etc/mysql/conf.d
 #      - ./db/data:/var/lib/mysql
@@ -83,7 +22,7 @@ services:
     platform: linux/amd64
     image: my-pay-membership-service:1.0.0
     networks:
-      - fastcampuspay_network
+      - mypay_network
     ports:
       - "8081:8080"
     depends_on:
@@ -97,14 +36,14 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=mysqluser
       - SPRING_DATASOURCE_PASSWORD=mysqlpw
-#      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 
   banking-service:
     platform: linux/amd64
     image: my-pay-banking-service:1.0.0
     networks:
-      - fastcampuspay_network
+      - mypay_network
     ports:
       - "8082:8080"
     depends_on:
@@ -118,9 +57,30 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=mysqluser
       - SPRING_DATASOURCE_PASSWORD=mysqlpw
-#      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+
+  money-service:
+    platform: linux/amd64
+    image: my-pay-money-service:1.0.0
+    networks:
+      - mypay_network
+    ports:
+      - "8083:8080"
+    depends_on:
+      - mysql
+    environment:
+#      - AXON_AXONSERVER_SERVERS=axon-server:8124
+#      - AXON_SERIALIZER_EVENTS=jackson
+#      - AXON_SERIALIZER_MESSAGES=jackson
+#      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=mysqluser
+      - SPRING_DATASOURCE_PASSWORD=mysqlpw
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 
 networks:
-  fastcampuspay_network:
+  mypay_network:
     driver: bridge
+    name: mypay_network
