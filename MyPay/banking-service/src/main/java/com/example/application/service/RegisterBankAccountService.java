@@ -1,9 +1,9 @@
 package com.example.application.service;
 
-import com.example.apater.out.external.bank.BankAccount;
-import com.example.apater.out.external.bank.GetBanAccountRequest;
-import com.example.apater.out.persistance.RegisteredBankAccountJpaEntity;
-import com.example.apater.out.persistance.RegisteredBankAccountPersistenceMapper;
+import com.example.adapter.out.external.bank.BankAccount;
+import com.example.adapter.out.external.bank.GetBanAccountRequest;
+import com.example.adapter.out.persistance.RegisteredBankAccountJpaEntity;
+import com.example.adapter.out.persistance.RegisteredBankAccountPersistenceMapper;
 import com.example.application.port.in.RegisterBankAccountCommand;
 import com.example.application.port.in.RegisterBankAccountUseCase;
 import com.example.application.port.out.RegisterBankAccountPort;

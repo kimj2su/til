@@ -1,9 +1,9 @@
 package com.example.application.service;
 
-import com.example.apater.out.external.bank.ExternalFirmbankingRequest;
-import com.example.apater.out.external.bank.FirmbankingResult;
-import com.example.apater.out.persistance.FirmbankingJpaEntity;
-import com.example.apater.out.persistance.FirmbankingMapper;
+import com.example.adapter.out.external.bank.ExternalFirmbankingRequest;
+import com.example.adapter.out.external.bank.FirmbankingResult;
+import com.example.adapter.out.persistance.FirmbankingJpaEntity;
+import com.example.adapter.out.persistance.FirmbankingMapper;
 import com.example.application.port.in.RequestFirmbankingCommand;
 import com.example.application.port.in.RequestFirmbankingUsecase;
 import com.example.application.port.out.RequestExteralFirmbankingPort;

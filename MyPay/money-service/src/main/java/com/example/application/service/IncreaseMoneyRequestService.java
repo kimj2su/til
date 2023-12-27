@@ -1,7 +1,7 @@
 package com.example.application.service;
 
-import com.example.apater.out.persistance.MemberMoneyJpaEntity;
-import com.example.apater.out.persistance.MoneyChangingRequestMapper;
+import com.example.adapter.out.persistance.MemberMoneyJpaEntity;
+import com.example.adapter.out.persistance.MoneyChangingRequestMapper;
 import com.example.application.port.in.IncreaseMoneyRequestCommand;
 import com.example.application.port.in.IncreaseMoneyRequestUseCase;
 import com.example.application.port.out.IncreaseMoneyPort;

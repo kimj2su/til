@@ -1,6 +1,6 @@
 package com.example.application.port.out;
 
-import com.example.apater.out.persistance.FirmbankingJpaEntity;
+import com.example.adapter.out.persistance.FirmbankingJpaEntity;
 import com.example.domain.FirmbankingRequest;
 
 public interface RequestFirmbankingPort {

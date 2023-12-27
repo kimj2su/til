@@ -1,6 +1,6 @@
 package com.example.application.port.out;
 
-import com.example.apater.out.persistance.RegisteredBankAccountJpaEntity;
+import com.example.adapter.out.persistance.RegisteredBankAccountJpaEntity;
 import com.example.domain.RegisteredBankAccount;
 
 public interface RegisterBankAccountPort {

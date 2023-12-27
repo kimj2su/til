@@ -1,7 +1,7 @@
 package com.example.application.port.out;
 
-import com.example.apater.out.persistance.MemberMoneyJpaEntity;
-import com.example.apater.out.persistance.MoneyChangingRequestJpaEntity;
+import com.example.adapter.out.persistance.MemberMoneyJpaEntity;
+import com.example.adapter.out.persistance.MoneyChangingRequestJpaEntity;
 import com.example.domain.MemberMoney;
 import com.example.domain.MoneyChangingRequest;
 
