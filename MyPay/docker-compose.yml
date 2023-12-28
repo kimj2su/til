@@ -40,6 +40,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=logging.out.stdout
+      - TASK_TOPIC=task.topic
 
   banking-service:
     platform: linux/amd64
@@ -63,6 +64,8 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=logging.out.stdout
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
+      - TASK_TOPIC=task.topic
 
   money-service:
     platform: linux/amd64
@@ -85,6 +88,9 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=logging.out.stdout
+      - TASK_TOPIC=task.topic
+      - TASK_RESULT_TOPIC=task.result.topic
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
 
   zookeeper:
     platform: linux/amd64
@@ -146,6 +152,20 @@ services:
     environment:
       - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
       - LOGGING_TOPIC=logging.out.stdout
+
+  task-consumer:
+    image: my-pay-task-consumer:1.0.0
+    networks:
+      - mypay_network
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
+      - TASK_TOPIC=task.topic
+      - TASK_RESULT_TOPIC=task.result.topic
 
 networks:
   mypay_network:
