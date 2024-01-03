@@ -173,9 +173,17 @@ kubectl get pods --all-namespaces # 파드의 상태를 확인 -> CoreDNS가 Run
 # 4. 워커 노드 설치하기
 마스터 노드에서 클러스터 생성시 출력해준 명령어를 워커 노드에서 실행한다.
 ```ubuntu
+kubeadm token create --print-join-command # 마스터 노드에서 실행 토큰 재 생성
 kubeadm join 198.19.249.75:6443 --token dzdleb.vwzlsduglb59471f \
 	--discovery-token-ca-cert-hash sha256:0b7c75d3e342e6e6b8aa9bd5a460ac53ee1e29aed0c0ae2af282eadfc7750aa1
 ```
 Run 'kubectl get nodes' on the control-plane to see this node join the cluster.  
 라는 문구가 나타나면 정상적으로 설치된 것이다.  
 마스터 노드에서 kubectl get nodes 명령어를 실행하면 워커 노드가 추가된 것을 확인할 수 있다.
+
+
+# restart
+```ubuntu
+sudo kubeadm reset
+sudo systemctl restart kubelet
+```
