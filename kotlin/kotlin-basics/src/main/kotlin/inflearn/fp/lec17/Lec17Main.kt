@@ -39,6 +39,10 @@ class Fruit(
     override fun toString(): String {
         return "Fruit(name='$name', price=$price)"
     }
+
+    val isSamePrice: Boolean
+        get() = this.price == 1000
+
 }
 
 // filter

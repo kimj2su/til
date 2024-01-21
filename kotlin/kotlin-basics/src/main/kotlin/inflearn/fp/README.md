@@ -100,6 +100,104 @@ inline fun Int.add(other: Int): Int {
 - 자바에서는 try-with-resource를 사용하면 자동으로 close()를 호출해준다.
 - 코틀린에서는 use()를 사용하면 자동으로 close()를 호출해준다.
 
+# 컬렉션을 함수형으로 다루는 방법
+
+## 필터와 맵
+
+```kotlin
+val apples = fruits.filter { it == "사과" }
+val apples = fruits.filterIndexed { index, s -> 
+    println(index), 
+    s.name == "사과" 
+}
+
+// 사과의 가격만 가져오기
+val applePrices = fruits
+    .filter {fruit -> fruit.name == "사과"}
+    .map { it.price }
+
+val applePrices = fruits
+    .filter {fruit -> fruit.name == "사과"}
+    .mapIndexed { index, fruit -> 
+        println(index)
+        fruit.price
+    }
+
+// 매핑의 결과가 null이 아닌 것만 가져오기
+val applePrices = fruits
+    .filter {fruit -> fruit.name == "사과"}
+    .mapNotNull { it.price }
+//    .mapNotNull { fruit -> fruit.nullOrValue() }
+```
+
+## 다양한 컬렉션 처리 기능
+- 모든 조건을 만족할 때 : all
+```kotlin
+val isAllPriceHigherThan1000 = fruits.all { it.price > 1000 }
+```
+- 조건을 모두 불만족하면 true 그렇지 않으면 false : none
+```kotlin
+val isAllPriceHigherThan1000 = fruits.none { it.price > 1000 }
+```
+- 하나라도 조건을 만족하면 true 그렇지 않으면 false : any
+```kotlin
+val isAllPriceHigherThan1000 = fruits.any { it.price > 1000 }
+```
+- count
+```kotlin
+val isAllPriceHigherThan1000 = fruits.count { it.price > 1000 }
+```
+- sortedBy: (오름차순) 정렬을 한다.
+```kotlin
+val isAllPriceHigherThan1000 = fruits.sortedBy { it.price }
+```
+- sortedByDescending: (내림차순) 정렬을 한다.
+```kotlin
+val isAllPriceHigherThan1000 = fruits.sortedByDescending { it.price }
+```
+- distinctBy: 변형된 값을 기준으로 중복을 제거한다.
+```kotlin
+val isAllPriceHigherThan1000 = fruits.distinctBy { it.price }
+```
+- 조건을 만족하는 첫번째 element를 반환(무조건 null이 아니여야한다.) : first
+- 조건을 만족하는 첫번째 element를 반환(조건을 만족하는 element가 없으면 null) : firstOrNull
+```kotlin
+val isAllPriceHigherThan1000 = fruits.first { it.price > 1000 }
+val isAllPriceHigherThan1000 = fruits.firstOrNull { it.price > 1000 }
+```
+- 조건을 만족하는 마지막 element를 반환(무조건 null이 아니여야한다.) : last
+- 조건을 만족하는 마지막 element를 반환(조건을 만족하는 element가 없으면 null) : lastOrNull
+```kotlin
+val isAllPriceHigherThan1000 = fruits.last { it.price > 1000 }
+val isAllPriceHigherThan1000 = fruits.lastOrNull { it.price > 1000 }
+```
 
 
+## List를 Map으로
+- groupBy : 조건을 기준으로 그룹핑이 된다.
+```kotlin
+val map: Map<String, List<Fruit>> = fruits.groupBy {fruit -> fruit.name}
+val map: Map<String, List<Long>> = fruits.groupBy({ fruit -> fruit.name}, {fruit -> fruit.price})
+```
+- associateBy : 조건을 기준으로 그룹핑이 된다. -> value가 하나만 나온다.(중복이 없을때 사용)
+```kotlin
+val map: Map<String, Fruit> = fruits.associateBy {fruit -> fruit.name}
+val map: Map<String, Long> = fruits.associateBy({ fruit -> fruit.name}, {fruit -> fruit.price})
+```
 
+- filter
+- 사과 -> List<사과>만 잇게 된다.
+```kotlin
+val map: Map<String, List<Fruit>> = fruits.groupBy {fruit -> fruit.name}
+  .filter{(key, value) -> key == "사과"}
+```
+## 중첩된 컬렉션 처리
+- flatMap : 중첩된 컬렉션을 한번에 펼쳐준다.
+- List<List<Fruit>> -> List<Fruit> : flatten
+```kotlin
+val fruits = listOf(
+    listOf(Fruit("사과", 1000), Fruit("배", 2000)),
+    listOf(Fruit("딸기", 3000), Fruit("키위", 4000))
+)
+val flatFruits = fruits.flatten()
+```
