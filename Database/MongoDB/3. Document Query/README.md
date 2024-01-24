@@ -798,6 +798,7 @@ db.orders.insertMany( [
 ```
 
 ```java
+이름별 수량 확인
 db.orders.aggregate([
     {
         $match: {
@@ -805,10 +806,10 @@ db.orders.aggregate([
         }
     },
     {
-        $group: {
-            _id: { $getField: "name"},
-            totalQuantity: { 
-                $sum: {$getField: "quantity"}
+        $group: { // 그룹핑을 한다.
+            _id: { $getField: "name"}, // name을 기준으로 그룹핑한다.
+            totalQuantity: {  // totalQuantity라는 필드를 만들고
+                $sum: {$getField: "quantity"} // quantity를 합산한다.
             }
         }
     }
@@ -823,7 +824,7 @@ db.orders.aggregate([
     },
     {
         $group: {
-            _id: "$name",
+            _id: "$name", // $getField를 $로 사용할 수 있다.
             totalQuantity: { 
                 $sum: "$quantity"
             }
@@ -872,7 +873,7 @@ db.orders.aggregate([
 	{ "_id" : 7020, "title" : "Iliad", "author" : "Homer", "copies" : 10 }
  ])
 
-
+// author로 그룹핑하여 books 필드에 title을 넣어준다.
 db.books.aggregate([
     {
         $group: {
@@ -884,7 +885,18 @@ db.books.aggregate([
     }
 ])
 
-$$ROOT : 시스템 변수 가장 탑레벨 도큐먼트의 정보를 넣어준다.
+//$$ROOT : 시스템 변수 가장 탑레벨 도큐먼트의 정보를 넣어준다. -> 위에서는 그룹핑해여 나온 title을 넣어주지만 $$ROOT를 사용하면 전체 도큐먼트를 넣어준다.
+db.books.aggregate([
+    {
+        $group: {
+            _id: "$author", 
+            books: {
+                $push: "$$ROOT"
+            }
+        }
+    }
+])
+        
 db.books.aggregate([
     {
         $group: {
@@ -899,6 +911,7 @@ db.books.aggregate([
     }
 ])
 
+// $addFields : 필드를 추가할때 사용한다.
 db.books.aggregate([
     {
         $group: {
@@ -928,18 +941,19 @@ db.orders.insertMany([
  
 db.products.insertMany([
     { "id" : 1,  "instock" : 120 },  
-    { "id" : 2,  "instock" : 80  }, 
+    { "id" : 2,  "instock" : 80  },
+    { "id" : 2,  "instock" : 90  },
     { "id" : 3,  "instock" : 60  }, 
     { "id" : 4,  "instock" : 70  }
 ])
 
 db.orders.aggregate([
     {
-        $lookup: {
-            from: 'products',
-            localField: 'productId',
-            foreignField: 'id',
-            as: 'data'
+        $lookup: { // left join
+            from: 'products', // join할 컬렉션
+            localField: 'productId', // orders의 productId
+            foreignField: 'id', // products의 id
+            as: 'data' // 조회 결과를 담을 필드
         }
     }
 ])
@@ -965,7 +979,8 @@ db.orders.aggregate([
     }
 ])
 
-해결방법은 $unwind를 사용해서 배열을 풀어준다.
+해결방법은 $unwind를 사용해서 배열을 풀어준다. -> order 기준으로 products는 1:N 관계이기 때문에 배열로 조회된다.
+그렇기 때문에 
 db.orders.aggregate([
     {
         $lookup: {
@@ -1050,6 +1065,7 @@ db.listingsAndReviews.aggregate([
 ])
 
 $out: 조회 결과를 새로운 컬렉션으로 저장하는 법
+$merge: 조회 결과를 새로운 컬렉션으로 저장하는 법
 db.books.aggregate([
     {
         $group: {
@@ -1067,6 +1083,15 @@ db.books.aggregate([
 
 ## Aggregation Framework로 데이터 정제하기
 ```
+결과
+{
+    _id:391,
+    scores:[
+        { type: "exam", avg_score: 50.0 },
+        { type: "quiz", avg_score: 31.0 }
+    ]
+}
+
 db.grades.aggregate([
     {
         $unwind: "$scores"
@@ -1133,7 +1158,7 @@ db.grades.aggregate([
         }
     },
     {
-        $unset: ["scores", "student_id"]    
+        $unset: ["scores", "student_id"]    // 필드 삭제
     },
     {
         $unwind: "$tmp_scores"
@@ -1143,7 +1168,7 @@ db.grades.aggregate([
             _id: "$class_id",
             exam_scores: {
                 $push: {
-                    $cond: {
+                    $cond: { // 조건에 맞는 데이터만 가져온다.
                         if: {
                             $eq: ["$tmp_scores.type", "exam"]
                         },
