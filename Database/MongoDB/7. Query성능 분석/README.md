@@ -749,3 +749,114 @@ nReturned: 1 -> 1개를 반환했다.
 totalKeyExamined: 3 -> 3개만 스캔했다.
 totalDocsExamined: 2 -> 도큐먼트를 2개만 읽었다.
 ```
+
+# Index 최적화
+```mongodb-json
+use sample_supplies
+
+db.sales.find(
+    {
+        saleDate: {
+            $gte: ISODate("2015-01-01T00:00:00.000Z")
+        }
+    }
+).explain("executionStats")
+
+// 인덱스 생성
+db.sales.createIndex({saleDate: 1})
+
+// 실행 계획 결과
+executionStats: {
+    executionSuccess: true,
+    nReturned: 3068,
+    executionTimeMillis: 7,
+    totalKeysExamined: 3068,
+    totalDocsExamined: 3068,
+    executionStages: {
+      stage: 'FETCH',
+```
+
+// 위와 같이 사용하면 saleDate만을 찾고 있지만 도큐먼트를 읽게 된다. -> 인덱스를 읽고 도큐먼트를 읽는다.
+- totalDocsExamined : 도큐먼트를 읽은 수이다.
+- totalKeysExamined : 인덱스를 읽은 수이다.
+- FETCH 스테이지는 인덱스를 읽고 도큐먼트를 읽는다.
+
+
+인덱스만으로 조회 결과를 가져오는 것을 커버링 인덱스라고 한다. 프로젝션을로 사용 가능
+- 
+```mongodb-json
+
+db.sales.find(
+    {
+        saleDate: {
+            $gte: ISODate("2015-01-01T00:00:00.000Z")
+        }
+    },
+    {
+        saleDate:1,
+        _id:0
+    }
+).explain("executionStats")
+
+// 실행 계획 결과
+executionStats: {
+    executionSuccess: true,
+    nReturned: 3068,
+    executionTimeMillis: 2,
+    totalKeysExamined: 3068,
+    totalDocsExamined: 0,
+    executionStages: {
+      stage: 'PROJECTION_COVERED',
+      nReturned: 3068,
+```
+- totalDocsExamined : 도큐먼트를 읽은 수이다.
+- totalKeysExamined : 인덱스를 읽은 수이다.
+- PROJECTION_COVERED 스테이지는 인덱스만으로 조회 결과를 가져온다.
+
+위와 같이 인덱스만으로 조회 결과를 가져오는 것을 커버링 인덱스라고 한다.
+
+복합 인덱스를 사용한다.
+```mongodb-json
+db.sales.find(
+    {
+        storeLocation: 'Denver',
+        "customer.age": 75
+    }
+).explain("executionStats")
+
+db.sales.createIndex({storeLocation: 1, "customer.age": 1})
+```
+
+# 지역 기반 쿼라 최적화
+```mongodb-json
+use sample_restaurants
+db.restaurants.createIndex({ "address.coord": "2dsphere" })
+
+explain = db.restaurants.aggregate([
+    {
+        $geoNear: {
+            near: {
+                type: "Point",
+                coordinates: [-73.98241999999999, 40.579505]
+            },
+            key: "address.coord",
+            maxDistance: 30000,
+            query: { cuisine: "Korean" },
+            distanceField: "dist",
+            spherical: true,
+        }
+    },
+    {
+        $project: {
+            name: 1,
+            cuisine: 1,
+            dist: 1
+        }
+    }
+]).explain("executionStats")
+
+db.restaurants.createIndex({ 
+    cuisine: 1,
+    "address.coord": "2dsphere" 
+})
+```
