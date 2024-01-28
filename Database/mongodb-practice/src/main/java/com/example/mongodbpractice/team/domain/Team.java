@@ -1,9 +1,13 @@
 package com.example.mongodbpractice.team.domain;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "team")
@@ -18,6 +22,18 @@ public class Team {
     private String teamName;
 
     private List<Long> userIds;
+
+    @CreatedDate
+    private Date createdDate;
+
+    @LastModifiedDate
+    private Date lastModifiedDate;
+
+    @Version
+    private Long version;
+
+    public Team() {
+    }
 
     private Team(Long id, String teamName, List<Long> userIds) {
         this.id = id;
@@ -47,5 +63,17 @@ public class Team {
 
     public List<Long> getUserIds() {
         return userIds;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }

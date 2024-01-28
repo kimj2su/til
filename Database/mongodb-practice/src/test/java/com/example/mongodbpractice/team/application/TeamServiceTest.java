@@ -44,6 +44,7 @@ class TeamServiceTest extends AcceptanceTest {
         assertThat(savedTeam.id()).isEqualTo(1L);
         assertThat(savedTeam.teamName()).isEqualTo("team");
         assertThat(savedTeam.userIds()).isEqualTo(List.of(userDto.getId()));
+        assertThat(savedTeam.createdDate()).isNotNull();
     }
 
     @DisplayName("팀 조회 테스트")
@@ -114,7 +115,7 @@ class TeamServiceTest extends AcceptanceTest {
     }
 
     private TeamDto createTeamDto(String teamName, UserDto userDto) {
-        return new TeamDto(1L, teamName, List.of(userDto.getId()));
+        return TeamDto.of(1L, teamName, List.of(userDto.getId()));
     }
 
     private UserDto createUserDto(String name, int age) {
