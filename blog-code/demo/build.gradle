@@ -13,6 +13,9 @@ java {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://packages.confluent.io/maven/' //추가해야 정상적으로 라이브러리 가져옴
+    }
 }
 
 dependencies {
@@ -21,6 +24,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
+    // avro
+    implementation 'org.apache.avro:avro:1.11.0'
+    // https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer
+    implementation 'io.confluent:kafka-avro-serializer:7.4.0'
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

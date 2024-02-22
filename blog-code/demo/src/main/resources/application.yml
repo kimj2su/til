@@ -6,6 +6,20 @@ spring:
   config:
     activate:
       on-profile: local
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      bootstrap-servers: localhost:9092
+      enable-auto-commit: false
+      group-id: jisu
+test:
+  topic: embedded-test-topic
+
+schema:
+  registry:
+    url: http://localhost:8081
 ---
 spring:
   config:
