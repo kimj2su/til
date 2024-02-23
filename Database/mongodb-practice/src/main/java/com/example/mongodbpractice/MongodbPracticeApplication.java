@@ -13,6 +13,7 @@ import org.bson.conversions.Bson;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
@@ -23,17 +24,10 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import java.util.Arrays;
 import java.util.List;
 
-@EnableMongoAuditing
+// @EnableMongoAuditing
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class MongodbPracticeApplication {
-
-    private final Environment env;
-    private final MongoTemplate mongoTemplate;
-
-    public MongodbPracticeApplication(Environment env, MongoTemplate mongoTemplate) {
-        this.env = env;
-        this.mongoTemplate = mongoTemplate;
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(MongodbPracticeApplication.class, args);
