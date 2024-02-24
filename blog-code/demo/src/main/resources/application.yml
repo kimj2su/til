@@ -8,12 +8,17 @@ spring:
       on-profile: local
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     consumer:
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092}
       auto-offset-reset: earliest
-      bootstrap-servers: localhost:9092
       enable-auto-commit: false
-      group-id: jisu
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+#      group-id: jisu
+
 test:
   topic: embedded-test-topic
 

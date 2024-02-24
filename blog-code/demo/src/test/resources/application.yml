@@ -9,15 +9,23 @@
 #      group-id: baeldung
 #test:
 #  topic: embedded-test-topic
-
 spring:
   kafka:
     producer:
       bootstrap-servers: localhost:9092
+#      bootstrap-servers: ${spring.kafka.bootstrap-servers:localhost:9092}
     consumer:
       auto-offset-reset: earliest
       bootstrap-servers: localhost:9092
+#      bootstrap-servers: ${spring.kafka.bootstrap-servers:localhost:9092}
       enable-auto-commit: false
-      group-id: jisu
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test
+#      group-id: jisu
 test:
   topic: embedded-test-topic
+
+schema:
+  registry:
+    url: mock://test

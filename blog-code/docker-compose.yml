@@ -62,13 +62,14 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
   cp-schema-registry:
-    container_name: schema-registry
+    container_name: kafka-schema-registry
+    image: confluentinc/cp-schema-registry
     networks:
       - kafka_network
     environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: ${BOOTSTRAP_SERVERS}
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-    image: confluentinc/cp-schema-registry:5.1.0
     ports:
       - 8081:8081
 
@@ -79,7 +80,7 @@ services:
     environment:
       KAFKA_REST_BOOTSTRAP_SERVERS: ${BOOTSTRAP_SERVERS}
       KAFKA_REST_LISTENERS: http://0.0.0.0:8082
-      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://kafka-schema-registry:8081
       KAFKA_REST_HOST_NAME: kafka-rest
     image: confluentinc/cp-kafka-rest:5.1.0
     depends_on:
