@@ -30,6 +30,34 @@ spring:
   config:
     activate:
       on-profile: dev
+
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+    consumer:
+      group-id: runtime-kafka-registry
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+
+custom:
+  kafka:
+    listeners:
+      listener-1.topic: com.faza.example.custom.listener.property
+      listener-1:
+        listener-class: MyCustomMessageListener
+test:
+  topic: embedded-test-topic
+
+schema:
+  registry:
+    url: http://localhost:8081
 ---
 spring:
   config:
