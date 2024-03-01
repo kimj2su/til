@@ -1,3 +1,48 @@
+# ThreadPoolExecutor
+- ThreadPoolExecutor는 ExecutorService 인터페이스를 구현한 클래스로서 스레드 풀을 생성하고 관리하는 클래스이다.
+
+```java
+public ThreadPoolExecutor(
+            int corePoolSize, 
+            int maximumPoolSize, 
+            long keepAliveTime, 
+            TimeUnit unit, 
+            BlockingQueue<Runnable> workQueue, 
+            ThreadFactory threadFactory, 
+            RejectedExecutionHandler handler
+) {
+    // ...
+}
+```
+- corePoolSize : 스레드 풀의 기본 크기
+- maximumPoolSize : 스레드 풀의 최대 크기
+- keepAliveTime : 스레드 풀의 최대 크기를 초과하는 스레드가 유휴 상태로 대기할 시간, 제거 되는 시간
+- unit : keepAliveTime의 단위
+- BlockingQueue<Runnable> : 작업 큐
+- ThreadFactory : 스레드를 생성하는 팩토리
+- RejectedExecutionHandler : 작업을 처리할 수 없을 때 호출되는 핸들러
+
+## corePoolSize & maximumPoolSize
+- ThreadPoolExecutor 는 corePoolSize 및 maximumPoolSize 로 설정된 개수에 따라 풀 크기를 자동으로 조정한다
+- ThreadPoolExecutor 는 새 작업이 제출 될 때 corePoolSize 미만의 스레드가 실행 중이면 corePoolSize 가 될 때까지 새 스레드를 생성한다
+- corePoolSize 를 초과할 경우 큐 사이즈가 남아 있으면  큐에 작업을 추가하고 큐가 가득 차 있는 경우는 maximumPoolSize 가 될 때까지 새 스레드가 생성된다
+- setCorePoolSize 및 setMaximumPoolSize 메서드를 사용하여 동적으로 값을 변경할 수 있다
+- 기본적으로 스레드 풀은 스레드를 미리 생성하지 않고 새 작업이 도착할 때만 생성하지만 prestartCoreThread 또는 prestartAllCoreThreads 메서드를 사용하여 동적으로 재 정의할 수 있다
+
+```java
+int corePoolSize = 2; // 기본 스레드 풀 크기
+int maximumPoolSize = 4; // 최대 스레드 풀 크기
+long keepAliveTime = 10; // 초 단위의 스레드 유지 시간
+// BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
+BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(4);
+int taskNum = 7; // 작업의 개수
+
+executor.prestartCoreThread(); // 기본 스레드 1개를 미리 생성
+executor.prestartAllCoreThreads(); // 모든 기본 스레드를 미리 생성
+```
+corePoolSize + queueSize < taskNum 이면 최대 maximumPoolSize 만큼 스레드가 생성된다.  
+위의 예제에서는 2 + 4 < 7 이므로 1개의 스레드가 생성된다.
+
 # BlockingQueue
 - 기본적으로 스레드 풀은 작업이 제출되면 corePoolSize의 새 스레드를 추가해서 작업을 할당하고 큐에 작업을 바로 추가히지 않는다.
 - corePoolSize를 초과해서 스레드가 실행 중이면 새 스레드를 추가해서 작업을 할당하는 대신 큐에 작업을 추가한다.(큐가 가득찰 때까지)
