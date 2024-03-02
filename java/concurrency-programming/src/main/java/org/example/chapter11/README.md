@@ -43,6 +43,13 @@ executor.prestartAllCoreThreads(); // 모든 기본 스레드를 미리 생성
 corePoolSize + queueSize < taskNum 이면 최대 maximumPoolSize 만큼 스레드가 생성된다.  
 위의 예제에서는 2 + 4 < 7 이므로 1개의 스레드가 생성된다.
 
+# KeepAliveTime
+- corePoolSize 보다 더많은 스레드가 존재하는 경우 keepAliveTime 이후에 스레드가 제거된다.
+- allowCoreThreadTimeOut(true)로 설정하면 core스레드에도 적용할 수 있음.
+- Executors.newCachedThreadPool() 은 keepAliveTime 이 60초로 설정되어 있다.
+- Executors.newFixedThreadPool() 은 keepAliveTime 이 0초로 설정되어 있다.(제한 없음)
+
+
 # BlockingQueue
 - 기본적으로 스레드 풀은 작업이 제출되면 corePoolSize의 새 스레드를 추가해서 작업을 할당하고 큐에 작업을 바로 추가히지 않는다.
 - corePoolSize를 초과해서 스레드가 실행 중이면 새 스레드를 추가해서 작업을 할당하는 대신 큐에 작업을 추가한다.(큐가 가득찰 때까지)
