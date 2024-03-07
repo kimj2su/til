@@ -32,6 +32,14 @@ ExecutorService 인터페이스는 Executor 인터페이스를 상속받아 Exec
 ### FutureTask
 - Future 인터페이스를 구현한 클래스
 - 자바에서 내부적으로 사용하므로 직접 활용할 일은 거의 없음.
+- 7개의 상태 값이 있다.
+  - NEW : 작업이 아직 시작되지 않은 상태 -> NEW로 시작함.
+  - COMPLETING : 작업이 완료되고 결과를 설정하는 중
+  - NORMAL : 작업이 정상적으로 완료된 상태, 결과까지 FUTURE에 설정됨.
+  - EXCEPTIONAL : 작업이 예외를 던지며 완료된 상태, 예외까지 FUTURE에 설정됨.
+  - CANCELLED : 작업이 취소된 상태
+  - INTERRUPTING : 작업이 취소되고 있는 상태
+  - INTERRUPTED : 작업이 취소되고 완료된 상태
 
 ## Callback
 - 비동기 작업이 완료되었을때 수행할 동작을 정의한 인터페이스 또는 클래스
