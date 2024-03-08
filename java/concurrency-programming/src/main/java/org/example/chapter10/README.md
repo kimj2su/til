@@ -48,3 +48,39 @@ ExecutorService 인터페이스는 Executor 인터페이스를 상속받아 Exec
 - 비동기 작업의 완료 후 동작을 정의할 때 주로 사용됨
 
 -> 비동기 작업은 스레드 간 실행의 흐름이 독립적이기 떄문에 비동기 작업의 완료 시점에 결과를 얻을 수 있어야함으로 사용
+
+# ExecutorService
+
+## 스레드 풀 실행 및 관리
+
+### execute() vs submit()  
+| 기능       | execute()               | submit() |
+|----------|-------------------------|---|
+| 작업 유형    | Runnable 작업을 스레드 풀에서 실행 | Runnable 또는 Callable 작업을 스레드 풀에서 실행 |
+| 작업 완료 대기 | 작업을 수행하고 완료되기를 기다리지 않음  | 결과를 기다릴 수 있음|
+| 결과 반환    | 결과를 반환하지 않음             | 결과를 Future로 반환하여 추후에 결과를 가져올 수 있음|
+| 반환 값     | void                    | Future<T>|
+
+## 스레드 풀 중단 및 종료
+- shutdown() 
+  - 현재 진행중인 작업을 완료한 뒤 스레드 풀을 종료
+  - 실행중인 스레드를 강제로 인터럽트 하지 않기 때문에 예외 처리를 할 필요가 없다.
+- shutdownNow()
+  - 이전에 제출된 작업도 취소하고 현재 실행중인 작업도 중단하려고 시도한다.
+  - 작업 대기 중이던 목록을 반환한다.
+  - 작업을 종료하기 이해서는 isInterrupted() 나 sleep() 같은 인터럽트 관련 API를 사용해야한다.
+
+shutdown 후 작업을 제출하려고 하면 RejectedExecutionException 예외가 발생한다.  
+shutdown 호출한 스레드는 실행 중인 작업이 종료될 때까지 기다리지 않고 바로 다음 라인을 실행한다.  
+만약 스레드가 메서드 호출 후 블록킹 되기 위해서는 awaitTermination() 메서드를 사용해야한다.  
+
+### 작업 종료 대기 및 확인
+- awaitTermination(long timeout, TimeUnit unit)
+  - 스레드 풀이 종료되기를 기다린다.
+  - timeout 시간이 지나면 false를 반환한다.
+  - 스레드 풀이 종료되면 true를 반환한다.
+- isShutdown()
+  - ExecutorService의 shutdown(), shutdownNow() 메서드가 호출 후 종료 절차가 시작되었는지를 나타낸다. 
+- isTerminated()
+  - ExecutorService의 모든 작업이 완료되었는지를 나타낸다.
+  - shutdown() 또는 shutdownNow() 메서드가 호출된 후 모든 작업이 완료되었으면 true를 반환한다.
