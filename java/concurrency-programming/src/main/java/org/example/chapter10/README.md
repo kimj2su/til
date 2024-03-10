@@ -84,3 +84,70 @@ shutdown 호출한 스레드는 실행 중인 작업이 종료될 때까지 기�
 - isTerminated()
   - ExecutorService의 모든 작업이 완료되었는지를 나타낸다.
   - shutdown() 또는 shutdownNow() 메서드가 호출된 후 모든 작업이 완료되었으면 true를 반환한다.
+
+## ExecutorService 다중 작업 처리
+
+### invokeAll
+작업들 중 가장 오래 걸리는 작업 만큼 시간이 소요된다.
+
+```java
+List<Future> invokeAll<Collection tasks> throws InterruptedException
+```
+- 여러개의 Callable 작업을 동시에 실행하고 모든 작업이 완료될때까지 블록되며 각 작업의 결과를 나타내는 Future 객체의 리스트를 반환한다.
+- 작업이 완료 되면 Future.isDone() 이 ture가 되며 작업은 정상적으로 종료되거나 예외를 던져 종료 될 수 있다.
+- 대기 중에 입터럽트가 발생한경우 아직 완료 되지 않은 작업들은 취소된다.
+
+```java
+import java.util.concurrent.TimeUnit;
+
+List<Future> invokeAll(Collection tasks, long timeout, TimeUnit unit) throws InterruptedException
+```
+- 기본 메서드와 동일한 기능을 하고 시간 경과와 관련된 부분만 차이가 난다.
+- 타임아웃이 발생하거나 모든 작업이 완료될 때 까지 블록되며 각 작업의 결과를 나타내는 Futrue 객체의 리스트를 반환한다.
+- 타임아웃이 발생한 경우 이 작업 중 일부는 완료되지 않을 수 있으며 완료 되지 않은 작업은 취소 된다.
+
+### InvokeAny
+작업들 중 가장 짧게 걸리는 작업 만큼 시간이 소요된다.
+```java
+T invokeAny(Collection tasks) throws InterruptedException, ExecutionException
+```
+- 여러개의 Callable 작업을 동시에 실행하고 가장 먼저 완료되는 작업의 결과를 반환한다.(예외를 던지지 않은)
+- 어떤 작업이라도 성공적으로 완료하면 블록을 해제하고 해당 작업의 결과를 반환한다.
+- 정상적인 반환 또는 예외 발생 시 완료 되지 않은 작업들은 모두 취소된다.
+
+```java
+T invokeAny(Collection tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
+```
+- 주어진 시간이 경과하기전에 예외 없이 성공적으로 완료된 작업의 결과를 반환한다.
+
+# ScheduledExecutorService
+주어진 시간 후에 명령을 실행하거나 주기적으로 실행할 수 있는 ExecutorService를 상속한 인터페이스이다.  
+작업의 예약 및 실행을 위한 강력한 기능을 제공하여 시간 기반 작업을 조절하거나 주기적인 작업을 수행하는데 유용하다.
+
+```java
+ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit)
+```
+- 주어진 지연 시간 이후에 Runnable 작업을 예약하고 ScheduledFuture를 반환한다.
+- command: 실행할 작업, delay: 실행을 지연할 시간, unit: 지연 시간의 단위
+
+```java
+ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
+```
+- 주어진 지연 시간 이후에 Callable 작업을 예약하고 ScheduledFuture를 반환한다.
+
+```java
+ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)
+```
+- 초기 지연 시간 이후에 Runnable 작업을 주기적으로 실행하도록 예약하고 ScheduleFuture를 반환한다. 이후에 주어진 주기로 실행된다.
+- command: 실행할 작업, initialDelay: 첫 번째 실행을 지연할 시간, period: 작업 간의 주기, unit: 시간 단위
+
+```java
+ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)
+```
+- 초기 지연 시간 이후에 Runnable 작업을 주기적으로 실행하도록 예약하고 ScheduleFuture를 반환한다. 작업이 완료되고 나서 지연 시간 후 실행된다.
+- command: 실행할 작업, initialDelay: 첫 번째 실행을 지연할 시간, delay: 작업 간의 지연 시간, unit: 시간 단위
+
+## ScheduledFutrue
+- ScheduledExecutorService의 작업 예약 결과를 나타내는 인터페이스
+- 주요 모겆ㄱ은 지연이나 주기적인 작업 실행을 위한 것이며 결과를 처리하는 것은 아니다.
+- getDelay() : 작업이 예약된 시간까지 남은 시간을 반환한다.
