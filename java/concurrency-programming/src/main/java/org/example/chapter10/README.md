@@ -151,3 +151,42 @@ ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, l
 - ScheduledExecutorService의 작업 예약 결과를 나타내는 인터페이스
 - 주요 모겆ㄱ은 지연이나 주기적인 작업 실행을 위한 것이며 결과를 처리하는 것은 아니다.
 - getDelay() : 작업이 예약된 시간까지 남은 시간을 반환한다.
+
+
+# Executors
+
+## 고정 크기 스레드 풀 생성
+- Executors는 Executor, ExecutorService, ScheduledExecutorService, ThreadFactory, Callable, Runnable 등의 팩토리 메서드를 제공한다.(팩토리 메서드는 객체 생성을 위한 메서드)  
+
+### newFixedThreadPool(int nThreads)
+- 메서드의 매개변수로 원하는 스레드 개수를 지정할 수 있으며 지정한 개수만큼 스레드가 생성되어 작업을 처리하게 된다.
+- 스레드 풀은 모든 스레드가 공유하는 대기열을 가지고 있으며 대기열은 무한한 크기의 대기열로 스레드가 가용상태이면 대기 중인 작업을 처리한다.
+- 모든 스레드가 활성 상태이고 작업이 추가적으로 제출되면 스레드가 사용 가능한 상태가 될 때 까지 작업들은 대기열에서 대기한다.
+- nThreads이 0 보다 작거나 같으면 IllegalArgumentException이 발생한다.
+
+### newFixedThreadPool(int nThreads, TrheadFactory threadFactory)
+- 기본 메서드와 기능은 동일하다.
+- 매개변수 ThreadFactory를 통해 스레드 생성과 관련된 로직을 정할 수 있다. 즉, 커스텀하게 스레드 생성 방식을 적용하거나 스레드의 이름, 우선순위 등을 설정할 수 있다.
+
+# ThreadFactory
+- 스레드 생성과 관련된 세부 사항을 추강화하고 원하는 방식으로 스레드를 커스터마이징 할 수 있도록 도와주는 객체이다.
+- 스레드 팩토리를 사용하면 new Thread 호출을 직접 생성하지 않고 스레드 하위 클래스, 우선 순위등을 사용할 수 있게 된다.
+- Executor.defaultThreadFactory()를 통해 기본 스레드 팩토리를 얻을 수 있다.
+
+```java
+class CustomThreadFactory implements ThreadFactory {
+    private final Sting name;
+    private int threadCount = 0;
+    public CustomThreadFactory(String name) {
+        this.name = name;
+    }
+    @Override
+    public Thread newThread(Runnable r) {
+        threadCount++;
+        String threadName = name + "-" + threadCount;
+        Thread t = new Thread(r, threadName);
+        System.out.println("created new thread with name : " + threadName);
+        return t;
+    }
+}
+```
