@@ -168,7 +168,7 @@ ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, l
 - 기본 메서드와 기능은 동일하다.
 - 매개변수 ThreadFactory를 통해 스레드 생성과 관련된 로직을 정할 수 있다. 즉, 커스텀하게 스레드 생성 방식을 적용하거나 스레드의 이름, 우선순위 등을 설정할 수 있다.
 
-# ThreadFactory
+## ThreadFactory
 - 스레드 생성과 관련된 세부 사항을 추강화하고 원하는 방식으로 스레드를 커스터마이징 할 수 있도록 도와주는 객체이다.
 - 스레드 팩토리를 사용하면 new Thread 호출을 직접 생성하지 않고 스레드 하위 클래스, 우선 순위등을 사용할 수 있게 된다.
 - Executor.defaultThreadFactory()를 통해 기본 스레드 팩토리를 얻을 수 있다.
@@ -190,3 +190,23 @@ class CustomThreadFactory implements ThreadFactory {
     }
 }
 ```
+
+## 유동 크기 스레드 풀 생성
+
+### newCachedThreadPool()
+- 작업이 제출되면 현재 사용가능한 스레드가 있는지 확인하고 없으면 새 스레드를 생성하여 작업을 수행한다.
+- 일반적으로 많은 수의 짧은 작업들을 병렬로 실행하면서 처리 성능을 향상시킬수 있으며 60초 동안 사용되지 않는 스레드는 자동 종료되고 캐시에서 삭제 된다.
+- 작업을 담아 놓고 대기시키는 블록킹 큐가 아닌 스레드간 작업을 주고 받는 동기 큐를 사용하기 때문에 작업이 제출 되면 해당 작업이 즉시 실행된다.
+- 스레드의 개수를 제한하지 않으며 작업 요청이 많을 때는 스레드 수가 증가하고 작업 요청이 감소하면 유후 상태의 스레드가 종료되어 스레드 풀의 스레드 개수가 조절된다.
+
+
+# 스케줄링 스레드 풀 생성
+
+## ScheduledExecutorService newScheduledThreadPool(int corePoolSize)
+- 주어진 corePoolSize 만큼의 스레드를 가지는 스케줄링 스레드 풀을 생성한다.
+- 한개의 스레드가 실행 중에 실패로 인해 새로운 스레드가 생성되어 실패 이후 후속 작업을 대신 실행한다.
+- corePoolSize가 0보다 작거나 같으면 IllegalArgumentException이 발생한다.
+
+## ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory)
+- 기본 메서드와 동일하며 ThreadFactory를 통해 스레드 생성과 관련된 로직을 정할 수 있다.
+- 스레드 생성과 관련된 세부 사항을 추강화하고 원하는 방식으로 스레드를 커스터마이징 할 수 있도록 도와주는 객체이다.
