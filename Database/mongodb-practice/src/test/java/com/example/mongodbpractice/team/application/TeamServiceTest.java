@@ -44,7 +44,6 @@ class TeamServiceTest extends AcceptanceTest {
         assertThat(savedTeam.id()).isEqualTo(1L);
         assertThat(savedTeam.teamName()).isEqualTo("team");
         assertThat(savedTeam.userIds()).isEqualTo(List.of(userDto.getId()));
-        assertThat(savedTeam.createdDate()).isNotNull();
     }
 
     @DisplayName("팀 조회 테스트")

@@ -10,3 +10,13 @@ com:
     dev:
       uri: http://localhost:8081
       database: test1
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.0
+
+spring:
+  main:
+    allow-bean-definition-overriding: true

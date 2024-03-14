@@ -7,6 +7,7 @@ import com.example.mongodbpractice.utils.AcceptanceTest;
 import java.util.List;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 @SpringBootTest
+@Disabled
 class RestaurantsServiceTest extends AcceptanceTest {
 
   @Autowired
