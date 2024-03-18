@@ -1,7 +1,10 @@
 package com.example.application.service;
 
+import com.example.adapter.axon.command.CreateMoneyCommand;
 import com.example.adapter.out.persistance.MemberMoneyJpaEntity;
 import com.example.adapter.out.persistance.MoneyChangingRequestMapper;
+import com.example.application.port.in.CreateMemberMoneyCommand;
+import com.example.application.port.in.CreateMemberMoneyUseCase;
 import com.example.application.port.in.IncreaseMoneyRequestCommand;
 import com.example.application.port.in.IncreaseMoneyRequestUseCase;
 import com.example.application.port.out.GetMembershipPort;
@@ -15,6 +18,7 @@ import com.example.domain.MemberMoney;
 import com.example.domain.MoneyChangingRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -24,13 +28,14 @@ import java.util.UUID;
 @UseCase
 @RequiredArgsConstructor
 @Transactional
-public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase {
+public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase, CreateMemberMoneyUseCase {
 
     private final CountDownLatchManager countDownLatchManager;
     private final SendRechargingMoneyTaskPort sendRechargingMoneyTaskPort;
     private final GetMembershipPort getMembershipPort;
     private final IncreaseMoneyPort increaseMoneyPort;
     private final MoneyChangingRequestMapper mapper;
+    private final CommandGateway commandGateway;
 
     @Override
     public MoneyChangingRequest increaseMoneyRequest(IncreaseMoneyRequestCommand command) {
@@ -127,5 +132,17 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase 
         }
 
         return null;
+    }
+
+    @Override
+    public void createMemberMoney(CreateMemberMoneyCommand command) {
+        CreateMoneyCommand axonCommand = new CreateMoneyCommand(command.getMembershipId());
+        commandGateway.send(axonCommand).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                System.out.println("throwable = " + throwable);
+            } else {
+                System.out.println("result = " + result);
+            }
+        });
     }
 }

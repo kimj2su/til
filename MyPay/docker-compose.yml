@@ -89,6 +89,7 @@ services:
       - "8083:8080"
     depends_on:
       - mysql
+      - axon-server
     environment:
       - AXON_AXONSERVER_SERVERS=axon-server:8124
       - AXON_SERIALIZER_EVENTS=jackson

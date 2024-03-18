@@ -1,5 +1,7 @@
 package com.example.adapter.in.web;
 
+import com.example.application.port.in.CreateMemberMoneyCommand;
+import com.example.application.port.in.CreateMemberMoneyUseCase;
 import com.example.application.port.in.IncreaseMoneyRequestCommand;
 import com.example.application.port.in.IncreaseMoneyRequestUseCase;
 import com.example.common.WebAdapter;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RequestMoneyChangingController {
     private final IncreaseMoneyRequestUseCase increaseMoneyRequestUseCase;
-
+    private final CreateMemberMoneyUseCase createMemberMoneyUseCase;
     // private final DecreaseMoneyRequestUseCase decreaseMoneyRequestUseCase;
 
     @PostMapping(path = "/money/increase")
@@ -67,5 +69,13 @@ public class RequestMoneyChangingController {
         // -> MoneyChangingResultDetail
         // return decreaseMoneyRequestUseCase.decreaseMoneyChangingRequest(command);
         return null;
+    }
+
+    @PostMapping(path = "/money/create-member-money")
+    void createMemberMoney(@RequestBody CreateMemberMoneyRequest request) {
+        createMemberMoneyUseCase.createMemberMoney(
+                CreateMemberMoneyCommand.builder()
+                        .membershipId(request.membershipId())
+                        .build());
     }
 }
