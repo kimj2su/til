@@ -44,3 +44,43 @@
 | 정상 & 오류 상태 구분 | 지원( 정상과 오류를 구분해서 처리) | 미지언 ( 정상이든 오류든 무조건 완료 상태) |
 | 재사용 | 생성한 CompletableFuture은 계속 사용이 가능하다 | 한 번 사용 후 재 사용 불가능 |
 | 다수 작업 처리 | Completablefuture의 다중 처리 메서드를 활용할 수 있다. |  다중 Future 작업을 위한 처리 로직 필요|
+
+# CompletableFuture API 구조
+- CompletableFuture 는 비동기 작업과 함수형 프로그래밍의 콜백 패턴을 조합한 Future라 할 수 있으며 2가지 유형의 API로 구분할 수 있다.
+- CompletableFuture는 Future와 CompletionStage를 구현한 클래스로서 Futrue + CompletionStage라고 정의할 수 있다.
+
+## CompletionStage
+- CompletionStage는 비동기 작업을 위한 콜백 함수 API를 제공하며 어떤 작업이 완료된 후에 실행되어야 하는 후속 작업들을 정의하는 데 사용된다.
+- CompletionStage는 "이 작업이 끝나면, 그 다음에 이 작업을 해라" 와 같은 연쇄적인 비동기 작업을 표현하기 위한 도구로 사용되며 한 작업의 완료는 자동으로 다음 작업의 시작을 트리거할 수 있어 여러 비동기 작업들을 연결하여 실행할 수 있게 해준다. 
+
+
+## CompletableFuture API 는 비동기 작업을 시작, 실행, 완료 등의 API 제공
+### 비동기 작업 시작
+- CompletableFuture<T> CompletableFuture.supplyAsync(Supplier<T> supplier)
+- CompletableFuture<Void> CompletableFuture.runAsync(Runnable runnable)
+
+### 비동기 작업 완료 설정
+- boolean CompletableFuture.complete()
+- boolean CompletableFuture.completeExceptionally()
+- CompletableFuture<T> CompletableFuture.completedFuture(T value)
+
+### 다중 비동기 작업 조합
+- CompletableFuture<Object> CompletableFuture.allOf(CompletableFuture<?>... cfs)
+- CompletableFuture<Object> CompletableFuture.anyOf(CompletableFuture<?>... cfs)
+
+### 비동기 작업 대기
+- V join 
+
+### 비동기 작업 유형
+| 메서드           | 인수(함수형 인터페이스) | 인수 추상 메서드| 개념                            |
+|---------------|---|-------------------------|-------------------------------|
+| supplyAsync() | Supplier<T> | T get() | 결과를 반환하는 비동기 작업을 수행한다.        |
+| runAsync()    | Runnable | void run() | 결과를 반환하지 않는 비동기 작업을 수행한다.     |
+| thenApply()   | Function<T,R> | R apply(T t) | 이전의 작업의 결과를 가공하고 새로운 작업 수행한다. |
+| thenAccept()  | Consumer<T> | void accept(T t) | 이전 작업의 결과를 소비하고 새로운 작업을 수행한다. |
+| thenRun()     | Runnable | void run() | 이전 작업의 결과를 사용하지 않고 새로운 작업을 수행한다. |
+| thenCombine() | BiFunction<T,U,R> | R apply(T t, U u) | 두 작업의 결과를 조합하여 새로운 작업을 수행한다. |
+| thenCompose() | Function<T,CompletionStage<U>> | CompletionStage<U> apply(T t) | 이전 작업의 결과를 가지고 새로운 작업을 수행한다. |
+| allOf()       | CompletableFuture<?>... |  | 모든 작업이 완료되면 새로운 작업을 수행한다. |
+| anyOf()       | CompletableFuture<?>... |  | 하나의 작업이라도 완료되면 새로운 작업을 수행한다. |
+
