@@ -84,3 +84,26 @@
 | allOf()       | CompletableFuture<?>... |  | 모든 작업이 완료되면 새로운 작업을 수행한다. |
 | anyOf()       | CompletableFuture<?>... |  | 하나의 작업이라도 완료되면 새로운 작업을 수행한다. |
 
+# 비동기 작업 시작 
+- CompletableFuture는 비동기 작업을 생성하고 실행하는 시작 메서드로 supplyAsync()와 runAsync() 를 제공한다.
+- CompletableFuture는 비동기 작업을 실행하기 위해 내부적으로 ForkJoinPool.commonPool()의 스레드 풀을 사용하며 선택적으로 ThreadPoolExecutor를 사용할 수 있다.
+
+## supplyAsync(Supplier s)
+- 개념 : 정적 메서드로서 비동기 작업을 시작하고 작업 수행 후 결과를 반환한다.
+- 인수 값 : Supplier<T> 함수를 인수로 받아 작업 결과를 반환한다.
+- 반환 값 : 새로운 CompletableFuture<T> 객체를 반환하며 CompletableFuture에 비동기 작업의 결과를 저장한다.
+- 실행 객체 : AsyncSupply
+
+```java
+CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> {
+    return T;
+});
+```
+비동기 작업을 시작하고 작업 수행 후 결과 T를 반환 한다.
+
+### supplyAsync() 흐름
+1. CompletableFuture의 supplyAsync(Supplier s) 메서드를 호출한다.
+2. 내부적으로 AsyncSupply 객체를 생성한다. 이 객체가 비동기 작업을 수행한다.
+3. 이 AsyncSupply 객체는 Supplier는 값을 만들어 반환하고 CompletableFuture는 값을 저장되는 객체이다. 
+
+AsyncSupply 에서 수행한 작업 결과는 CompletableFuture.supplyAsync()에서 생성된 CompletableFuture #1에 저장된다.
