@@ -105,5 +105,29 @@ CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> {
 1. CompletableFuture의 supplyAsync(Supplier s) 메서드를 호출한다.
 2. 내부적으로 AsyncSupply 객체를 생성한다. 이 객체가 비동기 작업을 수행한다.
 3. 이 AsyncSupply 객체는 Supplier는 값을 만들어 반환하고 CompletableFuture는 값을 저장되는 객체이다. 
+4. ForkJoinPool에서 ForkJoinWorkerThread -> WorkQueue, 큐로부터 작업을 꺼낸다.
+5. 이때 AsyncSupply 객체가 WorkQueue에 들어가고 작업을 수행한다.
+6. run() -> AsyncSupply -> Supplier.get() -> completableValue(data) -> CompletableFuture#1에 저장
 
 AsyncSupply 에서 수행한 작업 결과는 CompletableFuture.supplyAsync()에서 생성된 CompletableFuture #1에 저장된다.
+
+## runAsync(Runnable r)
+- 개념 : 정적 메서드로서 비동기 작업을 시작하고 작업 수행 후 완료한다.
+- 인수 값 : Runnable 객체를 인수로 받아 작업을 실행한다.
+- 반환 값 : 새로운 CompletableFuture<T> 객체를 반환하고 작업 결과를 저장하지 않는다.
+- 실행 객체 : AsyncRun
+
+```java
+    CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+        // 작업 수행
+    });
+```
+비동기 작업을 시작하고 작업을 수행한다.
+
+### runAsync() 흐름
+supplyAsync()와 동일하게 CompletableFuture의 runAsync(Runnable r) 메서드를 호출하고 내부적으로 AsyncRun 객체를 생성한다.  
+결과를 반환할때 Null을 의미하는 AltResult 객체를 저장한다.  
+runAsync() 는 보통 실행 로그를 남기거나 독립적인 백그라운드 작업 또는 다음 작업에서 결과를 기다리지 않고 다른 작업을 수행해야 할 경우 사용할 수 있다.  
+
+CompletableFuture을 통한 비동기 작업은 무조건 supplyAsync(), runAsync()로 시작해야 하며 다른 메서드로 시작할 수 없다.  
+
