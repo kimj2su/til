@@ -131,3 +131,99 @@ runAsync() 는 보통 실행 로그를 남기거나 독립적인 백그라운드
 
 CompletableFuture을 통한 비동기 작업은 무조건 supplyAsync(), runAsync()로 시작해야 하며 다른 메서드로 시작할 수 없다.  
 
+# 비동기 예외처리
+- CompletableFuture는 예외 처리를 위한 handle(), exceptionally(), whenComplete() 메서드를 제공한다.
+
+## exceptionally[Async](Function<Throwable, T> f)
+- 개념
+  - 작업이 예외로 완료된 경우 해당 예외를 처리하고 새로운 결과나 대체 예외를 반환할 수 있다.
+  - 작업이 예외로 완료된 경우에만 실행되고 정상적으로 완료된 경우 이 함수는 실행되지 않는다.
+- 인수 값 
+  - Function<Throwable, T> 함수를 인수로 받는다.
+- 반환 값
+  - CompletableFuture<T> 객체를 반환하며 예외 처리 결과를 저장한다.
+
+```java
+CompletableFuture<Integer> future = 
+    CompletableFuture.supplyAsync(() -> 3 / 0) // 예외 발생
+            .exceptionally(e -> {
+                System.out.println(e.getMessage()); 
+                return 0; // 대체 결과 반환
+    });
+```
+
+## handle[Async](BiFunction<T, Throwable, U> f)
+- 개념
+  - 작업이 완료되거나 예외로 완료된 경우에 실행되며 결과나 예외를 처리할 수 있다.
+  - 정상적으로 완료된 경우와 예외로 완료된 경우 모두 실행된다.
+- 인수 값
+  - BiFunction<T, Throwable, U> 함수를 인수로 받는다.
+  - 첫번째 인수는 비동기 작업이 성공적으로 완료된 경우 결과를 나타낸다.
+  - 두번째 인수는 비동기 작업이 예외로 완료된 경우 해당 예외를 나타낸다.
+- 반환 값
+  - CompletableFuture<U> 객체를 반환하며 결과를 저장한다.
+
+```java
+CompletableFuture<Integer> future = 
+    CompletableFuture.supplyAsync(() -> 3 / 0) // 예외 발생
+            .handle((result, e) -> {
+                if (e != null) {
+                    System.out.println(e.getMessage());
+                    return 0; // 대체 결과 반환
+                }
+                return result;
+            });
+```
+
+## whenComplete[Async](BiConsumer<T, Throwable> action)
+- 개념
+  - 작업이 완료되거나 예외로 완료된 경우에 실행되며 결과나 예외를 소비할 수 있다.
+  - 정상적으로 완료된 경우와 예외로 완료된 경우 모두 실행된다.
+- 인수 값
+  - BiConsumer<T, Throwable> 함수를 인수로 받는다.
+  - 첫번째 인수는 비동기 작업이 성공적으로 완료된 경우 결과를 나타낸다.
+  - 두번째 인수는 비동기 작업이 예외로 완료된 경우 해당 예외를 나타낸다.
+  - 반환 값이 없다.
+
+```java
+CompletableFuture<Integer> future = 
+    CompletableFuture.supplyAsync(() -> 3 / 0) // 예외 발생
+            .whenComplete((result, e) -> {
+                if (e != null) {
+                    System.out.println(e.getMessage());
+                }
+            });
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
