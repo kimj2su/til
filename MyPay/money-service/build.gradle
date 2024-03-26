@@ -17,8 +17,8 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-//    implementation group: 'org.axonframework', name: 'axon-configuration', version: "$axonVersion"
-//    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
+    implementation group: 'org.axonframework', name: 'axon-configuration', version: "$axonVersion"
+    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
 
     // https://mvnrepository.com/artifact/org.axonframework/axon-configuration
     implementation 'org.axonframework:axon-configuration:4.9.0'
