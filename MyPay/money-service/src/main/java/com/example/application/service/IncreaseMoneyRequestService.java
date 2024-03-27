@@ -1,10 +1,13 @@
 package com.example.application.service;
 
 import com.example.adapter.axon.command.CreateMoneyCommand;
+import com.example.adapter.axon.command.IncreaseMemberMoneyCommand;
 import com.example.adapter.out.persistance.MemberMoneyJpaEntity;
 import com.example.adapter.out.persistance.MoneyChangingRequestMapper;
 import com.example.application.port.in.CreateMemberMoneyCommand;
 import com.example.application.port.in.CreateMemberMoneyUseCase;
+import com.example.application.port.in.CreateMemberPort;
+import com.example.application.port.in.GetMemberMoneyPort;
 import com.example.application.port.in.IncreaseMoneyRequestCommand;
 import com.example.application.port.in.IncreaseMoneyRequestUseCase;
 import com.example.application.port.out.GetMembershipPort;
@@ -36,6 +39,8 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
     private final IncreaseMoneyPort increaseMoneyPort;
     private final MoneyChangingRequestMapper mapper;
     private final CommandGateway commandGateway;
+    private final CreateMemberPort createMemberPort;
+    private final GetMemberMoneyPort getMemberMoneyPort;
 
     @Override
     public MoneyChangingRequest increaseMoneyRequest(IncreaseMoneyRequestCommand command) {
@@ -141,8 +146,41 @@ public class IncreaseMoneyRequestService implements IncreaseMoneyRequestUseCase,
             if (throwable != null) {
                 System.out.println("throwable = " + throwable);
             } else {
+                createMemberPort.createMember(
+                        new MemberMoney.MembershipId(command.getMembershipId()),
+                        new MemberMoney.MoneyAggregateIdentifier(result.toString()));
                 System.out.println("result = " + result);
             }
         });
+    }
+
+    @Override
+    public void increaseMoneyRequestByEvent(IncreaseMoneyRequestCommand command) {
+        MemberMoneyJpaEntity memberMoneyJpaEntity = getMemberMoneyPort.getMemberMoney(
+                new MemberMoney.MembershipId(command.getTargetMembershipId()
+        ));
+
+        String aggregateIdentifier = memberMoneyJpaEntity.getAggregateIdentifier();
+        // command
+        IncreaseMemberMoneyCommand increaseMoneyCommand = IncreaseMemberMoneyCommand.builder()
+                .aggregateIdentifier(aggregateIdentifier)
+                .membershipId(command.getTargetMembershipId())
+                .amount(command.getAmount())
+                .build();
+
+        commandGateway.send(increaseMoneyCommand)
+                .whenComplete((result, throwable) -> {
+                    if (throwable != null) {
+                        throwable.printStackTrace();
+                        System.out.println("throwable = " + throwable);
+                        throw new RuntimeException(throwable);
+                    } else {
+                        System.out.println("result = " + result);
+                        // Increase Money -> money increase
+                        increaseMoneyPort.increaseMoney(
+                                new MemberMoney.MembershipId(command.getTargetMembershipId()),
+                                command.getAmount());
+                    }
+                });
     }
 }

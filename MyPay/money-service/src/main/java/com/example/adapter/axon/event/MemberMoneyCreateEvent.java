@@ -1,12 +1,21 @@
 package com.example.adapter.axon.event;
 
-import lombok.AllArgsConstructor;
+import com.example.common.SelfValidating;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @Data
-public class MemberMoneyCreateEvent {
+@EqualsAndHashCode(callSuper = false)
+public class MemberMoneyCreateEvent extends SelfValidating<MemberMoneyCreateEvent> {
     private String membershipId;
+
+    public MemberMoneyCreateEvent(String membershipId) {
+        this.membershipId = membershipId;
+        this.validateSelf();
+    }
+
+    public MemberMoneyCreateEvent() {
+    }
 }

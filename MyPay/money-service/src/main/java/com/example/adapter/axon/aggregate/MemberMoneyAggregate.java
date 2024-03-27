@@ -1,6 +1,8 @@
 package com.example.adapter.axon.aggregate;
 
 import com.example.adapter.axon.command.CreateMoneyCommand;
+import com.example.adapter.axon.command.IncreaseMemberMoneyCommand;
+import com.example.adapter.axon.event.IncreaseMemberMoneyEvent;
 import com.example.adapter.axon.event.MemberMoneyCreateEvent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -31,6 +33,15 @@ public class MemberMoneyAggregate {
         apply(new MemberMoneyCreateEvent(command.getMembershipId()));
     }
 
+    @CommandHandler
+    public String handle(@NotNull IncreaseMemberMoneyCommand command) {
+        System.out.println("IncreaseMoneyCommand Handler");
+        id = command.getAggregateIdentifier();
+
+        apply(new IncreaseMemberMoneyEvent(id, command.getMembershipId(), command.getAmount()));
+        return id;
+    }
+
     @EventSourcingHandler
     public void on(MemberMoneyCreateEvent event) {
         System.out.println("MemberMoneyCreateEvent Sourcing Handler");
@@ -39,24 +50,24 @@ public class MemberMoneyAggregate {
         balance = 0;
     }
 
-    // @EventSourcingHandler
-    // public void on(IncreaseMoneyEvent event) {
-    //     System.out.println("IncreaseMoneyEvent Sourcing Handler");
-    //     id = event.getAggregateIdentifier();
-    //     membershipId = Long.parseLong(event.getTargetMembershipId());
-    //     balance = event.getAmount();
-    // }
-    //
-    // public MemberMoneyAggregate() {
-    //     // Required by Axon to construct an empty instance to initiate Event Sourcing.
-    // }
-    //
-    // @Override
-    // public String toString() {
-    //     return "MemberMoneyAggregate{" +
-    //             "id='" + id + '\'' +
-    //             ", membershipId=" + membershipId +
-    //             ", balance=" + balance +
-    //             '}';
-    // }
+    @EventSourcingHandler
+    public void on(IncreaseMemberMoneyEvent event) {
+        System.out.println("IncreaseMemberMoneyEvent Sourcing Handler");
+        id = event.getAggregateIdentifier();
+        membershipId = Long.parseLong(event.getTargetMembershipId());
+        balance = event.getAmount();
+    }
+
+    public MemberMoneyAggregate() {
+        // Required by Axon to construct an empty instance to initiate Event Sourcing.
+    }
+
+    @Override
+    public String toString() {
+        return "MemberMoneyAggregate{" +
+                "id='" + id + '\'' +
+                ", membershipId=" + membershipId +
+                ", balance=" + balance +
+                '}';
+    }
 }
