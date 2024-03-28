@@ -53,3 +53,11 @@ public void on(MemberMoneyCreateEvent event) {
     balance = 0;
 }
 ```
+
+## 모든 데이터의 변경은 axon.aggregate.MemberMoneyAggregate 에서 이루어진다.
+DDD를 강제로 사용할 수 있게 구현해놓은게 axon framework 이다.
+
+localhost:8024 로 접속하면 axon-server의 dashboard를 볼 수 있다.  
+axon-server는 이벤트를 저장하고 이벤트를 발행하는 역할을 한다.  
+이벤트를 통해 변경된 데이터를 조회할 수 있어 데이터에 문제가 생겨도 이벤트를 통해 데이터를 복구할 수 있다.  
+aggregateIdentifier는 같은 이벤트를 구분하기 위한 식별자이다.
