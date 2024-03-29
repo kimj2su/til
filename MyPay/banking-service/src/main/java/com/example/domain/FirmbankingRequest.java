@@ -16,8 +16,9 @@ public class FirmbankingRequest {
     @Getter private final String toBankName;
     @Getter private final String toBankAccountNumber;
     @Getter private final int moneyAmount;
-    @Getter private final String firmbankingStatus;
+    @Getter private final int firmbankingStatus;
     @Getter private final UUID uuid;
+    @Getter private final String aggregateIdentifier;
 
     public static FirmbankingRequest generateFirmbankingRequest(
         FirmbankingRequest.FirmBankingRequestId firmbankingRequestId,
@@ -27,17 +28,19 @@ public class FirmbankingRequest {
         FirmbankingRequest.ToBankAccountNumber toBankAccountNumber,
         FirmbankingRequest.MoneyAmount moneyAmount,
         FirmbankingRequest.FirmbankingStatus firmbankingStatus,
-        UUID uuid
+        UUID uuid,
+        FirmbankingRequest.FirmbankingAggregateIdentifier firmbankingAggregateIdentifier
     ) {
         return new FirmbankingRequest(
-            firmbankingRequestId.firmbankingRequestId,
-            fromBankName.fromBankName,
-            fromBankAccountNumber.fromBankAccountNumber,
-            toBankName.toBankName,
-            toBankAccountNumber.toBankAccountNumber,
-            moneyAmount.moneyAmount,
-            firmbankingStatus.firmbankingStatus,
-            uuid
+                firmbankingRequestId.firmbankingRequestId,
+                fromBankName.fromBankName,
+                fromBankAccountNumber.fromBankAccountNumber,
+                toBankName.toBankName,
+                toBankAccountNumber.toBankAccountNumber,
+                moneyAmount.moneyAmount,
+                firmbankingStatus.firmbankingStatus,
+                uuid,
+                firmbankingAggregateIdentifier.aggregateIdentifier
         );
     }
 
@@ -91,9 +94,17 @@ public class FirmbankingRequest {
 
     @Value
     public static class FirmbankingStatus {
-        public FirmbankingStatus(String value) {
+        public FirmbankingStatus(int value) {
             this.firmbankingStatus = value;
         }
-        String firmbankingStatus;
+        int firmbankingStatus;
+    }
+
+    @Value
+    public static class FirmbankingAggregateIdentifier {
+        public FirmbankingAggregateIdentifier(String value) {
+            this.aggregateIdentifier = value;
+        }
+        String aggregateIdentifier;
     }
 }

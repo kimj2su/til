@@ -24,8 +24,6 @@ dependencies {
     implementation 'org.axonframework:axon-configuration:4.9.0'
     // https://mvnrepository.com/artifact/org.axonframework/axon-spring-boot-starter
     implementation 'org.axonframework:axon-spring-boot-starter:4.9.0'
-
-
 }
 
 docker {

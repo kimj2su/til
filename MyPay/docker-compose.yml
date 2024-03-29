@@ -65,10 +65,10 @@ services:
     depends_on:
       - mysql
     environment:
-#      - AXON_AXONSERVER_SERVERS=axon-server:8124
-#      - AXON_SERIALIZER_EVENTS=jackson
-#      - AXON_SERIALIZER_MESSAGES=jackson
-#      - AXON_SERIALIZER_GENERAL=xstream
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/my_pay?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=mysqluser

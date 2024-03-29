@@ -8,8 +8,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.jetbrains:annotations:23.0.0'
-//    implementation group: 'org.axonframework', name: 'axon-configuration', version: "$axonVersion"
-//    implementation group: 'org.axonframework', name: 'axon-spring-boot-starter', version: "$axonVersion"
+    // https://mvnrepository.com/artifact/org.axonframework/axon-configuration
+    implementation 'org.axonframework:axon-configuration:4.9.0'
+    // https://mvnrepository.com/artifact/org.axonframework/axon-spring-boot-starter
+    implementation 'org.axonframework:axon-spring-boot-starter:4.9.0'
 
     implementation project(path: ':common')
     runtimeOnly 'com.h2database:h2'

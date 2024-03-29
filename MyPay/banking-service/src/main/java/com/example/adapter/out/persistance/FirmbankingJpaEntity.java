@@ -24,11 +24,13 @@ public class FirmbankingJpaEntity {
     private String fromBankAccountNumber;
     private String toBankName;
     private String toBankAccountNumber;
-    private int moneyAmount;
-    private String firmbankingStatus;
-    private String uuid;
+    private int moneyAmount; // only won
 
-    public FirmbankingJpaEntity(String formBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, String firmbankingStatus, UUID uuid) {
+    private int firmbankingStatus; // 0: 요청, 1: 완료, 2: 실패
+    private String uuid;
+    private String aggregateIdentifier;
+
+    public FirmbankingJpaEntity(String formBankName, String fromBankAccountNumber, String toBankName, String toBankAccountNumber, int moneyAmount, int firmbankingStatus, UUID uuid, String aggregateIdentifier) {
         this.formBankName = formBankName;
         this.fromBankAccountNumber = fromBankAccountNumber;
         this.toBankName = toBankName;
@@ -36,6 +38,7 @@ public class FirmbankingJpaEntity {
         this.moneyAmount = moneyAmount;
         this.firmbankingStatus = firmbankingStatus;
         this.uuid = uuid.toString();
+        this.aggregateIdentifier = aggregateIdentifier;
     }
 
     @Override
@@ -48,7 +51,8 @@ public class FirmbankingJpaEntity {
                 ", toBankAccountNumber='" + toBankAccountNumber + '\'' +
                 ", moneyAmount=" + moneyAmount +
                 ", firmbankingStatus='" + firmbankingStatus + '\'' +
-                ", uuid=" + uuid +
+                ", uuid='" + uuid + '\'' +
+                ", aggregateIdentifier='" + aggregateIdentifier + '\'' +
                 '}';
     }
 }
