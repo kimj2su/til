@@ -71,3 +71,21 @@
 # 타임존 - ZoneDateTime
 - "Asia/Seoul" 같은 타임존 안에는 일광 절약 시간제에 대한 정보와 UTC+9:00 같은 UTC 차이인 오프셋 정보를 모두 포함하고 있다.
 - ZonedDateTime은 LocalDateTime에 시간대 정보인 ZoneId가 합쳐힌 것이다.
+
+```java
+OffsetDateTime nowOdt = OffsetDateTime.now();
+System.out.println("nowOdt = " + nowOdt);
+LocalDateTime ldt = LocalDateTime.of(2030, 1, 1, 13, 30, 50);
+System.out.println("ldt = " + ldt);
+OffsetDateTime odt = OffsetDateTime.of(ldt, ZoneOffset.of("+01:00"));
+System.out.println("odt = " + odt);
+
+nowOdt = 2024-04-25T17:59:41.633152+09:00
+ldt = 2030-01-01T13:30:50
+odt = 2030-01-01T13:30:50+01:00
+```
+ZoneOffset은 +01:00 같은 오프셋 정보를 제공한다.
+
+### ZoneDateTime vs OffsetDateTime
+- ZoneDateTime은 구체적인 지역 시간대를 다룰 때 사용하며, 일광 절약 시간을 자동으로 처리할 수 있다. 사용자 지정 시간대에 따른 시간 계산이 필요할 때 적합하다.
+- OffsetDateTime은 UTC와의 시간 차이만을 나타낼때 사용하며 지역 시간대의 복잡성을 고려하지  않는다. 시간대 변환 없이 로그를 기록하고 데이터를 저장하고 처리할 때 적합하다.
