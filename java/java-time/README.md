@@ -144,3 +144,130 @@ Duration, Period는 시간의 간격(기간)을 표현하는데 사용된다.
 | 사용대상|날짜|시간|
 |주요 메소드| getYears(), getMonths(), getDays()| toHours(), toMinutes(), getSeconds(), getNano()|
 
+# 날짜와 시간의 핵심 인터페이스
+날짜와 시간은 특정 시점의 시간(시각) 과 시간의 간격(기간)으로 나눌 수 있다.  
+- 특정 시점의 시간 : Temporal(TemporalAccessor 포함) 인터페이스를 구현한다.
+  - 구현으로 LocalDateTime, LocalDate, LocalTime, ZonedDateTime, OffsetDateTime, Instant 등이 있다.
+- 시간의 간격(기간) : TemporalAmount 인터페이스를 구현한다.
+  - TemporalAmount를 구현한 클래스로는 Period, Duration이 있다.
+
+## TemporalAccessor 인터페이스
+- 날짜와 시간을 읽기 위한 기본 인터페이스
+- 이 인터페이스는 특정 시점의 날짜와 시간 정보를 읽을 수 있는 최소한의 기능을 제공한다.
+
+## Temporal 인터페이스
+- TemporalAccessor의 하위 인터페이스로, 날짜와 시간을 조직(추가, 빼기 등) 하기 위한 기능을 제공한다. 이를 통해 날짜와 시간을 변경하거나 조정할 수 있다.
+
+## TemporalAmount 인터페이스
+시간의 간격(시간의 양, 기간)을 나타내며 날짜와 시간 객체에 적용하여 그 객체를 조정할 수 있다. 예를 들어, 특정 날짜에 일정 기간을 더하거나 빼는 데 사용 된다.
+
+# 시간의 단위와 시간 필드
+시간의 단위를 뜻하는 TemporalUnit(ChronUnit)과 시간의 각 필드를 뜻하는 TemporalField(ChronoField)이다.
+
+## 시간의 단위- TemporalUnit, ChronoUnit
+- TemporalUnit 인터페이스는 날짜와 시간을 측정하는 단위를 나타내며, 주로 사용되는 구현체는 java.time.temporal.ChronoUnit 열겨형으로 구현되어 있다.
+- ChronoUnit은 다양한 시간 단위를 제공한다.
+- 여기서 Unit이라는 뜻을 번역하면 단위이다. 따라서 시간의 단위 하나하나를 나타낸다.
+
+### 시간 단위
+|ChronoUnit|설명|
+|---|---|
+|NANOS|나노초|
+|MICROS|마이크로초|
+|MILLIS|밀리초|
+|SECONDS|초|
+|MINUTES|분|
+|HOURS|시간|
+
+### 날짜 단위
+|ChronoUnit|설명|
+|---|---|
+|DAYS|일|
+|WEEKS|주|
+|MONTHS|월|
+|YEARS|년|
+|DECADES|십년|
+|CENTURIES|백년|
+|MILLENNIA|천년|
+
+### 기타 단위
+|ChronoUnit|설명|
+|---|---|
+|EARS|시대|
+|FOREVER|영원|
+
+### ChronoUnit의 주요 메서드
+- between(Temporal, Temporal) : 두 Temporal 객체 사이의 시간 단위를 계산한다.
+- isDateBased() : 현재 ChronoUnit이 날짜 기반 단위 인지(예: 일, 주, 월, 년) 여부를 반환한다.
+- isTimeBased(): 현재 ChronoUnit이 시간 기반 단위인지(예: 시, 분, 초) 여부를 반환한다.
+- isSupportedBy(Temporal): 주어진 Temporal 객체가 현재 ChronoUnit 단위를 지원하는지 여부를 반환한다.
+- getDuration(): 현재 ChronoUnit의 기간을 Duration 객체로 반환한다.
+
+##  시간 필드 - ChronoField
+ChronoField는 날짜 및 시간을 나타내는데 사용되는 열겨형이다. 이 열거형은 다양한 필드를 통해 날짜와 시간의 특정 부분을 나타낸다. 여기에는 연도, 월, 일, 시간, 분 등이 포함된다.
+
+- TemporalField 인터페이스는 날짜와 시간을 나타내는데 사용된다. 주로 사용되는 구현체는 ChronoField 열거형으로 구현되어 있다.
+- ChronoField는 다양한 필드를 통해 날짜와 시간의 특정 부분을 나타낸다. 여기에는 연도, 월, 일 시간, 분 등이 포함된다.
+- 여기서 필드(Field)라는 뜻이 날짜와 시간 중에 있는 특정 필드들을 뜻한다. 
+- 예를 들어 2024년 4월 25일이라면 연도, 월, 일이 필드가 된다.
+  - YEAR: 2024
+  - MONTH_OF_YEAR: 4
+  - DAY_OF_MONTH: 25
+- 단순히 시간의 단위 하나하나를 뜻하는 ChronoUnit과는 다르다. ChronoField를 사용해야 날짜와 시간의 각 필드 중에 원하는 데이터를 조회할 수 있다.
+
+### 연도 관련 필드
+|필드 이름| 설명|
+|---|---|
+|ERA|연대, 예를 들어 서기(AD) 또는 기원전(BC)|
+|YEAR_OF_ERA|연대 내의 연도|
+|YEAR|년도|
+|EPOCH_DAY| 1970-01-01부터의 일 수|
+
+### 월 관련 필드
+|필드 이름| 설명        |
+|---|-----------|
+|MONTH_OF_YEAR| 월(1월 = 1) |
+|PROLEPTIC_MONTH|연도를 월로 확장한 값|
+
+### 주 및 일 관련 필드
+|필드 이름| 설명                     |
+|---|------------------------|
+|DAY_OF_WEEK| 요일(월요일 = 1)            |
+|ALIGNED_DAY_OF_WEEK_IN_MONTH| 월의 첫번째 요일을 기준으로 정렬된 요일 |
+|ALIGNED_DAY_OF_WEEK_IN_YEAR| 연도의 첫번째 요일을 기준으로 정렬된 요일 |
+|DAY_OF_MONTH| 월의 일(1일 = 1)           |
+|DAY_OF_YEAR| 연도의 일(1월 1일 = 1)      |
+|EPOCH_DAY| 1970-01-01부터의 일 수       |
+
+### 시간 관련 필드
+|필드 이름| 설명        |
+|---|-----------|
+|HOUR_OF_DAY| 하루 중 시간(0-23) |
+|CLOCK_HOUR_OF_DAY| 시계 시간(1-24) |
+|HOUR_OF_AMPM| 오전/오후 시간(0-11) |
+|CLOCK_HOUR_OF_AMPM| 오전/오후 시간(1-12) |
+|MINUTE_OF_HOUR| 시간의 분(0-59) |
+|SECOND_OF_MINUTE| 분의 초(0-59) |
+|NANO_OF_SECOND| 초의 나노초(0-999,999,999) |
+|MICRO_OF_SECOND| 초의 마이크로초(0-999,999) |
+|MILLI_OF_SECOND| 초의 밀리초(0-999) |
+
+### 기타 필드
+|필드 이름| 설명        |
+|---|-----------|
+|AMPM_OF_DAY|하루의 AM 또는 PM|
+|INSTANT_SECONDS|초를 기준으로 한 시간|
+|OFFSET_SECONDS|UTC와의 차이를 초로 표현|
+
+
+### 주요 메서드
+|메서드| 반환 타입| 설명|
+|---|---|---|
+|getBaseUnit()| TemporalUnit| 필드의 기본 단위를 반환한다. 예를 들어, 분 필드의 기본 단위는 ChronoUnit.MINUTES이다.|
+|getRangeUnit()|TemporalUnit| 필드의 범위 단위를 반환한다. 예를 들어, MONTH_OF_YEAR의 범위 단위는 CHRONOUNIT.YEARS이다.|
+|isDateBased()|boolean| 필드가 날짜 기반 필드인지 여부를 반환한다.|
+|isTimeBased()|boolean| 필드가 시간 기반 필드인지 여부를 반환한다.|
+|ranged()|ValueRange|필드가 가질 수 있는 값의 유효 범위를 ValueRange 객체로 반환한다. 이 객체는 최소값과 최대값을 제공한다.|
+
+TemporalUnit(ChronoUnit), TemporalField(ChronoField)는 단독으로 사용하기 보다는 주로 날짜와 시간을 조회하거나 조작할 때 사용한다.
+
