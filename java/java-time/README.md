@@ -271,3 +271,18 @@ ChronoField는 날짜 및 시간을 나타내는데 사용되는 열겨형이다
 
 TemporalUnit(ChronoUnit), TemporalField(ChronoField)는 단독으로 사용하기 보다는 주로 날짜와 시간을 조회하거나 조작할 때 사용한다.
 
+# 날짜와 시간 조회하고 조작하기
+날짜와 시간을 조회하려면 날짜와 시간 항목중에 어떤 필드를 조회할 지 선택해야 한다. 이때 날짜와 시간의 필드를 뜻하는 ChronoField가 사용된다.
+
+## TemporalAccessor.get(TemporalField field)
+- LocalDateTime을 포함한 특정 시점의 시간을 제공하는 클래스는 모두 TemporalAccessor 인터페이스를 구현한다.
+- TemporalAccessor는 특정 시점의 시간을 조회하는 기능을 제공한다.
+- get(TemporalField field)을 호출할 때 어떤 날짜와 시간 필드를 조회할지 TemporalField의 구현인 ChronoField를 인수로 전달하면 된다.
+
+## Temporal plus(long amountToAdd, Temporalunit unit)
+- LocalDateTime을 포함한 특정 시점의 시간을 제공하는 클래스 모두 Temporal 인터페이스를 구현한다.
+- Temporal은 특정 시점의 시간을 조작하는 기능을 제공한다.
+- plus(long amountToAdd, TemporalUnit unit)를 호출할 때 더하기 할 숫자와 시간의 단위(Unit)를 전달하면 된다.
+- 이때 TemporalUnit의 구현인 ChronoUnit을 인수로 전달하면 된다.
+- 불변이므로 반환 값을 받아야 한다.
+- 참고로 minus()도 존재함.
