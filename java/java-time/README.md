@@ -286,3 +286,42 @@ TemporalUnit(ChronoUnit), TemporalField(ChronoField)는 단독으로 사용하�
 - 이때 TemporalUnit의 구현인 ChronoUnit을 인수로 전달하면 된다.
 - 불변이므로 반환 값을 받아야 한다.
 - 참고로 minus()도 존재함.
+
+## Temporal with(TemporalField field, long newValue)
+- Temporal.with()를 사용하면 날짜와 시간의 특정 필드의 값만 변경할 수 있다.
+- 불변이므로 반환 값을 받아야 한다.
+
+## TemporalAdjuster 사용
+- with()는 아주 단순한 날짜만 변경할 수 있다. 다음주 금요일, 이번달의 마지막 일요일 같은 복잡한 날짜를 계산하고 싶다면 TemporalAdjuster를 사용하면 된다.
+
+```java
+public interface TemporalAdjuster {
+    Temporal adjustInto(Temporal temporal);
+}
+```
+원래 대로면 인터페이스를 구현해야 하지만 자바가 필요한 구현체들을 TemporalAdjusters에 다 만들어 두었다.  
+
+- TemporalAdjusters.next(DayOfWeek.SUNDAY) : 다음 일요일
+- TemporalAdjusters.lastInMonth(DayOfWeek.SUNDAY) : 이번 달의 마지막 일요일을 구한다.
+
+DayOfWeek는 열거형으로 요일을 나타낸다.
+
+### TemporalAdjuiuster 사용 예
+|메서드| 설명                         |
+|---|----------------------------|
+|dayOfWeekInMonth| 주어진 요일이 몇 번째인지에 따라 날짜를 조정한다. |
+|firstDayOfMonth| 해당 월의 첫째 날로 조정한다.          |
+|firstDayOfNextMonth| 다음 달의 첫째 날로 조정한다.          |
+|firstDayOfMonth|해당 월의 첫째 날로 조정한다.|
+|firstDayOfNextYear|다음 해의 첫째 날로 조정한다.|
+|firstDayOfYear|해당 해의 첫째 날로 조정한다.|
+|lastDayOfMonth|해당 월의 마지막 날로 조정한다.|
+|lastDayOfNextYear|다음 해의 마지막 날로 조정한다.|
+|lastInMonth|주어진 요일 중 해당 월의 마지막 요일로 조정한다.|
+|firstInMonth|주어진 요일 중 해당 월의 첫 번째 요일로 조정한다.|
+|lastDayOfNextMonth|다음 달의 마지막 날로 조정한다.|
+|lastDayOfYear|해당 해의 마지막 날로 조정한다.|
+|next|주어진 요일 이후의 가장 가까운 요일로 조정한다.|
+|nextOrSame |주어진 요일 이후의 가장 가까운 요일로 조정하되, 현재 날짜가 주어진 요일인 경우 현 날짜를 반환한다.|
+|previous|주어진 요일 이전의 가장 가까운 요일로 조정한다.|
+|previousOrSame|주어진 요일 이전의 가장 가까운 요일로 조정하되, 현재 날짜가 주어진 요일인 경우 현재 날짜를 반환한다.|
