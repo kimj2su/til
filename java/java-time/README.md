@@ -325,3 +325,12 @@ DayOfWeek는 열거형으로 요일을 나타낸다.
 |nextOrSame |주어진 요일 이후의 가장 가까운 요일로 조정하되, 현재 날짜가 주어진 요일인 경우 현 날짜를 반환한다.|
 |previous|주어진 요일 이전의 가장 가까운 요일로 조정한다.|
 |previousOrSame|주어진 요일 이전의 가장 가까운 요일로 조정하되, 현재 날짜가 주어진 요일인 경우 현재 날짜를 반환한다.|
+
+# 날짜와 시간 문자열 파싱과 포맷팅
+- 포맷팅: 날짜와 시간 데이터를 원하는 포맷의 문자열로 변경하는 것, Date -> String
+- 파싱: 문자열을 날짜와 시간 데이터로 변경하는 것, String -> Date
+
+LocalDate와 같은 날짜 객체를 원하는 형태의 문자로 변경하려면 DateTimeFormatter를 사용하면 된다.  
+여기에 ofPattern()으로 원하는 포맷을 지정하면 된다.  
+[DateTimeFormatter 패턴 공식 사이트](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)
+
