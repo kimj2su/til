@@ -334,3 +334,71 @@ LocalDate와 같은 날짜 객체를 원하는 형태의 문자로 변경하려�
 여기에 ofPattern()으로 원하는 포맷을 지정하면 된다.  
 [DateTimeFormatter 패턴 공식 사이트](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)
 
+# 응용 예제
+## 1. 2024년 1월 1일 0시 0분 0초에 1년 2개월 3일 4시간 후의 시각을 찾아라
+TestPlus.java
+```java
+LocalDateTime dt = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
+LocalDateTime futureDateTime = dt.plusYears(1)
+        .plusMonths(2)
+        .plusDays(3)
+        .plusHours(4);
+System.out.println("futureDateTime = " + futureDateTime);
+```
+
+## 2. 날짜 간격 반복 출력하기
+TestLoopPlus.java
+```java
+LocalDate date = LocalDate.of(2024, 01, 01);
+for (int i = 0; i < 5; i++) {
+    LocalDate nextDate = date.plus(2 * i, ChronoUnit.WEEKS);
+    LocalDate nextDate = date.plusWeeks(2 * i);
+    System.out.println("날짜 " + (i + 1) + ":" + nextDate);
+}
+```
+
+## 3. 디데이 구하기
+- 시작 날짜와 목표 날짜를 입력해서 남은 기간과 디데이를 구해라.
+- 남은 기간: x년 x개월 x일 형식으로 출력한다.
+- 디데이: x일 남은 형식으로 출력한다.
+
+TestBetween.java
+```java
+LocalDate startDate = LocalDate.of(2024, 1, 1);
+LocalDate endDate = LocalDate.of(2024, 12, 31);
+
+Period period = Period.between(startDate, endDate);
+long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+System.out.println("시작 날짜: " + startDate);
+System.out.println("종료 날짜: " + endDate);
+System.out.println("남은 기간: "+ period.getYears() + "년 " + period.getMonths() + "개월 " + period.getDays() + "일");
+System.out.println("디데이: " + daysBetween + "남음");
+```
+
+## 4. 시작 요일, 마지막 요일 구하기
+- 입력 받은 월의 첫날 요일과 마지막날 요일을 구해라
+
+```java
+int year = 2024;
+int month = 1;
+
+LocalDate date = LocalDate.of(year, month, 1);
+DayOfWeek firstDayOfWeek = date.getDayOfWeek();
+DayOfWeek lastDayOfWeek = date.with(TemporalAdjusters.lastDayOfMonth()).getDayOfWeek();
+System.out.println("firstDayOfWeek = " + firstDayOfWeek);
+System.out.println("lastDayOfWeek = " + lastDayOfWeek);
+```
+
+## 5. 국제 회의 시간
+- 서울의 회의 시간은 2024년 1월 1일 오전 9시다. 이 때 런던, 뉴욕의 회의 시간을 구해라.
+
+TimeZone.java
+```java
+ZonedDateTime seoulTime = ZonedDateTime.of(LocalDate.of(2024, 1, 1), LocalTime.of(9, 0), ZoneId.of("Asia/Seoul"));
+ZonedDateTime londonTime = seoulTime.withZoneSameInstant(ZoneId.of("Europe/London"));
+ZonedDateTime newYorkTime = seoulTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+
+System.out.println("서울: " + seoulTime);
+System.out.println("런던: " + londonTime);
+System.out.println("뉴욕: " + newYorkTime);
+```
