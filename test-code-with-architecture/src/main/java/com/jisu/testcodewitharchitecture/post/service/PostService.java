@@ -4,12 +4,13 @@ import com.jisu.testcodewitharchitecture.common.domain.exception.ResourceNotFoun
 import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
 import com.jisu.testcodewitharchitecture.post.domain.PostUpdate;
 import com.jisu.testcodewitharchitecture.post.infrastructure.PostEntity;
-import com.jisu.testcodewitharchitecture.post.infrastructure.PostRepository;
-import com.jisu.testcodewitharchitecture.user.service.UserService;
+import com.jisu.testcodewitharchitecture.post.service.port.PostRepository;
 import com.jisu.testcodewitharchitecture.user.infrastructure.UserEntity;
-import java.time.Clock;
+import com.jisu.testcodewitharchitecture.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
