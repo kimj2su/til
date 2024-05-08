@@ -1,8 +1,8 @@
 package com.jisu.testcodewitharchitecture.user.controller;
 
-import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.controller.response.UserResponse;
-import com.jisu.testcodewitharchitecture.user.infrastructure.UserEntity;
+import com.jisu.testcodewitharchitecture.user.domain.User;
+import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserCreateController {
 
-    private final UserController userController;
     private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody UserCreate userCreate) {
-        UserEntity userEntity = userService.create(userCreate);
+        User userEntity = userService.create(userCreate);
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(userController.toResponse(userEntity));
+            .body(UserResponse.from(userEntity));
     }
 
 }
