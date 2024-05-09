@@ -1,8 +1,9 @@
-package com.jisu.testcodewitharchitecture.user.domain;
+package com.jisu.testcodewitharchitecture.user.controller.response;
 
+import com.jisu.testcodewitharchitecture.user.domain.User;
+import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class MyProfileResponse {

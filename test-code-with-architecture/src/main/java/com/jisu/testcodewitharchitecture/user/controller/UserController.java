@@ -1,7 +1,7 @@
 package com.jisu.testcodewitharchitecture.user.controller;
 
 import com.jisu.testcodewitharchitecture.user.controller.response.UserResponse;
-import com.jisu.testcodewitharchitecture.user.domain.MyProfileResponse;
+import com.jisu.testcodewitharchitecture.user.controller.response.MyProfileResponse;
 import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserUpdate;
 import com.jisu.testcodewitharchitecture.user.service.UserService;

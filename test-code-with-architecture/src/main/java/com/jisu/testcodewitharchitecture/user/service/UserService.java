@@ -1,6 +1,8 @@
 package com.jisu.testcodewitharchitecture.user.service;
 
 import com.jisu.testcodewitharchitecture.common.domain.exception.ResourceNotFoundException;
+import com.jisu.testcodewitharchitecture.common.service.ClockHolder;
+import com.jisu.testcodewitharchitecture.common.service.UuidHolder;
 import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
@@ -16,6 +18,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CertificationService certificationService;
+    private final UuidHolder uuidHolder;
+    private final ClockHolder clockHolder;
 
     public User getByEmail(String email) {
         return userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE)
@@ -29,7 +33,7 @@ public class UserService {
 
     @Transactional
     public User create(UserCreate userCreate) {
-        User user = User.from(userCreate);
+        User user = User.from(userCreate, uuidHolder);
         user = userRepository.save(user);
         certificationService.send(user.getEmail(), user.getId(), user.getCertificationCode());
         return user;
@@ -46,7 +50,7 @@ public class UserService {
     @Transactional
     public void login(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Users", id));
-        user = user.login();
+        user = user.login(clockHolder);
         userRepository.save(user);
     }
 

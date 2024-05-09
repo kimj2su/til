@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserResponseTest {
+public class MyProfileResponseTest {
 
     @Test
     void User로_응답을_생성할_수_있다() {
@@ -24,13 +24,14 @@ public class UserResponseTest {
                 .build();
 
         // when : 기능 수행
-        UserResponse userResponse = UserResponse.from(user);
+        MyProfileResponse myProfileResponse = MyProfileResponse.from(user);
 
         // then : 결과 확인
-        assertThat(userResponse.getId()).isEqualTo(1L);
-        assertThat(userResponse.getEmail()).isEqualTo("kimjisu3268@gmail.com");
-        assertThat(userResponse.getNickname()).isEqualTo("jisu3268");
-        assertThat(userResponse.getStatus()).isEqualTo(UserStatus.ACTIVE);
-        assertThat(userResponse.getLastLoginAt()).isEqualTo(100L);
+        assertThat(myProfileResponse.getId()).isEqualTo(1L);
+        assertThat(myProfileResponse.getEmail()).isEqualTo("kimjisu3268@gmail.com");
+        assertThat(myProfileResponse.getNickname()).isEqualTo("jisu3268");
+        assertThat(myProfileResponse.getAddress()).isEqualTo("Pangyo");
+        assertThat(myProfileResponse.getStatus()).isEqualTo(UserStatus.ACTIVE);
+        assertThat(myProfileResponse.getLastLoginAt()).isEqualTo(100L);
     }
 }

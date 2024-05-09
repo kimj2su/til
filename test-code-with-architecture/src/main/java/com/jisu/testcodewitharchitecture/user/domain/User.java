@@ -1,6 +1,8 @@
 package com.jisu.testcodewitharchitecture.user.domain;
 
 import com.jisu.testcodewitharchitecture.common.domain.exception.CertificationCodeNotMatchedException;
+import com.jisu.testcodewitharchitecture.common.service.ClockHolder;
+import com.jisu.testcodewitharchitecture.common.service.UuidHolder;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,13 +30,13 @@ public class User {
         this.lastLoginAt = lastLoginAt;
     }
 
-    public static User from(UserCreate userCreate) {
+    public static User from(UserCreate userCreate, UuidHolder uuidHolder) {
         return User.builder()
                 .email(userCreate.getEmail())
                 .nickname(userCreate.getNickname())
                 .address(userCreate.getAddress())
                 .status(UserStatus.PENDING)
-                .certificationCode(UUID.randomUUID().toString())
+                .certificationCode(uuidHolder.random())
                 .build();
     }
 
@@ -50,7 +52,7 @@ public class User {
                 .build();
     }
 
-    public User login() {
+    public User login(ClockHolder clockHolder) {
         return User.builder()
                 .id(id)
                 .email(email)
@@ -58,7 +60,7 @@ public class User {
                 .address(address)
                 .status(status)
                 .certificationCode(certificationCode)
-                .lastLoginAt(Clock.systemUTC().millis())
+                .lastLoginAt(clockHolder.millis())
                 .build();
     }
 
