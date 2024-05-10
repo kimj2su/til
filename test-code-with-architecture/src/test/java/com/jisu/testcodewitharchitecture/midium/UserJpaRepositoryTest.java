@@ -1,6 +1,8 @@
-package com.jisu.testcodewitharchitecture.user.infrastructure;
+package com.jisu.testcodewitharchitecture.midium;
 
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
+import com.jisu.testcodewitharchitecture.user.infrastructure.UserEntity;
+import com.jisu.testcodewitharchitecture.user.infrastructure.UserJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

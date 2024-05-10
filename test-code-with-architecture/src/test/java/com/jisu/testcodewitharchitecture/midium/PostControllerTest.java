@@ -1,4 +1,4 @@
-package com.jisu.testcodewitharchitecture.post.controller;
+package com.jisu.testcodewitharchitecture.midium;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

@@ -8,10 +8,12 @@ import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import com.jisu.testcodewitharchitecture.user.domain.UserUpdate;
 import com.jisu.testcodewitharchitecture.user.service.port.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Builder
 @Service
 @RequiredArgsConstructor
 public class UserService {

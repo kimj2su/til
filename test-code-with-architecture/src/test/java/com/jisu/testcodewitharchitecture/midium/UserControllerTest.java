@@ -1,10 +1,9 @@
-package com.jisu.testcodewitharchitecture.user.controller;
+package com.jisu.testcodewitharchitecture.midium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import com.jisu.testcodewitharchitecture.user.domain.UserUpdate;
-import com.jisu.testcodewitharchitecture.user.infrastructure.UserEntity;
 import com.jisu.testcodewitharchitecture.user.service.port.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
