@@ -1,5 +1,6 @@
 package com.jisu.testcodewitharchitecture.user.infrastructure;
 
+import com.jisu.testcodewitharchitecture.common.domain.exception.ResourceNotFoundException;
 import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import com.jisu.testcodewitharchitecture.user.service.port.UserRepository;
@@ -13,6 +14,11 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
+
+    @Override
+    public User getById(long writerId) {
+        return findById(writerId).orElseThrow(() -> new ResourceNotFoundException("Users", writerId));
+    }
 
     @Override
     public Optional<User> findById(long id) {

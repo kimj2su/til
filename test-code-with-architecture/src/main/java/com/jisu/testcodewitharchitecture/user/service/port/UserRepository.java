@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface UserRepository {
 
+    User getById(long writerId);
+
     Optional<User> findById(long id);
 
     Optional<User> findByIdAndStatus(long id, UserStatus userStatus);
@@ -14,5 +16,4 @@ public interface UserRepository {
     Optional<User> findByEmailAndStatus(String email, UserStatus userStatus);
 
     User save(User user);
-
 }
