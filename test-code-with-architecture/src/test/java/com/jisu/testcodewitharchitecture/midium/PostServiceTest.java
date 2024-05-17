@@ -3,7 +3,7 @@ package com.jisu.testcodewitharchitecture.midium;
 import com.jisu.testcodewitharchitecture.post.domain.Post;
 import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
 import com.jisu.testcodewitharchitecture.post.domain.PostUpdate;
-import com.jisu.testcodewitharchitecture.post.service.PostService;
+import com.jisu.testcodewitharchitecture.post.service.PostServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class PostServiceTest {
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
 
     @Test
     void getById는_존재하는_게시물을_내려준다() {

@@ -19,13 +19,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class UserServiceTest {
 
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @BeforeEach
     void init() {
         FakeMailSender fakeMailSender = new FakeMailSender();
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
-        this.userService = UserService.builder()
+        this.userService = UserServiceImpl.builder()
                 .uuidHolder(new TestUuidHolder("T.T"))
                 .clockHolder(new TestClockHolder(1678530673958L))
                 .userRepository(fakeUserRepository)
@@ -99,10 +99,10 @@ public class UserServiceTest {
     void userCreateDto_를_이용하여_유저를_생성할_수_있다() {
         // given
         UserCreate userCreate = UserCreate.builder()
-            .email("kimjisu12345@gmail.com")
-            .address("Seoul")
-            .nickname("jisu1234")
-            .build();
+                .email("kimjisu12345@gmail.com")
+                .address("Seoul")
+                .nickname("jisu1234")
+                .build();
 
         // when
         User result = userService.create(userCreate);
@@ -116,9 +116,9 @@ public class UserServiceTest {
     void userUpdateDto_를_이용하여_유저를_수정할_수_있다() {
         // given
         UserUpdate userUpdate = UserUpdate.builder()
-            .address("Incheon")
-            .nickname("jisu3268")
-            .build();
+                .address("Incheon")
+                .nickname("jisu3268")
+                .build();
 
         // when
         userService.update(1, userUpdate);

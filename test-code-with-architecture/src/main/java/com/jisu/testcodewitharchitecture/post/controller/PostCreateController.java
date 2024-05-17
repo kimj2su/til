@@ -1,8 +1,8 @@
 package com.jisu.testcodewitharchitecture.post.controller;
 
-import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
+import com.jisu.testcodewitharchitecture.post.controller.port.PostService;
 import com.jisu.testcodewitharchitecture.post.controller.response.PostResponse;
-import com.jisu.testcodewitharchitecture.post.service.PostService;
+import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class PostCreateController {
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@RequestBody PostCreate postCreate) {
         return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(PostResponse.from((postService.create(postCreate))));
+                .status(HttpStatus.CREATED)
+                .body(PostResponse.from((postService.create(postCreate))));
     }
 }

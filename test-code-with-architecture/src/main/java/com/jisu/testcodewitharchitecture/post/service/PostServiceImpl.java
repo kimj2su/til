@@ -2,6 +2,7 @@ package com.jisu.testcodewitharchitecture.post.service;
 
 import com.jisu.testcodewitharchitecture.common.domain.exception.ResourceNotFoundException;
 import com.jisu.testcodewitharchitecture.common.service.ClockHolder;
+import com.jisu.testcodewitharchitecture.post.controller.port.PostService;
 import com.jisu.testcodewitharchitecture.post.domain.Post;
 import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
 import com.jisu.testcodewitharchitecture.post.domain.PostUpdate;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Builder
 @Service
 @RequiredArgsConstructor
-public class PostService {
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;

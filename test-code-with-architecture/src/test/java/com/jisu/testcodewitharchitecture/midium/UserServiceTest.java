@@ -10,7 +10,7 @@ import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.domain.UserUpdate;
-import com.jisu.testcodewitharchitecture.user.service.UserService;
+import com.jisu.testcodewitharchitecture.user.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     @MockBean
     private JavaMailSender mailSender;
 
