@@ -64,6 +64,7 @@ public class UserController {
     ) {
         User user = userReadService.getByEmail(email);
         authenticationService.login(user.getId());
+        user = userReadService.getById(user.getId());
         return ResponseEntity
                 .ok()
                 .body(MyProfileResponse.from(user));

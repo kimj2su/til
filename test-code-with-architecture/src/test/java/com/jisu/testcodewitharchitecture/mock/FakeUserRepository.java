@@ -53,6 +53,7 @@ public class FakeUserRepository implements UserRepository {
                     .nickname(user.getNickname())
                     .status(user.getStatus())
                     .lastLoginAt(user.getLastLoginAt())
+                    .certificationCode(user.getCertificationCode())
                     .build();
             data.add(newUser);
             return newUser;

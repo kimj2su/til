@@ -1,41 +1,47 @@
 package com.jisu.testcodewitharchitecture.post.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jisu.testcodewitharchitecture.mock.TestContainer;
+import com.jisu.testcodewitharchitecture.post.controller.response.PostResponse;
 import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
+import com.jisu.testcodewitharchitecture.user.domain.User;
+import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class PostCreateControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void 사용자는_게시물을_작성할_수_있다() throws Exception {
         // given
+        TestContainer testContainer = TestContainer.builder()
+                .clockHolder(() -> 1678530673958L)
+                .build();
+        testContainer.userRepository.save(User.builder()
+                .id(1L)
+                .email("kimjisu3268@gmail.com")
+                .nickname("kimjisu3268")
+                .address("Pangyo")
+                .status(UserStatus.ACTIVE)
+                .certificationCode("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                .lastLoginAt(100L)
+                .build());
         PostCreate postCreate = PostCreate.builder()
                 .writerId(1)
                 .content("helloworld")
                 .build();
 
-        // when
-        // then
-        mockMvc.perform(
-                        post("/api/posts")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(postCreate)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.content").value("helloworld"))
-                .andExpect(jsonPath("$.writer.id").isNumber())
-                .andExpect(jsonPath("$.writer.email").value("kimjisu3268@gmail.com"))
-                .andExpect(jsonPath("$.writer.nickname").value("jisu3268"));
+        // when : 기능 수행
+        ResponseEntity<PostResponse> result = testContainer.postCreateController.createPost(postCreate);
+
+        // then : 결과 확인
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().createdAt()).isEqualTo(1678530673958L);
+        assertThat(result.getBody().content()).isEqualTo("helloworld");
+        assertThat(result.getBody().writer().getNickname()).isEqualTo("kimjisu3268");
+        assertThat(testContainer.userRepository.getById(1).getCertificationCode()).isEqualTo("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
     }
 }

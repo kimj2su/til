@@ -4,6 +4,7 @@ import com.jisu.testcodewitharchitecture.post.controller.port.PostService;
 import com.jisu.testcodewitharchitecture.post.controller.response.PostResponse;
 import com.jisu.testcodewitharchitecture.post.domain.PostCreate;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "게시물(posts)")
 @RestController
 @RequestMapping("/api/posts")
+@Builder
 @RequiredArgsConstructor
 public class PostCreateController {
 
