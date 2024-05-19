@@ -3,12 +3,7 @@ package com.jisu.testcodewitharchitecture.user.service;
 import com.jisu.testcodewitharchitecture.common.domain.exception.ResourceNotFoundException;
 import com.jisu.testcodewitharchitecture.common.service.ClockHolder;
 import com.jisu.testcodewitharchitecture.common.service.UuidHolder;
-import com.jisu.testcodewitharchitecture.user.controller.port.AuthenticationService;
-import com.jisu.testcodewitharchitecture.user.controller.port.CertificationService;
-import com.jisu.testcodewitharchitecture.user.controller.port.UserCreateService;
-import com.jisu.testcodewitharchitecture.user.controller.port.UserReadService;
 import com.jisu.testcodewitharchitecture.user.controller.port.UserService;
-import com.jisu.testcodewitharchitecture.user.controller.port.UserUpdateService;
 import com.jisu.testcodewitharchitecture.user.domain.User;
 import com.jisu.testcodewitharchitecture.user.domain.UserCreate;
 import com.jisu.testcodewitharchitecture.user.domain.UserStatus;
@@ -22,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Builder
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService, UserCreateService, UserUpdateService, UserReadService, AuthenticationService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CertificationService certificationService;
