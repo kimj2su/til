@@ -34,7 +34,7 @@ public class PostCreateControllerTest {
                 .build();
 
         // when : 기능 수행
-        ResponseEntity<PostResponse> result = testContainer.postCreateController.createPost(postCreate);
+        ResponseEntity<PostResponse> result = testContainer.postCreateController.create(postCreate);
 
         // then : 결과 확인
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);

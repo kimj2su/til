@@ -40,7 +40,7 @@ public class PostControllerTest {
                 .build());
 
         // when : 기능 수행
-        ResponseEntity<PostResponse> result = testContainer.postController.getPostById(1L);
+        ResponseEntity<PostResponse> result = testContainer.postController.getById(1L);
 
         // then : 결과 확인
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -57,7 +57,7 @@ public class PostControllerTest {
 
         // when : 기능 수행 && then : 결과 확인
         assertThatThrownBy(() ->
-                testContainer.postController.getPostById(1))
+                testContainer.postController.getById(1))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
@@ -84,7 +84,7 @@ public class PostControllerTest {
                 .build());
 
         // when : 기능 수행
-        ResponseEntity<PostResponse> result = testContainer.postController.updatePost(1L, PostUpdate.builder()
+        ResponseEntity<PostResponse> result = testContainer.postController.update(1L, PostUpdate.builder()
                 .content("foobar")
                 .build());
 

@@ -24,7 +24,7 @@ public class UserCreateControllerTest {
                 .build();
 
         // when : 기능 수행
-        ResponseEntity<UserResponse> result = testContainer.userCreateController.createUser(userCreate);
+        ResponseEntity<UserResponse> result = testContainer.userCreateController.create(userCreate);
 
         // then : 결과 확인
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
