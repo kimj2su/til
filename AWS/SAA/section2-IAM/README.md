@@ -32,3 +32,54 @@
 - 그룹 생성 -> AdministratorAccess 할당 -> 생성
 - 사용자 -> 이름 -> 액세스 키 만들기 -> 로컬 코드 등등
 
+## IAM 정책
+- AWS 리소스에 대한 액세스 권한을 정의 한 것
+- 사용자, 그룹, 역할에 정책을 연결하여 사용
+- JSON 문서 형식으로 이루어짐
+- 정책이 명시되지 않는 경우 기본적으로 모든 요청이 거부(Deny) 됨
+```json
+{
+  "Statement" : [{
+    "Effect" : "effect",
+    "Action" : "action",
+    "Resource" : "arn",
+    "Condition" : {
+      "condition" : {
+        "key" : "value"
+      }
+    }
+  }]
+}
+```
+- Effect : Allow 또는 Deny를 사용하여 명시도니 정책에 대해 액세스 허용 또는 거부
+- Action : 정책이 허용하거나 거부하는 작업 목록
+- Resource : 작업이 적용되는 리소스
+- Condition : 정책이 적용된느 세부 조건(옵션 사항)
+
+## IAM - 자격 증명 기반 정책
+### 관리형 정책
+- AWS 계정에 속한 다수의 사용자, 그룹 및 역할에 연결할 수 있는 정책
+  - AWS 관리형 정책 - AWS에서 생성 및 관리
+  - 고객 관리형 정책 - 사용자가 생성 및 관리
+
+### 인라인 정책
+- 단일 사용자, 그룹 또는 역할에 직접 추가하는 정책
+
+## IAM - 권한 경계(Permission Boundary)
+- IAM 사용자 또는 역할에 최대 권한을 제한 하는기능
+- 예, IAM 사용자에게 Amazon S3, Amazon CloudWatch 및 Amazon EC2만 관리할 수 있게 하려면 아래와 같은 정책을 적용
+- AWS 전체 권한을 가지고 있어도 권한 경계에 대한 권한 범위로 축소되어 적용됨
+```json
+{
+  "Version" : "2012-10-17",,
+  "Statement" : [{
+    "Effect" : "Allow",
+    "Action" : [
+      "s3",
+      "cloudwatch",
+      "ec2"
+    ],
+    "Resource" : "arn"
+  }]
+}
+```
