@@ -12,7 +12,7 @@
   6. 스토리지 구성
   7. 고급 세부 정보
 
-## EC@ 인스턴스 원격 접속 실습
+## EC2 인스턴스 원격 접속 실습
 
 ### SSH 연결 (Linux 인스턴스)
 - SSH(Secure Shell) : 원격 접속 프로토콜을 이용해 Linux 인스턴스에 원격으로 연결 및 파일 전송 가능
@@ -32,3 +32,14 @@
 - SSH 프로토콜을 사용하기에 22번 포트가 오픈 되어 있어야 연결 가능
 - PowerShell이나 Putty를 이용한 SSH 연결처럼 프라이빗 키를 다운로드 받을 필요가 없음
 - Linux 인스턴스만 연결 가능
+
+## EC2 Linux 인스턴스 웹서버 생성 실습
+- SSH 원격 접속 후 리눅스 명령어 입력을 통한 웹 서버 생성
+- 아래 명령어를 입력하기 전에 sudo su를 입력하여 root 계정으로 전환 후 아래 명령어 입력
+- 웹 서버 생성 명령어
+  - yum update -y
+  - yum install httpd -y
+  - service httpd start
+  - chkconfig httpd on
+  - cd /var/www/html
+  - echo "Hello AWS EC2.%(hostname -f)" > index.html
