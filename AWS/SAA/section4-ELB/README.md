@@ -64,3 +64,32 @@
     - IP address
     - Lambda
     - Application Load Balancer
+
+## Target Groups 개요 및 실습
+### 대상 유형 (Target Type)
+- 인스턴스 : 개별 EC2 Instance, EC2 Auto Scaling Groups
+- Lambda 함수 : Application Load Balancer만 연결 가능
+- Application Load Balancer : Network Load Balancer만 연결 가능
+
+### Protocol
+- HTTP, HTTPS -> ALB
+- TCP, TLS, UDP, TCP_UDP-> NLB
+- GENEVE -> GWLB
+
+### Health Check
+등록된 Target(대상)에게 상태 확인 메시지를 보내서 대상의 상태를 확인
+
+### 속성(Attributes) - HTTP/HTTPS
+- Application Load Balancer에서 사용
+- 등록 취소 지연(Deregistration delay/Connecting Draining)
+  - Auto Scaling 축소 등으로 등록취소 된 인스턴스에 더 이상의 요청을 보내지 않도록 하는 기능
+  - 해당 인스턴스에 진행중이 요청이 있을 경우 설정해 놓은 시 간동안 연결이 유효상태가 되지 않으면 해당 인스턴스에 연 결 요청을 하지 않음
+- 느린 시작 기간(Slow start duration)
+  - 기본적으로 대상은 대상 그룹으로 등록되자 마자 전체 요청 공유를 받기 시작하고 초기 상태 확인을 전달
+  - 느린 시작 모드에서는 로드 밸런서가 대상으로 보낼 수 있는 요청의 수를 선형으로 증가
+- 알고리즘
+  • 라운드 로빈(Round-Robin): 일정 시간마다 라우팅을 변경
+  • 최소 미해결 요청(Least Outstanding Requests): 처리하고 있는 요청이 가장 적은 대상에게 라우팅
+- 고정(Stickiness Sessions / Session Affinity)
+  -  클라이언트가 세션을 유지한 상태라면 모든 요청을 동일한 인스턴스로 유지하는 기능
+  - 세션 데이터를 잃지 않으려는 상태정보를 유지하는 서버에 적합
