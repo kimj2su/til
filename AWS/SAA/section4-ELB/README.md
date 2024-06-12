@@ -93,3 +93,17 @@
 - 고정(Stickiness Sessions / Session Affinity)
   -  클라이언트가 세션을 유지한 상태라면 모든 요청을 동일한 인스턴스로 유지하는 기능
   - 세션 데이터를 잃지 않으려는 상태정보를 유지하는 서버에 적합
+
+### 속성(Attributes) - TCP/UDP/TLS
+-Network Load Balancer 에서 사용
+- 등록 취소 지연(Deregistration delay)
+    - Auto Scaling 축소 등으로 등록 취소된 인스턴스에 더 이상의 요청을 보내지 않도록 하는 기능
+      - 해당 인스턴스에 진행중이 요청이 있을 경우 설정해 놓은 시 간동안 연결이 유효상태가 되지 않으면 해당 인스턴스에 연결 요청을 하지 않음
+- 등록 취소시 연결 종료 (Connection termination on deregistration)
+  - 등록 취소 지연에 도달 했을 때 NLB가 활성 연결 종료
+- 프록시 프로토콜 v2
+- 클라이언트 IP 주소 보존 (Preserve client IP addresses)
+  - 들어오는 모든 트래픽의 클라이언트 IP를 애플리케이션으로 전달
+- 고정(Stickiness Sessions / Session Affinity)
+  - 클라이언트가 세션을 유지한 상태라면 모든 요청을 동일한 인스턴스로 유지하는 기능
+  - 세션 데이터를 잃지 않으려는 상태정보를 유지하는 서버에 적합
