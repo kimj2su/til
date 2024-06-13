@@ -107,3 +107,8 @@
 - 고정(Stickiness Sessions / Session Affinity)
   - 클라이언트가 세션을 유지한 상태라면 모든 요청을 동일한 인스턴스로 유지하는 기능
   - 세션 데이터를 잃지 않으려는 상태정보를 유지하는 서버에 적합
+
+### 고정 세션 (Stickiness Sessions / Session Affinity)
+- 고정 세션은 대상 그룹의 동일한 대상으로 클라이언트 트래픽을 라우팅하는 기술
+- Application Load Balancer, Network Load Balancer 모두 사용 가능
+- Application Load Balancer는 세션 유지를 위해 쿠키(cookie)를 사용하기에 클라이언트 쿠키를 지원해야 함
