@@ -112,3 +112,9 @@
 - 고정 세션은 대상 그룹의 동일한 대상으로 클라이언트 트래픽을 라우팅하는 기술
 - Application Load Balancer, Network Load Balancer 모두 사용 가능
 - Application Load Balancer는 세션 유지를 위해 쿠키(cookie)를 사용하기에 클라이언트 쿠키를 지원해야 함
+
+### 교차 영역 로드 밸런싱 (Cross-Zone Load Balancing)
+- 교차 영역 로드 밸런싱 비활성화
+  - 가용영역 내에 있는 타겟에만 트래픽을 분배
+- 교차 영역 로드 밸런싱 활성화
+  - 모든 가용영역의 등록된 모든 탁겟 인스턴스에 동일하게 트래픽을 분배
