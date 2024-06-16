@@ -118,3 +118,26 @@
   - 가용영역 내에 있는 타겟에만 트래픽을 분배
 - 교차 영역 로드 밸런싱 활성화
   - 모든 가용영역의 등록된 모든 탁겟 인스턴스에 동일하게 트래픽을 분배
+
+## Application Load Balancer(ALB)
+- HTTP, HTTPS(보안  HTTP) 프로토콜을 사용하는 애플리케이션 로드 밸런싱에 사용
+- 리스너 프로토콜은  HTTP, HTTPS를 사용할 수 있음
+- 웹 애플리케이션 처리에 적합
+- 리스너 규칙을 기반으로 라우팅 설정이 가능함
+- 데이터 전송 보안을 위한 HTTPS 프로토콜 사용시 SSL/TLS 인증서를 배포해야 함
+- 인증서는 ACM(AWS Certificate Manager) 사용 또는 클라이언트 인증서 사용 가능
+- Application Load Balabncer는 AWS Web Application Firewall(WAF)과 통합하여 로드 밸런서 뒤쪽의 웹 애플리케이션을 웹 공격으로부터 보호 가능
+
+### Listener 규칙
+- host-header(호스트 헤더)
+  - 각 요청의 호스트 이름을 기반으로 라우팅 (예, www.example.com)
+- path-pattern(경로)
+  - 요청의 URL의 경로 패턴을 기반으로 라우팅(예, www.example.com/audio) 
+- http-header(HTTP 헤더)
+  - 각 요청의 HTTP 헤더를 기반으로 라우팅
+- http-request-method(HTTP 요청 메서드)
+  - 각 요청의 HTTP 요청 메서드를 기반으로 라우팅
+- query-string(쿼리 문자열)
+  - 쿼리 문자열의 키 / 값 페어 또는 값을 기반으로 라우팅
+- source-ip(소스 IP)
+  - 각 요청의 소스 IP 주소를 기반으로 라우팅
