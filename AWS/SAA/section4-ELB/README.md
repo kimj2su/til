@@ -154,3 +154,6 @@
 - ALB처럼 리스너 규칙 설정 없음
 - 데이터 전송 보안을 위한 TLS 프로토콜 사용시 SSL/TLS 인증서를 배포해야 함
 - 인증서는 ACM(AWS Certificate Manager) 사용 또는 클라이언트 인증서 사용 가능
+
+## Gateway Load Balancer(GWLB)
+-  방화벽, 침입 탐지 및 방지 시스템. 심층 패킷 검사 시스템과 같은 가상 어플라이언스를 배포, 확장 및 관리
