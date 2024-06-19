@@ -28,3 +28,19 @@
   - 예, CPU 사용량을 50%기준으로 하고 사용량 기준에 따라 EC2 인스턴스 수를 증가하거나 감소
 - 예측 조정 사용(PPredictive Scling)
   - 머신 러닝을 사용하여 CloudWatch의 기록 데이터를 기반으로 용량 필요량을 예측
+
+## EC2 Auto Scaling - 동적 조정(Dynamic Scaling)
+- 대상 추적 조정(Target Tracking Scaling)
+    - 지정한 지표 유형의 대상값을 기준으로 Auto Scaling 그룹을 조정 하는 방식
+    - 지표유형: 평균 CPU 사용률, 네트워크 인터페이스에서 송/수신한 평균 바이트 수, 로드발란서 요청 수
+    - 예, 평균 CPU 사용률을 50%로 설정하면 Auto Scaling 그룹이 목표 값에 따라 EC2 인스턴스 증가 및 감소를 통해 지표 값을 50%에 가깝게 유지
+- 단계 조정(Step Scaling)
+  - CloudWatch alarm의 지표를 기반으로 Auto Scaling 그룹을 확장 하는 방식
+  -  예, CPU 사용률이 60% 초과하면 Auto Scaling Group 10% 또는 2개 증가 CPU 사용률이 30% 이하면 Auto Scaling Group 10% 또는 2개 감소
+  - 크기 조정 활동 또는 상태 확인 교체가 진행 중인 동안에도 정책이 추가 경보에 계속 응답
+- 단순 조정(Simple Scaling)
+  - CloudWatch alarm의 지표를 기반으로 Auto Scaling 그룹을 확장 하는 방식
+  - 예, CPU 사용률이 60% 초과하면 Auto Scaling Group 10% 또는 2개 증가 CPU 사용률이 30% 이하면 Auto Scaling Group 10% 또는 2개 감소
+  - 크기 조정 활동이 시작된 후 정책은 크기 조정 활동 또는 상태 확인 교체가 완료되고 휴지 기간(Cooldown Period)이 끝날 때까지 기다린 후 추가 경보에 응답
+- Amazon SQS 기반 크기 조정
+  - Amazon SQS 대기열의 시스템 로드 변경에 따라 Auto Scaling 그룹을 조정
