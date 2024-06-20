@@ -44,3 +44,20 @@
   - 크기 조정 활동이 시작된 후 정책은 크기 조정 활동 또는 상태 확인 교체가 완료되고 휴지 기간(Cooldown Period)이 끝날 때까지 기다린 후 추가 경보에 응답
 - Amazon SQS 기반 크기 조정
   - Amazon SQS 대기열의 시스템 로드 변경에 따라 Auto Scaling 그룹을 조정
+
+## 조정 휴지(Scaling Cooldowns), 인스턴스 워밍업(Instance Warmup)
+- 불필요한 EC2 인스턴스가 생성되거나 종료되는 것을 방지 하는 기능
+- EC2가 안정적인 서비스 상태가 될 때까지 스케일링을 하지 않도록 차단하는 역할을 함
+- EC2 인스턴스가 처음 시작된 다음 안정적인 서비스 상태가 도리 때까지 시간이 소요 됨
+
+### 조정 휴지(Scaling Cooldowns)
+- 단순 조정(Simple Scaling) 정책에만 적용
+- EC2가 증가 또는 감소하는 활동이 발생하면 조정 휴지 기간(Cooldown Period)을 가짐
+- 조정 휴지 기간 동안 Auto Scaling Group은 EC2를 종료하거나 시작하지 않음
+- 디폴트 조정 휴지 기간은 300초
+
+### 인스턴스 워밍업(Instance Warmup)
+- 단계 조정(Step Scling), 대상 추적 조정(Target Tracking Scling) 정책에만 적용
+- 인스턴스가 처음 시작 되면 워밍업(Warmup) 시간을 가짐
+- 워밍업 시간이 만료될 때까지 인스턴스는 오토 스케일리의 집계된 EC2 인스턴스 지표에 포함되지 않음
+- 인스턴스 워밍업은 기본적으로 활성화 되어 있지 않음
