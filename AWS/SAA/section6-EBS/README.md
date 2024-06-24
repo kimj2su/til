@@ -49,3 +49,11 @@
  - Instance Store는 EC2인스턴스가 종료되면 데이터가 삭제되므로 영구적인 저장소가 아닌 고성능을 구하는 애플리케이션의 임시 저장소로 적합 
  - 예, 초당 수백 만개의 트랜잭션을 지원하는 I/O처리량이 높은 데이터 베이스의 데이터의 임시 스토리지 옵션으로 사용
 - 중요한 장기 데이터의 경우 Instance Store가 아닌 Amazon S3, Amazon EBS, Amazon EFS 등의 데이터 스토리지를 사용
+
+## Elastic File System(EFS)
+- 리눅스 환경의 EC2 인스턴스에서 연결하기 위한 네트워크 파일 스토리지
+- Network File System(NFS)프로토콜을 지원
+- 여러 가용영역에 있는 수십~수백대의 EC2 연결 가능(고 가용성, 확장성)
+- -EFS는 보안그룹을 통해 인스턴스에 연결
+- EC2외에 Linux방식의 온-프레미스 서버에서도 연결 가능
+- AWS Key Management Service(KMS)를 이용해 EFS 암호화 가능
