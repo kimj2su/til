@@ -57,3 +57,12 @@
 - -EFS는 보안그룹을 통해 인스턴스에 연결
 - EC2외에 Linux방식의 온-프레미스 서버에서도 연결 가능
 - AWS Key Management Service(KMS)를 이용해 EFS 암호화 가능
+
+## Elastic File System(EFS) - 스토리지 클래스
+- 스토리지 클래스
+- 표준 스토리지 (Standard) - 3개의 가용영역에 데이터 저장, 자주 액세스하는 파일을 저장하는데 사용
+- 표준 IA (Standard Infrequent Access) - 3개의 가용영역에 데이터 저장, 자주 액세스하지 않는 파일을 저장하는 데 사용
+- One Zone - 1개의 가용영역에 데이터 저장, 자주 액세스하는 파일을 저장하는 데 사용
+- One Zone IA (One Zone Infrequent Access) - 1개의 가용영역에 데이터 저장, 자주 액세스하지 않는 파일을 저장하는 데 사용
+- EFS 수명주기 관리 정책 - 일정 기간 동안 액세스하지 않은 파일을 액세스 빈도가 낮은 스토리지 클래스인 Standard-IA 또 는 One Zone-IA로 이동하여 비용 절감
+- EFS 지능형 계층화(Intelligent-Tiering) - 워크로드의 액세스 패턴을 모니터링하고 해당 표준 스토리지 클래스 (EFS Standard 또는 EFS One Zone) 에서 일정 기간 (예: 30일) 동안 액세스되지 않는 파일은 해당하는 Infrequent Access (IA)스토리지 클래스로 자동전환
