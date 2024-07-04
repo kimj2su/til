@@ -87,3 +87,23 @@
 - S3에서 웹사이트 호스팅을 하면 EC2등의 별도의 웹서버 운영을 하지 않아도 되기에 운영 오버헤드를 줄일 수 있음
 - 웹사이트 주소는 버킷이름.s3-website-리전.amazonaws.com 형식
 - 사이트 접속시 403에러(액세스 거부)가 나오면 버킷의 퍼블릭 액세스 허용이 안되어 있다는 것임
+
+### S3 정적 웹사이트 호스팅 - 버킷 정책
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::Bucket-Name/*"
+      ]
+    }
+  ]
+}
+```
