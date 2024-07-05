@@ -107,3 +107,10 @@
   ]
 }
 ```
+
+## S3 Cross-origin resource sharing(CORS)
+- Origin : 도메인 주소 또는 S3 버킷의 주소(예: http://website.s3-website.us-east-1.amazonaws.com)
+- 같은 Origin : http://www.amazon111.com/video = http://www.amazon111.com/audio
+- 다른 Origin: http://www.amazon111.com != http://www.amazon222.com
+- CORS는 한 도메인(오리진)에서 로드되어 다른 도메인(오리진)에 있는 리소스에 버킷에 대한 액세스를 공유/허용 하는것
+- 권한이 없는 사용자가 도메인에 액세스 하는 것을 방지할 수 있음
