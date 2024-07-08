@@ -175,3 +175,12 @@
 - 버전 관리가 활성화 되어 있을 경우 객체의 버전별로 수명 주기 정책을 적용할 수 있음
 - Amazon S3 Storage Class Analysis (스토리지 클래스 분석)
   - 데이터 액세스 패턴을 관찰해 자주 액세스하지 않는 STANDARD 스토리지를 STANDARD_IA 스토리지 클래스로 옮길 시점을 알려줌
+
+## S3 Glacier Vault Lock and Object Lock
+- S3 Glacier Valut는 아카이브 데이터를 저장하는 스토리지 컨테이너 서비스
+- S3 처럼 콘솔을 통해 데이터 업로드를 할 수 없고 CLI, 코드 등의 명령어를 통해 데이터를 업로드
+- S3 Glacier Vault Lock을 사용하여 파일 저장 후 삭제, 편집을 못하도록 정책을 잠글 수 있음
+- Write Once Read Many(WORM) 모델을 적용
+- Vault Lock을 사용하기 위해서는 Vault Lock 정책을 생성
+- Vault 정책이 생성된 이후에 더 이상 변경이나 삭제 불가
+- 데이터 보관 규정 준수 정책이 있는 경우에 Vault Lock 사용
