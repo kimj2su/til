@@ -3,6 +3,7 @@ package com.jisu.backend.jwt;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -37,5 +38,9 @@ public class JwtUtil {
 
     public String getUsername(String token) {
         return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody().getExpiration();
     }
 }

@@ -1,6 +1,7 @@
 package com.jisu.backend.config;
 
 import com.jisu.backend.jwt.JwtUtil;
+import com.jisu.backend.service.BlackListService;
 import com.jisu.backend.service.CustomUserDetailsService;
 import com.jisu.backend.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +19,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final BlackListService blackListService;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, BlackListService blackListService) {
         this.userDetailsService = userDetailsService;
+        this.blackListService = blackListService;
     }
 
     @Bean
@@ -52,7 +55,7 @@ public class SecurityConfig {
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService, blackListService), UsernamePasswordAuthenticationFilter.class)
                 // .formLogin(Customizer.withDefaults())
         ;
 
