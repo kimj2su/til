@@ -1,5 +1,6 @@
 package com.jisu.backend.controller;
 
+import com.jisu.backend.dto.EditArticleDto;
 import com.jisu.backend.dto.WriteArticleDto;
 import com.jisu.backend.entity.Article;
 import com.jisu.backend.service.ArticleService;
@@ -42,5 +43,12 @@ public class ArticleController {
       return ResponseEntity.ok(articleService.getNewArticle(boardId, firstId));
     }
     return ResponseEntity.ok(articleService.firstGetArticle(boardId));
+  }
+
+  @PutMapping("/{boardId}/articles/{articleId}")
+  public ResponseEntity<Article> modifyArticle(@PathVariable Long boardId,
+      @PathVariable Long articleId,
+      @RequestBody EditArticleDto editArticleDto) {
+    return ResponseEntity.ok(articleService.modifyArticle(boardId, articleId, editArticleDto));
   }
 }
