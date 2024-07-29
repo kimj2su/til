@@ -44,6 +44,9 @@ public class Article {
   @JsonIgnore
   private Board board;
 
+  @Column(nullable = false)
+  private boolean isDeleted = false;
+
   @Lob
   @Column(nullable = false)
   private String content;
@@ -65,5 +68,9 @@ public class Article {
     this.content = content;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+  }
+
+  public void delete() {
+    this.isDeleted = true;
   }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,12 @@ public class ArticleController {
       @PathVariable Long articleId,
       @RequestBody EditArticleDto editArticleDto) {
     return ResponseEntity.ok(articleService.modifyArticle(boardId, articleId, editArticleDto));
+  }
+
+  @DeleteMapping("/{boardId}/article/{articleId}")
+  public ResponseEntity<Void> deleteArticle(@PathVariable Long boardId,
+      @PathVariable Long articleId) {
+    articleService.deleteArticle(boardId, articleId);
+    return ResponseEntity.noContent().build();
   }
 }

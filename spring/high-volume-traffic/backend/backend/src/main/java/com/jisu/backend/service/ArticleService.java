@@ -5,6 +5,7 @@ import com.jisu.backend.dto.WriteArticleDto;
 import com.jisu.backend.entity.Article;
 import com.jisu.backend.entity.Board;
 import com.jisu.backend.entity.User;
+import com.jisu.backend.exception.ForbiddenException;
 import com.jisu.backend.exception.RateLimitException;
 import com.jisu.backend.exception.ResourceNotFoundException;
 import com.jisu.backend.repository.ArticleRepository;
@@ -71,8 +72,17 @@ public class ArticleService {
     Article article = articleRepository.findById(articleId)
         .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
 
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+
     if (!isCanEditArticle()) {
       throw new RateLimitException("5분 이내에는 수정할 수 없습니다.");
+    }
+
+    if (article.getAuthor() != user) {
+      throw new ForbiddenException("수정할 수 없습니다.");
     }
 
     if (!article.getBoard().getId().equals(boardId)) {
@@ -113,5 +123,29 @@ public class ArticleService {
     Duration duration = Duration.between(localDateTime, dateAsLocalDateTime);
 
     return Math.abs(duration.toMinutes()) > 5;
+  }
+
+  @Transactional
+  public void deleteArticle(Long boardId, Long articleId) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
+
+    if (article.getAuthor() != user) {
+      throw new ForbiddenException("수정할 수 없습니다.");
+    }
+
+    if (!article.getBoard().getId().equals(boardId)) {
+      throw new ResourceNotFoundException("게시글을 찾을 수 없습니다.");
+    }
+
+    if (!isCanEditArticle()) {
+      throw new RateLimitException("5분 이내에는 수정할 수 없습니다.");
+    }
+
+    article.delete();
   }
 }

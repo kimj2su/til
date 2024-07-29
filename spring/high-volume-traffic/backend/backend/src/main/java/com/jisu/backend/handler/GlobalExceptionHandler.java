@@ -1,5 +1,6 @@
 package com.jisu.backend.handler;
 
+import com.jisu.backend.exception.ForbiddenException;
 import com.jisu.backend.exception.RateLimitException;
 import com.jisu.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(RateLimitException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public String handleRateLimitException(RateLimitException e) {
+    return e.getMessage();
+  }
+
+  @ExceptionHandler(ForbiddenException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public String handleForbiddenException(ForbiddenException e) {
     return e.getMessage();
   }
 }
