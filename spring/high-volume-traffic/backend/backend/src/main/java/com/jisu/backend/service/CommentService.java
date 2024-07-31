@@ -16,7 +16,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +60,42 @@ public class CommentService {
         .article(article)
         .build();
     return commentRepository.save(comment);
+  }
+
+  @Async
+  public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
+    boardRepository.findById(boardId)
+        .orElseThrow(() -> new ResourceNotFoundException("게시판을 찾을 수 없습니다."));
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
+    if (article.isDeleted()) {
+      throw new ResourceNotFoundException("게시글을 찾을 수 없습니다.");
+    }
+    return CompletableFuture.completedFuture(article);
+  }
+
+  @Async
+  public CompletableFuture<List<Comment>> getComments(Long articleId) {
+    return CompletableFuture.completedFuture(
+        commentRepository.findByArticleIdOrderByCreatedAtDesc(articleId));
+  }
+
+  public CompletableFuture<Article> getArticleWithComment(Long boardId, Long articleId) {
+    CompletableFuture<Article> articleFuture = getArticle(boardId, articleId);
+    CompletableFuture<List<Comment>> commentsFuture = getComments(articleId);
+
+    return CompletableFuture.allOf(articleFuture, commentsFuture).thenApply(voidResult -> {
+      try {
+        Article article = articleFuture.get();
+        List<Comment> comments = commentsFuture.get();
+        article.setComments(comments);
+
+        return article;
+      } catch (InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }
+    });
   }
 
   private boolean isCanWriteComment() {

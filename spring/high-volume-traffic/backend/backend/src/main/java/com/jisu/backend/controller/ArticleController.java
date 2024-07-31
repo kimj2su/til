@@ -4,6 +4,7 @@ import com.jisu.backend.dto.EditArticleDto;
 import com.jisu.backend.dto.WriteArticleDto;
 import com.jisu.backend.entity.Article;
 import com.jisu.backend.service.ArticleService;
+import com.jisu.backend.service.CommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController {
 
   private final ArticleService articleService;
+  private final CommentService commentService;
 
   @PostMapping("/{boardId}/articles")
   public ResponseEntity<Article> writeArticle(@PathVariable Long boardId,
@@ -56,5 +58,13 @@ public class ArticleController {
       @PathVariable Long articleId) {
     articleService.deleteArticle(boardId, articleId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{boardId}/articles/{articleId}")
+  public ResponseEntity<Article> getArticleWithComment(
+      @PathVariable Long boardId,
+      @PathVariable Long articleId
+  ) {
+    return ResponseEntity.ok(commentService.getArticleWithComment(boardId, articleId).resultNow());
   }
 }
