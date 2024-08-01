@@ -62,6 +62,35 @@ public class CommentService {
     return commentRepository.save(comment);
   }
 
+  @Transactional
+  public Comment editComment(Long boardId, Long articleId, Long commentId, WriteCommentDto dto) {
+    if (!isCanEditComment()) {
+      throw new RateLimitException("Comment");
+    }
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User author = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new ResourceNotFoundException("author not found"));
+    Board board = boardRepository.findById(boardId)
+        .orElseThrow(() -> new ResourceNotFoundException("Board not found"));
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+
+    if (article.isDeleted()) {
+      throw new ForbiddenException("Article is Deleted");
+    }
+
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+
+    if (!comment.getAuthor().getUsername().equals(userDetails.getUsername())) {
+      throw new ForbiddenException("You are not the author of this comment");
+    }
+
+    comment.setContent(dto.content());
+    return comment;
+  }
+
   @Async
   public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
     boardRepository.findById(boardId)
@@ -114,7 +143,7 @@ public class CommentService {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     Comment latestComment = commentRepository.findLatestArticleByAuthorUsernameOrderByUpdatedAt(
         userDetails.getUsername());
-    if (latestComment == null) {
+    if (latestComment == null || latestComment.getUpdatedAt() == null) {
       return true;
     }
     return isDifferenceMoreThanOneMinutes(latestComment.getUpdatedAt());

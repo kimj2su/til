@@ -105,6 +105,9 @@ public class ArticleService {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     Article artile = articleRepository.findLatestArticleByAuthorUsernameOrderByCreatedAt(
         userDetails.getUsername());
+    if (artile == null || artile.getUpdatedAt() == null) {
+      return true;
+    }
     return isDifferenceMoreThanFiveMinutes(artile.getCreatedAt());
   }
 
@@ -113,6 +116,9 @@ public class ArticleService {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     Article artile = articleRepository.findLatestArticleByAuthorUsernameOrderByUpdatedAt(
         userDetails.getUsername());
+    if (artile == null || artile.getUpdatedAt() == null) {
+      return true;
+    }
     return isDifferenceMoreThanFiveMinutes(artile.getUpdatedAt());
   }
 
