@@ -91,24 +91,6 @@ public class CommentService {
     return comment;
   }
 
-  @Async
-  public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
-    boardRepository.findById(boardId)
-        .orElseThrow(() -> new ResourceNotFoundException("게시판을 찾을 수 없습니다."));
-    Article article = articleRepository.findById(articleId)
-        .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
-    if (article.isDeleted()) {
-      throw new ResourceNotFoundException("게시글을 찾을 수 없습니다.");
-    }
-    return CompletableFuture.completedFuture(article);
-  }
-
-  @Async
-  public CompletableFuture<List<Comment>> getComments(Long articleId) {
-    return CompletableFuture.completedFuture(
-        commentRepository.findByArticleIdOrderByCreatedAtDesc(articleId));
-  }
-
   public CompletableFuture<Article> getArticleWithComment(Long boardId, Long articleId) {
     CompletableFuture<Article> articleFuture = getArticle(boardId, articleId);
     CompletableFuture<List<Comment>> commentsFuture = getComments(articleId);
@@ -125,6 +107,43 @@ public class CommentService {
         throw new RuntimeException(e);
       }
     });
+  }
+
+  @Transactional
+  public Comment deleteComment(Long boardId, Long articleId, Long commentId) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+    Board board = boardRepository.findById(boardId)
+        .orElseThrow(() -> new ResourceNotFoundException("Board not found"));
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new ResourceNotFoundException("댓글을 찾을 수 없습니다."));
+    if (!comment.getAuthor().getUsername().equals(user.getUsername())) {
+      throw new ForbiddenException("삭제할 수 없습니다.");
+    }
+    comment.setDeleted(true);
+    return comment;
+  }
+
+  @Async
+  public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
+    boardRepository.findById(boardId)
+        .orElseThrow(() -> new ResourceNotFoundException("게시판을 찾을 수 없습니다."));
+    Article article = articleRepository.findById(articleId)
+        .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
+    if (article.isDeleted()) {
+      throw new ResourceNotFoundException("게시글을 찾을 수 없습니다.");
+    }
+    return CompletableFuture.completedFuture(article);
+  }
+
+  @Async
+  public CompletableFuture<List<Comment>> getComments(Long articleId) {
+    return CompletableFuture.completedFuture(
+        commentRepository.findByArticleIdOrderByCreatedAtDesc(articleId));
   }
 
   private boolean isCanWriteComment() {
