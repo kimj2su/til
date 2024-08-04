@@ -37,3 +37,17 @@ VMware Cloud on AWS에 배포하거나 Amazon EC2에서 AMI로 배포
 ## Storage Gateway - 하드웨어 어플라이언스
 - 스토리지 게이트 웨이 운영을 위해서는 온프레미스 서버에 Storage Gateway 애플리케이션을 설치해야함
 - 온프레미스에 서버 등의 저장장치가 없거나 인프라가 부족한 작은 데이터 센터의 경우 Storage Gateway 소프트웨어가 미리 설치된 하드웨어 어플라이언스를 구매하여 운용 가능
+
+
+## Amazon FSx
+- Amazon 파일 시스템
+- 온-프레미스와 AWS 클라우드에서 액세스 가능
+- 4가지 유형의 파일 시스템 제공
+- FSx for Lustre
+  - 리눅스 환경을 위한 고성능 병렬 스토리지 시스템
+  - 병렬 스토리지 시스템 = 분산파일 시스템(DFS, Distributed File System)
+  - 머신 러닝, 빅데이터 등의 고성능 컴퓨팅에 사용 (HPC, High Performance Computing)
+  - Amazon S3 버킷과 통합 구성하여 같이 사용가능
+  - 파일 시스템 배포 옵션
+    - 스크래치 파일 시스템
+    - 지속적 파일 시스템
