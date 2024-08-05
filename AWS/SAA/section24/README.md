@@ -1,0 +1,27 @@
+# 문제 풀이 메모
+- CloudFront 서명된 URL : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
+- CloudFront 서명 쿠키 : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
+- CloudFront 필드 수준 암호화 프로필 구성 : 엣지로케이션에서 데이털르 추가로 암호화 하는 기능
+- PostgreSQL 데이터베이스를 Amazon Aurora로 마이그레이션 : Linux 호스트에서 PostgreSQL을 직접 운영하지 않고 AWS 관리 Aurora 솔루션 사용
+- Amazon S3 : 파일 저장을 위한 가장 비용 효율적 스토리지
+- Amazon S3 Glacier : 장기 보관을 위한 스토리지
+- Amazon S3 Athena : S3의 데이터를 쿼리할 수 있는 서비스
+- Amazon QuickSight : 비즈니스 인텔리전스 도구
+- FTP : 암호화 되지 않은 채널 전송 방법
+- AWS Snowball : 장비를 직접 배송하는 방식으로 대량의 데이터를 전송하는 방법
+- Amzaon VPN : 가상 프라이빗 네트워크, 1Gbps 인터넷으로 10TB 전송에 20시간 소요
+- Amazon API Gateway, Lambda, DynamoDB : 서버리스 아키텍처, 고가용성 솔루션
+- Route53으로 HTTPS를 통해 메시지 수신 구현 불가
+- HTTPS를 통해 S3로 바로 메시지 수신 불가
+- AWS CloudTrail은 계정 활동 기록 서비스
+- 단일 DB 인스턴스로 구성되어도 데이터는 여러 가용영역에 복제 및 분산 저장됨
+- 다중 AZ 배포를 사용하여 DB 클러스터를 구성하는 경우 단일 인스턴스 DB 클러스터  보다 비용이 더 비쌈
+- 글로벌 데이터베이스는 다른 리전으로 데이터베이스를 복제하는 기능. 다른 리전에 데이터베이스 추가에 대한 비용 발생
+- Amazon CloudFront : 전 세계로 콘텐츠 배포를 가속화 하는 서비스
+- Aws Global Accelerator : 라우팅 최적화 서비스
+- 아마존 Route 53 : DNS 서비스
+- Amzaon S3 Transfer Acceleration : S3로 데이터 전송 속도를 높이는 서비스
+- Amazon S3 Glacier : 데스크탑에 스토리지 드라이브로 직접 탑재 불가
+- AWS DataSync : 데이터 마이그레이션 서비스
+- AWS Snowball Edge :  오프라인 스토리지 마이그레이션 서비스
+- AWS 스토리지 게이트 웨이 : 온프레미스 데이터 센터의 데이터와 AWS 클라우드의 스토리지를 연결하는 서비스
