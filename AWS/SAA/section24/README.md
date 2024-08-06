@@ -25,3 +25,12 @@
 - AWS DataSync : 데이터 마이그레이션 서비스
 - AWS Snowball Edge :  오프라인 스토리지 마이그레이션 서비스
 - AWS 스토리지 게이트 웨이 : 온프레미스 데이터 센터의 데이터와 AWS 클라우드의 스토리지를 연결하는 서비스
+- Route 53 : DNS 서비스
+- Network Load Balancer : UDP 처리 가능
+- Amazon Aurora는 1초 미만의 읽기 복제 대기 시간을 제공한다.
+- Amazon Aurora 글로벌 데이터베이스 : RPO 1초 - 1초 미맘 대기시간으로 5개 보조리전에 복제, RTO 1초 - 보조 리전 중 하나가 1분 이내 읽기/ 쓰기 기능으로 승격
+- Amazon RDS for MySQL : 스냅샷은 1초 미만으로 다른 리전으로 복사  할 수 없음
+- Amazon Simple Queue Service : 메시지 전달 서비스, 애플리케이션이 중단 되어도 SQS 대기열이 메시지를 가지고 있다가 나중에 처리하므로 트랜잭션 손실 방지 가능
+- AWS WAF : 웹 애플리케이션 방화벽(특정 국가 액세스 제한 가능)
+- S3는 99%이상 가용성 제공 및 정적 웹사이트 운영 가능
+- 
