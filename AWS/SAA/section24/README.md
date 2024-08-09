@@ -34,7 +34,7 @@
 - AWS WAF : 웹 애플리케이션 방화벽(특정 국가 액세스 제한 가능)
 - S3는 99%이상 가용성 제공 및 정적 웹사이트 운영 가능
 - Amazon Kinesis Data Analytics : 스트리밍 데이터 분석 서비스, 데이터 분석 용도
-- Amazon Kinesis Data Streams : 스트리밍 데이터 수집 및 분석 서비스, 단일 샤드는 초당 1000개 메시지 처리 가능
+- Amazon Kinesis Data Streams : 실시간 스트리밍 데이터 수집 및 분석 서비스, 단일 샤드는 초당 1000개 메시지 처리 가능
 - Amazon Simple Queue Service: 애플리케이션의 결합을 느슨하게 하는 솔루션
 - Amazon EC2 인스턴스 스토어 : 가장 고성능 임시 블록 스토리지, 인스턴스 손실을 견딜 수 있으므로 적합
 - Amazon EFS : 리눅스 기반 파일 스토리지
@@ -87,3 +87,14 @@
 - NAT 게이트웨이가 가진 공인 IP 주소를 통해 인터넷 연결
 - 프라이빗 서브넷에서 EC2에서 DynamoDB 테이블에 액세스하기 위해서는 VPC 엔드포인트 사용
 - VPN 보다는 Direct Connect 가 일관적이고 안정성있게 보낼 수 있는 범용성 있는 서비스이다.
+- Aurora 글로벌 데이터 베이스는 다른 리전으로 DB 복제 기능. 리전 장애시 보조리전 중 하나가 1분 이내 읽기, 쓰기로 승격 됨
+- 가장 짧은 시간에 복잡한 분석 쿼리 및 조인 수행 및 Amazon QuickSight로 시각화 : Amazon Redshift(데이터 웨어하우스)
+- AWS 관리형 고객 마스터 키(CMK) : 사용자의 키 액세스 제어 설정을 할 수 없다.
+- Amazon Macie : 민감한 데이터를 검색하고 보호하는 서비스
+- Amzaon GuardDuty : 위협 탐지 서비스
+- Amazon Inspecotr : EC2 및 커넽이너의 소프트웨어 취약성과 네트워크 노출을 스캔하는 취약성 관리 서비스
+- Amazon EventBridge(Amzaon CloudWatch Events) : 이벤트를 자동 전송하는 서비스
+- 보안 그룹은 허용만 있다.
+- CIDR 범위의 다른 IP 주소 차단 -> 네트워크 ACL 인바운드 테이블에 거부 규칙 추가
+- 대상 추적 정책을 사용 -> CPU 사용률이 70% 이상인 경우 Auto Scaling 그룹의 크기를 조정
+- 특정 국가 차단 : Amazon CloudFront를 사용하여 특정 국가의 액세스를 차단
