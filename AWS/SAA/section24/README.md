@@ -1,11 +1,17 @@
 # 문제 풀이 메모
+
+## S3
+- Amazon S3 : 파일 저장을 위한 가장 비용 효율적 스토리지
+- Amazon S3 Glacier : 장기 보관을 위한 스토리지
+- Amazon S3 Athena : S3의 데이터를 쿼리할 수 있는 서비스
+- S3 표준 : 자주 액세스 하는 파일 저장시 사용
+- S3 지능형 계층화(Intelligent-Tiering) : 자주 액세스 하는 파일과 드물게 액세스 하는 파일을 구분하여 저장, 액세스 패턴을 알 수 없는 경우 사용
+- S3 Standard-Infrequent Access(S3 Standard-IA) : 자주 액세스 하지 않는 파일 저장 시 사용
+- S3 One Zone-Infrequent Access(S3 One Zone-IA) : 단일 가용영역에 저장되는 파일 저장 시 사용s
 - CloudFront 서명된 URL : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
 - CloudFront 서명 쿠키 : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
 - CloudFront 필드 수준 암호화 프로필 구성 : 엣지로케이션에서 데이털르 추가로 암호화 하는 기능
 - PostgreSQL 데이터베이스를 Amazon Aurora로 마이그레이션 : Linux 호스트에서 PostgreSQL을 직접 운영하지 않고 AWS 관리 Aurora 솔루션 사용
-- Amazon S3 : 파일 저장을 위한 가장 비용 효율적 스토리지
-- Amazon S3 Glacier : 장기 보관을 위한 스토리지
-- Amazon S3 Athena : S3의 데이터를 쿼리할 수 있는 서비스
 - Amazon QuickSight : 비즈니스 인텔리전스 도구
 - FTP : 암호화 되지 않은 채널 전송 방법
 - AWS Snowball : 장비를 직접 배송하는 방식으로 대량의 데이터를 전송하는 방법
@@ -18,7 +24,7 @@
 - 다중 AZ 배포를 사용하여 DB 클러스터를 구성하는 경우 단일 인스턴스 DB 클러스터  보다 비용이 더 비쌈
 - 글로벌 데이터베이스는 다른 리전으로 데이터베이스를 복제하는 기능. 다른 리전에 데이터베이스 추가에 대한 비용 발생
 - Amazon CloudFront : 전 세계로 콘텐츠 배포를 가속화 하는 서비스
-- Aws Global Accelerator : 라우팅 최적화 서비스
+- Aws Global Accelerator : 라우팅 최적화 서비스, 가장 짧은 리전으로 라우팅 및 자동 장애 조치 가능
 - 아마존 Route 53 : DNS 서비스
 - Amzaon S3 Transfer Acceleration : S3로 데이터 전송 속도를 높이는 서비스
 - Amazon S3 Glacier : 데스크탑에 스토리지 드라이브로 직접 탑재 불가
@@ -53,7 +59,11 @@
 - VPC 피어링 : 높은 네트워크 처리에 대한 솔루션이 아님
 - 여러 가용영역에 EC2를 배치하면 서로 다른 데이터 센터에 EC2가 배치되므로 인스턴스의 네트워크의 짧은 지연시간을 만들 수 없음
 - AWS Shield : DDoS 공격 방어 서비스
-- AWS WAF : 웹 애플리케이션 방화벽 서비스
+  - ELB, CloudFront, Route 53, Global Accelerator, EC2
+- AWS WAF : 웹 애플리케이션 방화벽 서비스, SQL Injection, 크로스 사이트 스크립팅 (XSS)공격 방어, HTTP/ HTTPS 요청을 보호하므로 NLB(네트워크 레벨이 아닌) ALB 연결가능
+  - ALB, API Gateway, CloudFront, ELB, Route 53
+- AWS Firewall Manager : AWS Organizations를 사용하여 여러 계정에 걸쳐 AWS WAF 및 AWS Shield Advanced를 중앙 집중화 관리
+- AWS Shield Advanced : DDoS 공격 방어 서비스
 - AWS Inspector : 보안 취약점 검사 서비스
 - Amazon Mecie : 민감한 데이터를 검색하고 보호
 - Amazon GuardDuty : 악성 활동을 감지하고 보호
@@ -100,4 +110,17 @@
 - 대상 추적 정책을 사용 -> CPU 사용률이 70% 이상인 경우 Auto Scaling 그룹의 크기를 조정
 - 특정 국가 차단 : Amazon CloudFront를 사용하여 특정 국가의 액세스를 차단
 - RedShift 는 데이터를 영구보관하고 거의 실시간으로 쿼리 가능
-- 
+- 16개의 Amazon Ec2 Linux 인스턴스 그룹은 노드간 통신에 가장 낮은 지연 시간-> 클러스터 배치 그룹
+- 고성능 스토리지를 위한 공유 블록 장치 -> EBS 다중 연결
+- App Flow : Saas 애플리케이션과 AWS 간의 데이터를 전송해 주는 서비스로 최소한의 오버헤드로 구축 가능
+- 미국의 온프레미스에서 서버가 실행되지만 유럽 사용자를 위해 로딩 시간을 최적화 하기 위해서 CloudFront를 사용 (Edge Location)
+- Aws Config : AWS 리소스의 구성 변경 사항 추적
+- AWS CloudTrail : AWS 계정 활동 기록 서비스
+- VPN : 500Mbps 인터넷을 사용하면 700TB 전송시 100일 이상 소요
+- 인터넷에 대한 제약 조건과 기간에 대한 제약 조건 -> 데이터 마이크레이션은 AWS Snowball 사용
+- S3 VPC 게이트웨이 엔드포인트를 사용해 프라이빗 하게 라우팅하면 인터넷으로 데이터 전송하는 것보다 저렴하다.
+- DynamoDB 테이블에서 읽기 및 쓰기 트래픽이 예측할 수 없는 경우 온디맨드 용량 모드를 사용함 -> 읽기/ 쓰기 처리량을 자동으로 조정, 트래픽 예측이 불가능한경우 사용
+- Amazon Comprenhend : 텍스트 분석 서비스
+- Amazon Rekognition : 이미지 및 비디오 분석 서비스
+- Amazon SageMaker : 머신러닝 모델을 구축, 훈련 및 배포하는 서비스
+- Amazon Elastic File System(Amazon EFS) : 고가용성, 내구성을 만족하는 솔루션
