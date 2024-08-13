@@ -7,7 +7,8 @@
 - S3 표준 : 자주 액세스 하는 파일 저장시 사용
 - S3 지능형 계층화(Intelligent-Tiering) : 자주 액세스 하는 파일과 드물게 액세스 하는 파일을 구분하여 저장, 액세스 패턴을 알 수 없는 경우 사용
 - S3 Standard-Infrequent Access(S3 Standard-IA) : 자주 액세스 하지 않는 파일 저장 시 사용
-- S3 One Zone-Infrequent Access(S3 One Zone-IA) : 단일 가용영역에 저장되는 파일 저장 시 사용s
+- S3 One Zone-Infrequent Access(S3 One Zone-IA) : 단일 가용영역에 저장되는 파일 저장 시 사용
+- S3 스토리지 렌즈 : 지표중에 불완전한 멀티파트 업로드에 대한 분석 기능이 있음
 - CloudFront 서명된 URL : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
 - CloudFront 서명 쿠키 : 액세스를 제한하는 기능, 민감한 정보 보호를 위한 암호화 기능이 아님
 - CloudFront 필드 수준 암호화 프로필 구성 : 엣지로케이션에서 데이털르 추가로 암호화 하는 기능
@@ -124,3 +125,6 @@
 - Amazon Rekognition : 이미지 및 비디오 분석 서비스
 - Amazon SageMaker : 머신러닝 모델을 구축, 훈련 및 배포하는 서비스
 - Amazon Elastic File System(Amazon EFS) : 고가용성, 내구성을 만족하는 솔루션
+- AWS Control Tower : 다중 계정 환경을 쉽게 관리하는 서비스. Control Tower에서 OU 변경에 대한 Drift 감지에 대해 알림을 설정 가능
+- Amazon EKS 커넥터 : 외부 쿠버네티스 클러스터를 AWS에서 관리 가능
+- AWS Service Catalog : 서비스들을 중앙에서 배포 및 관리하는 기능
