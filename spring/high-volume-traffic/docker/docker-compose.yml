@@ -3,9 +3,9 @@ version: '3.8'  # Docker Compose 파일 버전
 services:
   mysql-db:
     image: mysql:8.0  # 사용할 MySQL 버전
-#    restart: always  # 컨테이너 재시작 정책
+    #    restart: always  # 컨테이너 재시작 정책
     platform: linux/amd64  # 플랫폼 설정
-#    container_name: mysql-container  # 컨테이너 이름 (원하는 이름으로 변경 가능)
+    #    container_name: mysql-container  # 컨테이너 이름 (원하는 이름으로 변경 가능)
     environment:
       MYSQL_ROOT_PASSWORD: onion1!  # 루트 사용자 비밀번호
       MYSQL_DATABASE: onion-db # 생성할 기본 데이터베이스 이름
@@ -15,8 +15,41 @@ services:
       - "3306:3306"  # 호스트와 컨테이너 간의 포트 매핑
     volumes:
       - db_data:/var/lib/mysql  # 데이터베이스 데이터를 저장할 볼륨 마운트
-#    networks:
-#      - mysql_network  # 네트워크 설정 (선택 사항)
+  #    networks:
+  #      - mysql_network  # 네트워크 설정 (선택 사항)
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=onion1!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    command: >
+      sh -c "
+      bin/elasticsearch-plugin install analysis-nori;
+      bin/elasticsearch
+      "
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
 
 #networks:
 #  mysql_network:  # 네트워크 정의
@@ -24,3 +57,5 @@ services:
 
 volumes:
   db_data:  # 데이터가 유지될 볼륨 정의
+  es-data:
+    driver: local

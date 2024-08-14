@@ -102,3 +102,44 @@ ALTER TABLE example_table MODIFY COLUMN content VARCHAR(255),ALGORITHM=INPLACE,L
 ```
 pt-online-schema-change --alter "ADD INDEX comment_author_id_index ()" D=example-db,t=example_table --host=localhost --password=password --user=root --execute --recursion-method=none
 ```
+
+# Elasticsearch
+
+jdbc clinet - https://www.elastic.co/kr/downloads/past-releases#jdbc-client
+
+- Apache Lucene
+    - Java로 작성된 고성능 full-text 검색 라이브러리
+    - 문서를 분석하여 index(색인)을 생성
+    - 텍스트는 토큰으로 분할하고 각 토큰의 위치와 빈도를 기록하여 검색을 효율적으로 만듦
+    - 검색을 관련성(유사도) 점수로 정렬하여 관련성이 높은 문서를 상위에 표시
+- Elasticsearch
+    - Apache Lucene 기반의 실시간 분산 검색 및 분석 엔진
+    - JSON 기반의 RESTful API를 통해 상호 작용
+    - 실시간으로 데이터를 처리해서 즉시 검색 가능하도록 제공
+    - 다양한 집계 기능(aggregation)
+
+# ELK Stack
+
+- Elasticsearch
+    - 역할 : 분산 검색 및 분석 엔진
+    - 기능 : 대량의 구조화된 및 비구조화된 데이터를 실시간으로 저장, 검색, 분석.
+- Logstash
+    - 역할: 데이터 수집 및 처리 파이프라인
+    - 기능: 다양한 소스(서버로그, 애플리케이션 로그등)로부터 데이터를 수집, 변환, 전송. 데이터를 Elasticsearch에 저장할 수 있도록 처리
+- Kibana
+    - 역할 : 데이터 시각화 및 대시보드 도구.
+    - 기능 : Elasticsearch에 저장된 데이터를 기반으로 대시보드, 차트, 지도 등을 생성하여 시각화. 실시간으로 데이터 분석과 모니터링이 가능.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
