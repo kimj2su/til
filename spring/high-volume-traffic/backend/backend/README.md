@@ -176,10 +176,71 @@ jdbc clinet - https://www.elastic.co/kr/downloads/past-releases#jdbc-client
 - Heartbeat: 웹 서비스, DB 가용성 모니터링
 - Auditbeat: 시스템 보안 이벤트 수집 및 사용자 활동 추적
 
+# 아키텍처 설명
 
+## Standalone 모드
 
+- 단일 서버로 운영되는 방식
+    - 반대는 Cluster 모드
+- 1개의 서버에서 모든 기능을 동작시킴
+    - 데이터 저장, 검색, incdexing, cluster management
+- 장점
+    - 설정과 관리가 상대적으로 간단하고 외부 서버와의 통신을 고려할 필요가 없음
+- 단점
+    - 대규모 데이터 처리가 어려움
+    - 고가용성 기능이 없으므로 장애 발생시 서비스 가용성에 영향을 줌
 
+## 클러스터 아키텍처 구조
 
+- Node(노드) : 물리/가상 서버
+    - Master Node
+        - 클러스터 상태 및 모든 노드 관리
+        - shard 할당, index 생성
+    - Data Node
+        - 실제 데이터를 저장(CRUD 처리)
+        - shard(primary, replica) 저장
+    - Coordinate Node
+        - 검색 요청을 다른 노드에 라우팅(분산)
+        - 마스터, 데이터 노드와 직접 상호 작용X
 
+## Shard(샤드)
+
+- Shard
+    - index를 구성하는 기본 단위
+    - data를 분산 저장하여 데이터 손실을 방지함
+    - 특정 node에 병목되지 않도록 분산 처리하기 위함
+- 종류
+    - primary: 실제로 저장하는 기본 shard
+    - replica: primary shard의 복제본
+        - 고가용성 및 검색 성능 향상
+
+## Shard != replica
+
+- Shard: data를 분산 저장하기 위한 개념
+- Replica: shard의 복제본
+
+## Document
+
+- ElasticSearch에서 가장 작은 단위
+- JSON 형식의 데이터
+- 지원하는 데이터 타입
+    - binary
+    - boolean
+    - keyword
+    - number
+    - date
+    - object(json)
+    - nested(relationship)
+    - text
+
+## index / Type
+
+- index(인덱스)
+    - data(document)를 저장하는 논리적 단위
+    - 각 index는 고유한 이름을 가지고 여러개의 shard로 구성
+- type(타입)
+    - index 내부의 논리적인 데이터 구조
+    - index는 여러개의 type을 가질 수 있음
+    - 7.x 버전부터는 type을 사용하지 않음, index:type=1:1로 매핑된다.
 
 
