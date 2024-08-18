@@ -250,3 +250,26 @@ jdbc clinet - https://www.elastic.co/kr/downloads/past-releases#jdbc-client
 - posting list: 특정 term이 등장하는 모든 문서의 리스트, 해당 term의 위치 정보도 포함
 - 단어-문서 매핑: 역 인덱스는 단어를 key로 해당 단어가 포함된 문서 ID의 리스트를 값을 가지는 매핑을 제공
 
+# mapping
+
+- document가 저장될 때 각 field의 data type을 정의하는 schema
+    - field data type
+        - text, keyword, integer, date, boolean...
+    - analyzer
+      -text field에 대해 어떤 분석기를 사용할 것인지 정의
+    - field property
+        - index, store, doc_values 여부 지정 가능
+    - muliple field
+        - 하나의 text field를 text와 keyword type으로 동시에 indexing 가능
+
+# settings
+
+- index의 동작 방식을 제어하는 설정(shard, replica, analyzer...)
+    - number_of_shards
+        - 데이터를 분할하여 저장하는 단위
+    - number_of_replicas
+        - primary shard의 복제본 수, 데이터의 고가용성을 보장
+    - analysis
+        - 형태소 분석기, 토크나이저, 토큰 필터 등을 정의
+    - refresh_interval
+        - index 갱신 주기, 기본값은 1초
