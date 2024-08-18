@@ -243,4 +243,10 @@ jdbc clinet - https://www.elastic.co/kr/downloads/past-releases#jdbc-client
     - index는 여러개의 type을 가질 수 있음
     - 7.x 버전부터는 type을 사용하지 않음, index:type=1:1로 매핑된다.
 
+# inverted index(역 인덱스) 주요 개념
+
+- term: 문서에 등장하는 개별 단어 or 토큰
+    - 형태소: 일정한 의미가 있는 가장 작은 말의 단위
+- posting list: 특정 term이 등장하는 모든 문서의 리스트, 해당 term의 위치 정보도 포함
+- 단어-문서 매핑: 역 인덱스는 단어를 key로 해당 단어가 포함된 문서 ID의 리스트를 값을 가지는 매핑을 제공
 
