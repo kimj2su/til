@@ -273,3 +273,42 @@ jdbc clinet - https://www.elastic.co/kr/downloads/past-releases#jdbc-client
         - 형태소 분석기, 토크나이저, 토큰 필터 등을 정의
     - refresh_interval
         - index 갱신 주기, 기본값은 1초
+
+# brain split 문제
+
+- 클러스터 내의 노드들이 네트워크 분리 또는 기타 장애로 인해 서로 통신할 수 없게 되면서 각 노드가 자신이 마스터 노드라고 잘못 판단하는 현상
+    - 분산 시스템, 특히 클러스터 환경에서 발생할 수 있는 문제
+    - 일부 노드들이 서로 통신할 수 없게 되어 각 노드가 자신이 마스터라고 잘못 판단할 때 발생
+    - 데이터 일관성 문제와 클러스터의 안정성 저하를 초래
+    - 최악의 경우, 시스템 복구 불가능 초래
+
+## brain split 방지 방법
+
+- Master Node는 홀수개로 구성
+- Minimum Master Nodes 설정
+    - 클러스터가 최소 몇 개의 마스터 노드와 통신할 수 있어야 정상적으로 작동할지를 정의
+    - 이 설정을 통해 클러스터가 여러 개의 마스터 노드를 생성하는 것을 방지
+    - 예) discovery.zen.minimum_master_nodes:2
+- Zen Discovery
+    - 클러스터 내의 노드들이 서로를 발견하고, 통신을 관리하며, 네트워크 분리를 감지하여 Brain Split 문제를 방지
+
+# re-indexing 문제
+
+- setting, mapping 를 변경해야되는 상황
+    - shard, replica, field type, dictionary, analyzer 변경
+- ElasticSearch Cluster 버전 업그레이드
+    - 호환성을 위해서 데이터를 다시 indexing 해야하는 경우가 있음
+- 성능 최적화
+    - 데이터 구조 최적화, 삭제된 문서 처리, 불필요한 데이터 제거
+    - analyzer 최적화, 데이터 볼륨 증가
+
+# re-indexing이 필요한 경우
+
+- rolling re-indexing
+    - 기존 index는 유지하고 새로운 인덱스를 생성하여 점진적으로 데이터를 복사
+    - 끝난 뒤에 application이 새로운 인덱스를 참조하도록 변경
+- 일괄 처리
+    - 데이터 세트를 여러개의 작은 배치로 나눠서 성능 저하를 최소화하여 진행
+- re-index API 사용
+    - 편하긴 하지만 mapping이 잘못되어 field 타입이나 이름이 충돌나면 오류가 발생할 수 있음
+    - 문제가 발생했을 때 원인 파악이 쉽지 않음
