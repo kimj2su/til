@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CommentService {
 
   private final BoardRepository boardRepository;
@@ -129,6 +128,7 @@ public class CommentService {
   }
 
   @Async
+  @Transactional
   public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
     boardRepository.findById(boardId)
         .orElseThrow(() -> new ResourceNotFoundException("게시판을 찾을 수 없습니다."));
@@ -137,7 +137,9 @@ public class CommentService {
     if (article.isDeleted()) {
       throw new ResourceNotFoundException("게시글을 찾을 수 없습니다.");
     }
-    return CompletableFuture.completedFuture(article);
+    article.setViewCount(article.getViewCount() + 1);
+    Article saveArticle = articleRepository.save(article);
+    return CompletableFuture.completedFuture(saveArticle);
   }
 
   @Async

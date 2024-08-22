@@ -65,16 +65,23 @@ public class Article {
   @LastModifiedDate
   private LocalDateTime updatedAt;
 
+  @Column(nullable = false)
+  private Long viewCount;
+
   @Builder
-  public Article(Long id, String title, User author, Board board, String content,
-      LocalDateTime createdAt, LocalDateTime updatedAt) {
+  public Article(Long id, String title, User author, Board board, List<Comment> comments,
+      boolean isDeleted, String content, LocalDateTime createdAt, LocalDateTime updatedAt,
+      Long viewCount) {
     this.id = id;
     this.title = title;
     this.author = author;
     this.board = board;
+    this.comments = comments;
+    this.isDeleted = isDeleted;
     this.content = content;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.viewCount = viewCount;
   }
 
   public void delete() {
