@@ -1,5 +1,6 @@
 package com.jisu.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jisu.backend.dto.EditArticleDto;
 import com.jisu.backend.dto.WriteArticleDto;
 import com.jisu.backend.entity.Article;
@@ -28,7 +29,7 @@ public class ArticleController {
 
   @PostMapping("/{boardId}/articles")
   public ResponseEntity<Article> writeArticle(@PathVariable Long boardId,
-      @RequestBody WriteArticleDto writeArticleDto) {
+      @RequestBody WriteArticleDto writeArticleDto) throws JsonProcessingException {
     return ResponseEntity.ok(articleService.articleArticle(boardId, writeArticleDto));
   }
 
@@ -49,13 +50,13 @@ public class ArticleController {
   @PutMapping("/{boardId}/articles/{articleId}")
   public ResponseEntity<Article> modifyArticle(@PathVariable Long boardId,
       @PathVariable Long articleId,
-      @RequestBody EditArticleDto editArticleDto) {
+      @RequestBody EditArticleDto editArticleDto) throws JsonProcessingException {
     return ResponseEntity.ok(articleService.modifyArticle(boardId, articleId, editArticleDto));
   }
 
   @DeleteMapping("/{boardId}/article/{articleId}")
   public ResponseEntity<Void> deleteArticle(@PathVariable Long boardId,
-      @PathVariable Long articleId) {
+      @PathVariable Long articleId) throws JsonProcessingException {
     articleService.deleteArticle(boardId, articleId);
     return ResponseEntity.noContent().build();
   }
@@ -64,7 +65,7 @@ public class ArticleController {
   public ResponseEntity<Article> getArticleWithComment(
       @PathVariable Long boardId,
       @PathVariable Long articleId
-  ) {
+  ) throws JsonProcessingException {
     return ResponseEntity.ok(commentService.getArticleWithComment(boardId, articleId).resultNow());
   }
 }

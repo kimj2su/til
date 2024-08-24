@@ -66,7 +66,7 @@ public class Article {
   private LocalDateTime updatedAt;
 
   @Column(nullable = false)
-  private Long viewCount;
+  private Long viewCount = 0L;
 
   @Builder
   public Article(Long id, String title, User author, Board board, List<Comment> comments,

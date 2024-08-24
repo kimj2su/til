@@ -1,5 +1,7 @@
 package com.jisu.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jisu.backend.dto.WriteCommentDto;
 import com.jisu.backend.entity.Article;
 import com.jisu.backend.entity.Board;
@@ -35,6 +37,8 @@ public class CommentService {
   private final ArticleRepository articleRepository;
   private final CommentRepository commentRepository;
   private final UserRepository userRepository;
+  private final ElasticSearchService elasticSearchService;
+  private final ObjectMapper objectMapper;
 
   @Transactional
   public Comment writeComment(Long boardId, Long articleId, WriteCommentDto dto) {
@@ -90,7 +94,8 @@ public class CommentService {
     return comment;
   }
 
-  public CompletableFuture<Article> getArticleWithComment(Long boardId, Long articleId) {
+  public CompletableFuture<Article> getArticleWithComment(Long boardId, Long articleId)
+      throws JsonProcessingException {
     CompletableFuture<Article> articleFuture = getArticle(boardId, articleId);
     CompletableFuture<List<Comment>> commentsFuture = getComments(articleId);
 
@@ -129,7 +134,8 @@ public class CommentService {
 
   @Async
   @Transactional
-  public CompletableFuture<Article> getArticle(Long boardId, Long articleId) {
+  public CompletableFuture<Article> getArticle(Long boardId, Long articleId)
+      throws JsonProcessingException {
     boardRepository.findById(boardId)
         .orElseThrow(() -> new ResourceNotFoundException("게시판을 찾을 수 없습니다."));
     Article article = articleRepository.findById(articleId)
@@ -139,6 +145,7 @@ public class CommentService {
     }
     article.setViewCount(article.getViewCount() + 1);
     Article saveArticle = articleRepository.save(article);
+    indexArticle(saveArticle);
     return CompletableFuture.completedFuture(saveArticle);
   }
 
@@ -177,5 +184,11 @@ public class CommentService {
     Duration duration = Duration.between(localDateTime, dateAsLocalDateTime);
 
     return Math.abs(duration.toMinutes()) > 1;
+  }
+
+  private String indexArticle(Article article) throws JsonProcessingException {
+    String articleJson = objectMapper.writeValueAsString(article);
+    return elasticSearchService.indexArticleDocument(article.getId().toString(), articleJson)
+        .block();
   }
 }

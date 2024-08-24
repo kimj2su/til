@@ -1,5 +1,7 @@
 package com.jisu.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jisu.backend.dto.EditArticleDto;
 import com.jisu.backend.dto.WriteArticleDto;
 import com.jisu.backend.entity.Article;
@@ -31,9 +33,11 @@ public class ArticleService {
   private final BoardRepository boardRepository;
   private final ArticleRepository articleRepository;
   private final UserRepository userRepository;
+  private final ElasticSearchService elasticSearchService;
+  private final ObjectMapper objectMapper;
 
   @Transactional
-  public Article articleArticle(Long boardId, WriteArticleDto dto) {
+  public Article articleArticle(Long boardId, WriteArticleDto dto) throws JsonProcessingException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     if (!isCanWriteArticle()) {
@@ -49,8 +53,11 @@ public class ArticleService {
         .board(board)
         .title(dto.title())
         .content(dto.content())
+        .viewCount(0L)
         .build();
-    return articleRepository.save(article);
+    Article save = articleRepository.save(article);
+    indexArticle(save);
+    return save;
   }
 
   public List<Article> firstGetArticle(Long boardId) {
@@ -68,7 +75,8 @@ public class ArticleService {
   }
 
   @Transactional
-  public Article modifyArticle(Long boardId, Long articleId, EditArticleDto editArticleDto) {
+  public Article modifyArticle(Long boardId, Long articleId, EditArticleDto editArticleDto)
+      throws JsonProcessingException {
     Article article = articleRepository.findById(articleId)
         .orElseThrow(() -> new ResourceNotFoundException("게시글을 찾을 수 없습니다."));
 
@@ -96,7 +104,7 @@ public class ArticleService {
     if (editArticleDto.content().isPresent()) {
       article.setContent(editArticleDto.content().get());
     }
-
+    indexArticle(article);
     return article;
   }
 
@@ -132,7 +140,7 @@ public class ArticleService {
   }
 
   @Transactional
-  public void deleteArticle(Long boardId, Long articleId) {
+  public void deleteArticle(Long boardId, Long articleId) throws JsonProcessingException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     User user = userRepository.findByUsername(userDetails.getUsername())
@@ -152,6 +160,13 @@ public class ArticleService {
       throw new RateLimitException("5분 이내에는 수정할 수 없습니다.");
     }
 
+    indexArticle(article);
     article.delete();
+  }
+
+  private String indexArticle(Article article) throws JsonProcessingException {
+    String articleJson = objectMapper.writeValueAsString(article);
+    return elasticSearchService.indexArticleDocument(article.getId().toString(), articleJson)
+        .block();
   }
 }
