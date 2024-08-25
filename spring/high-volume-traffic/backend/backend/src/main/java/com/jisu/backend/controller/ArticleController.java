@@ -36,13 +36,23 @@ public class ArticleController {
   @GetMapping("/{boardId}/articles")
   public ResponseEntity<List<Article>> writeArticle(@PathVariable Long boardId,
       @RequestParam(required = false) Long lastId,
-      @RequestParam(required = false) Long firstId) {
+      @RequestParam(required = false) Long firstId
+  ) {
     if (lastId != null) {
       return ResponseEntity.ok(articleService.getOldArticle(boardId, lastId));
     }
 
     if (firstId != null) {
       return ResponseEntity.ok(articleService.getNewArticle(boardId, firstId));
+    }
+    return ResponseEntity.ok(articleService.firstGetArticle(boardId));
+  }
+
+  @GetMapping("/{boardId}/articles/search")
+  public ResponseEntity<List<Article>> searchArticle(@PathVariable Long boardId,
+      @RequestParam(required = true) String keyword) {
+    if (keyword != null) {
+      return ResponseEntity.ok(articleService.searchArticle(keyword));
     }
     return ResponseEntity.ok(articleService.firstGetArticle(boardId));
   }
