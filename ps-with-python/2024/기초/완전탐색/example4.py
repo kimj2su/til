@@ -1,6 +1,6 @@
 # 문제4. 숫자야구(#2503)
 # A는 3자리 숫자로 된 정답을 하나 정합니다.
-# B는 3자기 숫자를 제시해서 A가 생각하고 있는 정답을 맞히려고 합니다.
+# B는 3자리 숫자를 제시해서 A가 생각하고 있는 정답을 맞히려고 합니다.
 # B가 말한 숫자가 정답에 포함되어 있다면 1Ball
 # B가 말한 숫자가 정답에 포함되어 있고 자리도 동일하다면 1 Strike 입니다.
 # 다른 숫자로 이루어진 세자리수 Strike와 Ball의 결과를 보고 가능한 숫자를 계산하는 프로그램을 작성하세요,
@@ -32,7 +32,7 @@ for a in range(1,10): # 100의 자리수
             counter = 0
 
             # (2) 다른 세 자리수
-            if( a == b or b == c or c == a):
+            if a == b or b == c or c == a:
                 continue
 
             # continue, 그 숫자를 넘김
@@ -48,27 +48,33 @@ for a in range(1,10): # 100의 자리수
                 ball_count = 0
 
                 #스트라이크 계산기
-                if (a == int(check[0])):
+                if a == int(check[0]):
                     strike_count += 1
-                if (b == int(check[1])):
+                    print("if a == int(check[0]):" + str(strike_count))
+                if b == int(check[1]):
                     strike_count += 1
-                if (c == int(check[2])):
+                    print("if b == int(check[1]):" + str(strike_count))
+                if c == int(check[2]):
                     strike_count += 1
+                    print("if c == int(check[2]):" + str(strike_count))
 
 
                 #볼 계산기
-                if (a == int(check[1]) or a == int(check[2])):
+                if a == int(check[1]) or a == int(check[2]):
                     ball_count += 1
-                if (b == int(check[0]) or b == int(check[2])):
+                    print("if a == int(check[1]) or a == int(check[2]):" + str(ball_count))
+                if b == int(check[0]) or b == int(check[2]):
                     ball_count += 1
-                if (c == int(check[0]) or c == int(check[1])):
+                    print("if b == int(check[0]) or b == int(check[2]):" + str(ball_count))
+                if c == int(check[0]) or c == int(check[1]):
                     ball_count += 1
+                    print("if c == int(check[0]) or c == int(check[1]):" + str(ball_count))
 
 
                 #(4) 매칭 여부 확인하기
-                if (strike != strike_count):
+                if strike != strike_count:
                     break
-                if (ball != ball_count):
+                if ball != ball_count:
                     break
 
                 counter += 1
