@@ -16,5 +16,5 @@ prefix = [0 for _ in range(N + 1)]
 
 for i in range(N):
   prefix[i + 1] = max(prefix[i] + arr[i], arr[i]) # 이전까지의 합과 현재값을 비교해서 큰값을 저장
-
+# 이전까지의 합이 음수라면 현재값을 선택하는게 더 크다는 뜻이므로, 이전까지의 합을 버리고 현재값을 선택한다.
 print(max(prefix)) # 최대값 출력
