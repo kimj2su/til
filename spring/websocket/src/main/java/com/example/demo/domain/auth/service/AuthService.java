@@ -10,6 +10,7 @@ import com.example.demo.domain.repository.UserRepository;
 import com.example.demo.domain.repository.entity.User;
 import com.example.demo.domain.repository.entity.UserCredentials;
 import com.example.demo.security.Hasher;
+import com.example.demo.security.JWTProvider;
 import java.sql.Timestamp;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
