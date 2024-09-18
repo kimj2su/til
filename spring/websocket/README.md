@@ -37,3 +37,7 @@ base64UrlEncode(payload), // 페이로드
 secret // 비밀키
 )
 ```
+
+# WebSocket
+
+HTTP 와 같지만 헤더에 `Upgrade: websocket`, `Connection: Upgrade` 이라는 헤더가 추가된다.
