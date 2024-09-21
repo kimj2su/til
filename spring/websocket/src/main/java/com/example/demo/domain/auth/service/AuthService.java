@@ -26,7 +26,7 @@ public class AuthService {
   private final UserRepository userRepository;
   private final Hasher hasher;
 
-  @Transactional(transactionManager = "createUserTranscationManager")
+  @Transactional(transactionManager = "createUserTransactionManager")
   public CreateUserResponse createUser(CreateUserRequest request) {
     Optional<User> user = userRepository.findByName(request.name());
 
