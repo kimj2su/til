@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
-import { ChatLayout } from "@/components/chat/chat-layout";
+import {cookies} from "next/headers";
+import {ChatLayout} from "@/components/chat/chat-layout";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 
 export default function Home() {
   const layout = cookies().get("react-resizable-panels:layout");
@@ -13,16 +13,17 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
-      <div className="flex justify-between max-w-5xl w-full items-center">
-        <Link href="#" className="text-4xl font-bold text-gradient">
-          Spring을 활용하여 직접 구현하는 Chatting 플랫폼
-        </Link>
-      </div>
+      <main
+          className="flex h-[calc(100dvh)] flex-col items-center justify-center p-4 md:px-24 py-32 gap-4">
+        <div className="flex justify-between max-w-5xl w-full items-center">
+          <Link href="#" className="text-4xl font-bold text-gradient">
+            김지수 데모 채팅
+          </Link>
+        </div>
 
-      <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
-        <ChatLayout defaultLayout={defaultLayout} navCollapsedSize={8} />
-      </div>
-    </main>
+        <div className="z-10 border rounded-lg max-w-5xl w-full h-full text-sm lg:flex">
+          <ChatLayout defaultLayout={defaultLayout} navCollapsedSize={8}/>
+        </div>
+      </main>
   );
 }

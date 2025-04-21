@@ -10,26 +10,23 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WssConfig implements WebSocketMessageBrokerConfigurer {
 
-  // pub/sub 메시지를 처리할 endpoint 설정
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.enableSimpleBroker("/sub");
     registry.setApplicationDestinationPrefixes("/pub");
   }
 
-  // 연결되는 base endpoint 설정
   @Override
   public void registerStompEndpoints(StompEndpointRegistry register) {
     register.addEndpoint("/ws-stomp")
-        .setAllowedOrigins("*");
-    // .withSockJS();
+        .setAllowedOrigins("https://39f3-120-50-90-162.ngrok-free.app");
   }
 
-//     @Override
-//     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//         registry.addHandler(null, "/ws/v1/chat")
-//             .setAllowedOrigins("*");
-//     }
+  // @Override
+  // public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+  //     registry.addHandler(null, "/ws/v1/chat")
+  //         .setAllowedOrigins("*");
+  // }
 
 
 }

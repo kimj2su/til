@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,7 +28,7 @@ public class ChatServiceV1 {
     return new ChatListResponse(res);
   }
 
-  //  @Transactional(transactionManager = "createChatTransactionManager")
+  @Transactional(transactionManager = "createChatTransactionManager")
   public void saveChatMessage(Message msg) {
     Chat chat = Chat.builder().
         sender(msg.getFrom()).

@@ -1,23 +1,28 @@
 package com.example.demo.domain.repository.entity;
 
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.*;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Document(value = "user_credentials")
+@Entity
+@Table(name = "user_credentials")
 public class UserCredentials {
+    @Id
+    @OneToOne
+    @JoinColumn(name = "user_t_id")
+    private User user;
 
-  @Id
-  private User user;
-
-  private String hashed_password;
+    @Column(nullable = false)
+    private String hashed_password;
 }

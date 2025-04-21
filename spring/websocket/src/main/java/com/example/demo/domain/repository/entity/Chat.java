@@ -1,30 +1,40 @@
 package com.example.demo.domain.repository.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+import lombok.*;
 import java.sql.Timestamp;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Document(value = "chat")
+@Entity
+@Table(name = "chat")
 public class Chat {
 
-  @Id
-  private Long TID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "t_id")
+    private Long TID;
 
-  private String sender;
+    @Column
+    private String sender;
 
-  private String receiver;
+    @Column
+    private String receiver;
 
-  private String message;
+    @Column
+    private String message;
 
-  private Timestamp created_at;
+    @Column
+    private Timestamp created_at;
 
 }

@@ -16,6 +16,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -25,7 +26,7 @@ public class AuthService {
   private final UserRepository userRepository;
   private final Hasher hasher;
 
-  //  @Transactional(transactionManager = "createUserTransactionManager")
+  @Transactional(transactionManager = "createChatTransactionManager")
   public CreateUserResponse createUser(CreateUserRequest request) {
     Optional<User> user = userRepository.findByName(request.name());
 

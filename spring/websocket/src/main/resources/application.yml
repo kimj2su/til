@@ -4,17 +4,18 @@ springdoc:
     enabled: true
     operations-sorter: method
 spring:
-  #  datasource:
-  #    url: jdbc:mysql://localhost:3306/Spring_Chatting
-  #    username: root
-  #    password: root
-  #    driver-class-name: com.mysql.jdbc.Driver
-  #  jpa:
-  #    show-sql: true
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017
-      database: websocket
+  datasource:
+    url: jdbc:mysql://localhost:3306/Spring_Chatting
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
 token:
   secret-key: "SECRET"
   refresh-secret-key: "REFRESH_SECRET"
