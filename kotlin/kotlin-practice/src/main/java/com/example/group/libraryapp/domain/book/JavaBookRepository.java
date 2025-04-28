@@ -1,12 +1,10 @@
 package com.example.group.libraryapp.domain.book;
 
-import com.group.libraryapp.domain.book.Book;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+public interface JavaBookRepository extends JpaRepository<JavaBook, Long> {
 
-public interface JavaBookRepository extends JpaRepository<Book, Long> {
-
-  Optional<Book> findByName(String bookName);
+  Optional<JavaBook> findByName(String bookName);
 
 }

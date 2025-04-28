@@ -16,15 +16,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.lang.IllegalArgumentException
 
 @SpringBootTest
 class BookServiceTest @Autowired constructor(
-        private val bookRepository: BookRepository,
-        private val bookService: BookService,
-        private val userRepository: UserRepository,
-        private val userLoanHistoryRepository: UserLoanHistoryRepository
-){
+    private val bookRepository: BookRepository,
+    private val bookService: BookService,
+    private val userRepository: UserRepository,
+    private val userLoanHistoryRepository: UserLoanHistoryRepository
+) {
 
     // given
 
@@ -42,7 +41,7 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책 등록이 정상 동작한다.")
     fun saveBootTest() {
         // given
-        val request = BookRequest("이상한 나라의 엘리스")
+        val request = BookRequest("이상한 나라의 엘리스", "COMPUTER")
 
         // when
         bookService.saveBook(request)
@@ -51,13 +50,14 @@ class BookServiceTest @Autowired constructor(
         val books = bookRepository.findAll()
         assertThat(books).hasSize(1)
         assertThat(books[0].name).isEqualTo("이상한 나라의 엘리스")
+        assertThat(books[0].type).isEqualTo("COMPUTER")
     }
 
     @Test
     @DisplayName("책 대출이 정상 동작한다.")
     fun lonaBootTest() {
         // given
-        bookRepository.save(Book("이상한 나라의 엘리스"))
+        bookRepository.save(Book.fixture("이상한 나라의 엘리스"))
         val saveUser = userRepository.save(User("김지수", null))
         val request = BookLoanRequest("김지수", "이상한 나라의 엘리스")
 
@@ -76,7 +76,7 @@ class BookServiceTest @Autowired constructor(
     @DisplayName("책이 진작 대출되어 있다면, 신규 대출이 실패한다.")
     fun loanBookFailTest() {
         // given
-        bookRepository.save(Book("이상한 나라의 엘리스"))
+        bookRepository.save(Book.fixture("이상한 나라의 엘리스"))
         val saveUser = userRepository.save(User("김지수", null))
         userLoanHistoryRepository.save(UserLoanHistory(saveUser, "이상한 나라의 엘리스", false))
         val request = BookLoanRequest("김지수", "이상한 나라의 엘리스")

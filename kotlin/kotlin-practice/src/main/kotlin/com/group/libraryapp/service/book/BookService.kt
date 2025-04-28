@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class BookService (
+class BookService(
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository,
     private val userLoanHistoryRepository: UserLoanHistoryRepository,
@@ -20,7 +20,7 @@ class BookService (
 
     @Transactional
     fun saveBook(request: BookRequest) {
-        val book = Book(request.name)
+        val book = Book(request.name, request.type)
         bookRepository.save(book)
     }
 

@@ -1,13 +1,18 @@
 package com.example.group.libraryapp.domain.user;
 
+import com.example.group.libraryapp.domain.book.JavaBook;
 import com.example.group.libraryapp.domain.user.loanhistory.JavaUserLoanHistory;
-import com.group.libraryapp.domain.book.Book;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 @Entity
@@ -42,7 +47,7 @@ public class JavaUser {
     this.name = name;
   }
 
-  public void loanBook(Book book) {
+  public void loanBook(JavaBook book) {
     this.userLoanHistories.add(new JavaUserLoanHistory(this, book.getName(), false));
   }
 
